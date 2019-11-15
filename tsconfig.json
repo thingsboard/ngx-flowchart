@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-flowchart": [
+        "dist/ngx-flowchart"
+      ],
+      "ngx-flowchart/*": [
+        "dist/ngx-flowchart/*"
+      ]
+    }
   }
 }
