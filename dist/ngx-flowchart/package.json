@@ -1,0 +1,21 @@
+{
+  "name": "ngx-flowchart",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^8.0.3",
+    "@angular/core": "^8.0.3"
+  },
+  "main": "bundles/ngx-flowchart.umd.js",
+  "module": "fesm5/ngx-flowchart.js",
+  "es2015": "fesm2015/ngx-flowchart.js",
+  "esm5": "esm5/ngx-flowchart.js",
+  "esm2015": "esm2015/ngx-flowchart.js",
+  "fesm5": "fesm5/ngx-flowchart.js",
+  "fesm2015": "fesm2015/ngx-flowchart.js",
+  "typings": "ngx-flowchart.d.ts",
+  "metadata": "ngx-flowchart.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.9.0"
+  }
+}
