@@ -220,13 +220,26 @@ if (false) {
  * @record
  */
 function FcAdjacentList() { }
+var BaseError = /** @class */ (function () {
+    function BaseError() {
+        Error.apply(this, arguments);
+    }
+    return BaseError;
+}());
+BaseError.prototype = new Error();
 var ModelvalidationError = /** @class */ (function (_super) {
     __extends(ModelvalidationError, _super);
     function ModelvalidationError(message) {
-        return _super.call(this, message) || this;
+        var _this = _super.call(this) || this;
+        _this.message = message;
+        return _this;
     }
     return ModelvalidationError;
-}(Error));
+}(BaseError));
+if (false) {
+    /** @type {?} */
+    ModelvalidationError.prototype.message;
+}
 /**
  * @param {?} graph
  * @return {?}

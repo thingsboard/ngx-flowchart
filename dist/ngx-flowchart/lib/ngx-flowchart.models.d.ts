@@ -109,7 +109,12 @@ export interface FcAdjacentList {
         outgoing: Array<string>;
     };
 }
-export declare class ModelvalidationError extends Error {
+declare class BaseError {
+    constructor();
+}
+export declare class ModelvalidationError extends BaseError {
+    message: string;
     constructor(message: string);
 }
 export declare function fcTopSort(graph: FcModel): Array<string> | null;
+export {};

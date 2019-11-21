@@ -219,13 +219,24 @@ if (false) {
  * @record
  */
 function FcAdjacentList() { }
-class ModelvalidationError extends Error {
+class BaseError {
+    constructor() {
+        Error.apply(this, arguments);
+    }
+}
+BaseError.prototype = new Error();
+class ModelvalidationError extends BaseError {
     /**
      * @param {?} message
      */
     constructor(message) {
-        super(message);
+        super();
+        this.message = message;
     }
+}
+if (false) {
+    /** @type {?} */
+    ModelvalidationError.prototype.message;
 }
 /**
  * @param {?} graph

@@ -130,9 +130,17 @@ export interface FcAdjacentList {
   };
 }
 
-export class ModelvalidationError extends Error {
-  constructor(message: string) {
-    super(message);
+class BaseError {
+  constructor() {
+    Error.apply(this, arguments);
+  }
+}
+
+BaseError.prototype = new Error();
+
+export class ModelvalidationError extends BaseError {
+  constructor(public message: string) {
+    super();
   }
 }
 
