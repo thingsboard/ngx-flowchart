@@ -27,9 +27,6 @@
       ],
       "ngx-flowchart-dev": [
         "projects/ngx-flowchart/src/public-api"
-      ],
-      "@angular/*": [
-        "./node_modules/@angular/*"
       ]
     }
   }
