@@ -260,16 +260,6 @@
     /**
      * @record
      */
-    function FcOffset() { }
-    if (false) {
-        /** @type {?} */
-        FcOffset.prototype.top;
-        /** @type {?} */
-        FcOffset.prototype.left;
-    }
-    /**
-     * @record
-     */
     function FcRectBox() { }
     if (false) {
         /** @type {?} */
@@ -557,7 +547,7 @@
      * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
      */
     var FcModelService = /** @class */ (function () {
-        function FcModelService(modelValidation, model, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+        function FcModelService(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
             this.connectorsHtmlElements = {};
             this.nodesHtmlElements = {};
             this.canvasHtmlElement = null;
@@ -565,6 +555,7 @@
             this.svgHtmlElement = null;
             this.modelValidation = modelValidation;
             this.model = model;
+            this.modelChanged = modelChanged;
             this.cd = cd;
             this.canvasHtmlElement = canvasHtmlElement;
             this.svgHtmlElement = svgHtmlElement;
@@ -596,6 +587,15 @@
             this.nodes = new NodesModel(this);
             this.edges = new EdgesModel(this);
         }
+        /**
+         * @return {?}
+         */
+        FcModelService.prototype.notifyModelChanged = /**
+         * @return {?}
+         */
+        function () {
+            this.modelChanged.emit();
+        };
         /**
          * @return {?}
          */
@@ -986,6 +986,8 @@
         /** @type {?} */
         FcModelService.prototype.dropTargetId;
         /** @type {?} */
+        FcModelService.prototype.modelChanged;
+        /** @type {?} */
         FcModelService.prototype.connectors;
         /** @type {?} */
         FcModelService.prototype.nodes;
@@ -1279,6 +1281,7 @@
                 }
             }
             model.nodes.splice(index, 1);
+            this.modelService.notifyModelChanged();
             this.modelService.nodeRemovedCallback(node);
         };
         /**
@@ -1477,6 +1480,7 @@
                 this.deselect(edge);
             }
             model.edges.splice(index, 1);
+            this.modelService.notifyModelChanged();
             this.modelService.edgeRemovedCallback(edge);
         };
         /**
@@ -1528,6 +1532,7 @@
             /** @type {?} */
             var model = this.modelService.model;
             model.edges.push(edge);
+            this.modelService.notifyModelChanged();
         };
         /**
          * @param {?} event
@@ -1561,6 +1566,7 @@
              */
             function (created) {
                 model.edges.push(created);
+                _this.modelService.notifyModelChanged();
                 _this.modelService.edgeAddedCallback(created);
             }));
         };
@@ -2127,6 +2133,7 @@
                         draggedNode.y = Math.round(_this.getYCoordinate(dragOffset.y + event.clientY));
                     }
                     event.preventDefault();
+                    _this.modelService.notifyModelChanged();
                     return false;
                 }));
             }
@@ -2182,6 +2189,7 @@
                             _this.resizeCanvas(draggedNode, _this.draggedElements[i]);
                         }
                         event.preventDefault();
+                        _this.modelService.notifyModelChanged();
                         return false;
                     }));
                 }
@@ -2244,6 +2252,7 @@
                         _this.modelService.canvasHtmlElement.removeChild(shadowElement[0]);
                     }
                     _this.nodeDraggingScope.shadowElements.length = 0;
+                    _this.modelService.notifyModelChanged();
                 }
                 if (_this.nodeDraggingScope.draggedNodes.length) {
                     _this.nodeDraggingScope.draggedNodes.length = 0;
@@ -3292,6 +3301,7 @@
             this.edgeDrawingService = edgeDrawingService;
             this.cd = cd;
             this.zone = zone;
+            this.modelChanged = new core.EventEmitter();
             this.flowchartConstants = FlowchartConstants;
             this.nodesDiffer = this.differs.find([]).create((/**
              * @param {?} index
@@ -3359,7 +3369,7 @@
             this.userNodeCallbacks = this.userCallbacks.nodeCallbacks;
             /** @type {?} */
             var element = $(this.elementRef.nativeElement);
-            this.modelService = new FcModelService(this.modelValidation, this.model, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
+            this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
             if (this.dropTargetId) {
                 this.modelService.dropTargetId = this.dropTargetId;
             }
@@ -3710,6 +3720,7 @@
             nodeWidth: [{ type: core.Input }],
             nodeHeight: [{ type: core.Input }],
             dropTargetId: [{ type: core.Input }],
+            modelChanged: [{ type: core.Output }],
             dragover: [{ type: core.HostListener, args: ['dragover', ['$event'],] }],
             drop: [{ type: core.HostListener, args: ['drop', ['$event'],] }],
             mousedown: [{ type: core.HostListener, args: ['mousedown', ['$event'],] }],
@@ -3737,6 +3748,8 @@
         NgxFlowchartComponent.prototype.nodeHeight;
         /** @type {?} */
         NgxFlowchartComponent.prototype.dropTargetId;
+        /** @type {?} */
+        NgxFlowchartComponent.prototype.modelChanged;
         /** @type {?} */
         NgxFlowchartComponent.prototype.callbacks;
         /** @type {?} */

@@ -207,6 +207,7 @@ export class FcNodeDraggingService {
           draggedNode.y = Math.round(this.getYCoordinate(dragOffset.y + event.clientY));
         }
         event.preventDefault();
+        this.modelService.notifyModelChanged();
         return false;
       });
     }
@@ -245,6 +246,7 @@ export class FcNodeDraggingService {
             this.resizeCanvas(draggedNode, this.draggedElements[i]);
           }
           event.preventDefault();
+          this.modelService.notifyModelChanged();
           return false;
         });
       }
@@ -288,6 +290,7 @@ export class FcNodeDraggingService {
           this.modelService.canvasHtmlElement.removeChild(shadowElement[0]);
         }
         this.nodeDraggingScope.shadowElements.length = 0;
+        this.modelService.notifyModelChanged();
       }
 
       if (this.nodeDraggingScope.draggedNodes.length) {

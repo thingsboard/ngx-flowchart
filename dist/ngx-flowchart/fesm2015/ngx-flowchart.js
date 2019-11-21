@@ -1,4 +1,4 @@
-import { InjectionToken, Injectable, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
+import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -57,16 +57,6 @@ if (false) {
     FcCoords.prototype.x;
     /** @type {?|undefined} */
     FcCoords.prototype.y;
-}
-/**
- * @record
- */
-function FcOffset() { }
-if (false) {
-    /** @type {?} */
-    FcOffset.prototype.top;
-    /** @type {?} */
-    FcOffset.prototype.left;
 }
 /**
  * @record
@@ -339,6 +329,7 @@ class FcModelService {
     /**
      * @param {?} modelValidation
      * @param {?} model
+     * @param {?} modelChanged
      * @param {?} cd
      * @param {?} selectedObjects
      * @param {?} dropNode
@@ -349,7 +340,7 @@ class FcModelService {
      * @param {?} canvasHtmlElement
      * @param {?} svgHtmlElement
      */
-    constructor(modelValidation, model, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+    constructor(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
         this.connectorsHtmlElements = {};
         this.nodesHtmlElements = {};
         this.canvasHtmlElement = null;
@@ -357,6 +348,7 @@ class FcModelService {
         this.svgHtmlElement = null;
         this.modelValidation = modelValidation;
         this.model = model;
+        this.modelChanged = modelChanged;
         this.cd = cd;
         this.canvasHtmlElement = canvasHtmlElement;
         this.svgHtmlElement = svgHtmlElement;
@@ -387,6 +379,12 @@ class FcModelService {
         this.connectors = new ConnectorsModel(this);
         this.nodes = new NodesModel(this);
         this.edges = new EdgesModel(this);
+    }
+    /**
+     * @return {?}
+     */
+    notifyModelChanged() {
+        this.modelChanged.emit();
     }
     /**
      * @return {?}
@@ -689,6 +687,8 @@ if (false) {
     /** @type {?} */
     FcModelService.prototype.dropTargetId;
     /** @type {?} */
+    FcModelService.prototype.modelChanged;
+    /** @type {?} */
     FcModelService.prototype.connectors;
     /** @type {?} */
     FcModelService.prototype.nodes;
@@ -901,6 +901,7 @@ class NodesModel extends AbstractFcModel {
             }
         }
         model.nodes.splice(index, 1);
+        this.modelService.notifyModelChanged();
         this.modelService.nodeRemovedCallback(node);
     }
     /**
@@ -1042,6 +1043,7 @@ class EdgesModel extends AbstractFcModel {
             this.deselect(edge);
         }
         model.edges.splice(index, 1);
+        this.modelService.notifyModelChanged();
         this.modelService.edgeRemovedCallback(edge);
     }
     /**
@@ -1080,6 +1082,7 @@ class EdgesModel extends AbstractFcModel {
         /** @type {?} */
         const model = this.modelService.model;
         model.edges.push(edge);
+        this.modelService.notifyModelChanged();
     }
     /**
      * @param {?} event
@@ -1105,6 +1108,7 @@ class EdgesModel extends AbstractFcModel {
          */
         (created) => {
             model.edges.push(created);
+            this.modelService.notifyModelChanged();
             this.modelService.edgeAddedCallback(created);
         }));
     }
@@ -1576,6 +1580,7 @@ class FcNodeDraggingService {
                     draggedNode.y = Math.round(this.getYCoordinate(dragOffset.y + event.clientY));
                 }
                 event.preventDefault();
+                this.modelService.notifyModelChanged();
                 return false;
             }));
         }
@@ -1626,6 +1631,7 @@ class FcNodeDraggingService {
                         this.resizeCanvas(draggedNode, this.draggedElements[i]);
                     }
                     event.preventDefault();
+                    this.modelService.notifyModelChanged();
                     return false;
                 }));
             }
@@ -1683,6 +1689,7 @@ class FcNodeDraggingService {
                     this.modelService.canvasHtmlElement.removeChild(shadowElement[0]);
                 }
                 this.nodeDraggingScope.shadowElements.length = 0;
+                this.modelService.notifyModelChanged();
             }
             if (this.nodeDraggingScope.draggedNodes.length) {
                 this.nodeDraggingScope.draggedNodes.length = 0;
@@ -2603,6 +2610,7 @@ class NgxFlowchartComponent {
         this.edgeDrawingService = edgeDrawingService;
         this.cd = cd;
         this.zone = zone;
+        this.modelChanged = new EventEmitter();
         this.flowchartConstants = FlowchartConstants;
         this.nodesDiffer = this.differs.find([]).create((/**
          * @param {?} index
@@ -2651,7 +2659,7 @@ class NgxFlowchartComponent {
         this.userNodeCallbacks = this.userCallbacks.nodeCallbacks;
         /** @type {?} */
         const element = $(this.elementRef.nativeElement);
-        this.modelService = new FcModelService(this.modelValidation, this.model, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
+        this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
         if (this.dropTargetId) {
             this.modelService.dropTargetId = this.dropTargetId;
         }
@@ -2927,6 +2935,7 @@ NgxFlowchartComponent.propDecorators = {
     nodeWidth: [{ type: Input }],
     nodeHeight: [{ type: Input }],
     dropTargetId: [{ type: Input }],
+    modelChanged: [{ type: Output }],
     dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
     drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
     mousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }],
@@ -2952,6 +2961,8 @@ if (false) {
     NgxFlowchartComponent.prototype.nodeHeight;
     /** @type {?} */
     NgxFlowchartComponent.prototype.dropTargetId;
+    /** @type {?} */
+    NgxFlowchartComponent.prototype.modelChanged;
     /** @type {?} */
     NgxFlowchartComponent.prototype.callbacks;
     /** @type {?} */

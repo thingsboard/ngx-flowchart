@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   DoCheck,
-  ElementRef,
+  ElementRef, EventEmitter,
   HostBinding,
   HostListener,
   Input,
   IterableDiffer,
   IterableDiffers,
   NgZone,
-  OnInit
+  OnInit, Output
 } from '@angular/core';
 import { FcCallbacks, FcEdge, FcModel, FcNode, FlowchartConstants, UserCallbacks, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
@@ -59,6 +59,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
   @Input()
   dropTargetId: string;
+
+  @Output()
+  modelChanged = new EventEmitter();
 
   callbacks: FcCallbacks;
 
@@ -114,7 +117,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
     const element = $(this.elementRef.nativeElement);
 
-    this.modelService = new FcModelService(this.modelValidation, this.model, this.cd, this.selectedObjects,
+    this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects,
       this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved,
       this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
 

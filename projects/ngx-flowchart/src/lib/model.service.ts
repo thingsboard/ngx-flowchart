@@ -1,7 +1,7 @@
 import { FcModelValidationService } from './modelvalidation.service';
 import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
 import { Observable, of } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 
 export class FcModelService {
 
@@ -24,12 +24,15 @@ export class FcModelService {
 
   dropTargetId: string;
 
+  modelChanged: EventEmitter<any>;
+
   connectors: ConnectorsModel;
   nodes: NodesModel;
   edges: EdgesModel;
 
   constructor(modelValidation: FcModelValidationService,
               model: FcModel,
+              modelChanged: EventEmitter<any>,
               cd: ChangeDetectorRef,
               selectedObjects: any[],
               dropNode: (event: Event, node: FcNode) => void,
@@ -42,6 +45,7 @@ export class FcModelService {
 
     this.modelValidation = modelValidation;
     this.model = model;
+    this.modelChanged = modelChanged;
     this.cd = cd;
     this.canvasHtmlElement = canvasHtmlElement;
     this.svgHtmlElement = svgHtmlElement;
@@ -57,6 +61,10 @@ export class FcModelService {
     this.connectors = new ConnectorsModel(this);
     this.nodes = new NodesModel(this);
     this.edges = new EdgesModel(this);
+  }
+
+  public notifyModelChanged() {
+    this.modelChanged.emit();
   }
 
   public detectChanges() {
@@ -358,6 +366,7 @@ class NodesModel extends AbstractFcModel<FcNode> {
       }
     }
     model.nodes.splice(index, 1);
+    this.modelService.notifyModelChanged();
     this.modelService.nodeRemovedCallback(node);
   }
 
@@ -446,6 +455,7 @@ class EdgesModel extends AbstractFcModel<FcEdge> {
       this.deselect(edge);
     }
     model.edges.splice(index, 1);
+    this.modelService.notifyModelChanged();
     this.modelService.edgeRemovedCallback(edge);
   }
 
@@ -468,6 +478,7 @@ class EdgesModel extends AbstractFcModel<FcEdge> {
   public putEdge(edge: FcEdge) {
     const model = this.modelService.model;
     model.edges.push(edge);
+    this.modelService.notifyModelChanged();
   }
 
   public _addEdge(event: Event, sourceConnector: FcConnector, destConnector: FcConnector, label: string) {
@@ -482,6 +493,7 @@ class EdgesModel extends AbstractFcModel<FcEdge> {
     this.modelService.createEdge(event, edge).subscribe(
       (created) => {
         model.edges.push(created);
+        this.modelService.notifyModelChanged();
         this.modelService.edgeAddedCallback(created);
       }
     );

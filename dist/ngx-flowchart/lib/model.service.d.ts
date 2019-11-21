@@ -1,7 +1,7 @@
 import { FcModelValidationService } from './modelvalidation.service';
 import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
 import { Observable } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 export declare class FcModelService {
     modelValidation: FcModelValidationService;
     model: FcModel;
@@ -18,10 +18,12 @@ export declare class FcModelService {
     nodeRemovedCallback: (node: FcNode) => void;
     edgeRemovedCallback: (edge: FcEdge) => void;
     dropTargetId: string;
+    modelChanged: EventEmitter<any>;
     connectors: ConnectorsModel;
     nodes: NodesModel;
     edges: EdgesModel;
-    constructor(modelValidation: FcModelValidationService, model: FcModel, cd: ChangeDetectorRef, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement);
+    constructor(modelValidation: FcModelValidationService, model: FcModel, modelChanged: EventEmitter<any>, cd: ChangeDetectorRef, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement);
+    notifyModelChanged(): void;
     detectChanges(): void;
     selectObject(object: any): void;
     deselectObject(object: any): void;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, DoCheck, ElementRef, IterableDiffers, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, DoCheck, ElementRef, EventEmitter, IterableDiffers, NgZone, OnInit } from '@angular/core';
 import { FcCallbacks, FcEdge, FcModel, UserCallbacks, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 import { FcModelValidationService } from './modelvalidation.service';
@@ -24,6 +24,7 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     nodeWidth: number;
     nodeHeight: number;
     dropTargetId: string;
+    modelChanged: EventEmitter<any>;
     callbacks: FcCallbacks;
     userNodeCallbacks: UserNodeCallbacks;
     modelService: FcModelService;

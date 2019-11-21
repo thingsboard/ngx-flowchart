@@ -44,11 +44,6 @@ export interface FcCoords {
   y?: number;
 }
 
-export interface FcOffset {
-  top: number;
-  left: number;
-}
-
 export interface FcRectBox {
   top: number;
   left: number;
