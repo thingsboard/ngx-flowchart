@@ -367,9 +367,11 @@ class FcModelService {
          */
         () => { }));
         this.createEdge = createEdge || ((/**
+         * @param {?} event
+         * @param {?} edge
          * @return {?}
          */
-        () => of({ label: 'label' })));
+        (event, edge) => of(Object.assign({}, edge, { label: 'label' }))));
         this.edgeAddedCallback = edgeAddedCallback || ((/**
          * @return {?}
          */

@@ -575,9 +575,11 @@
              */
             function () { }));
             this.createEdge = createEdge || ((/**
+             * @param {?} event
+             * @param {?} edge
              * @return {?}
              */
-            function () { return rxjs.of({ label: 'label' }); }));
+            function (event, edge) { return rxjs.of(__assign({}, edge, { label: 'label' })); }));
             this.edgeAddedCallback = edgeAddedCallback || ((/**
              * @return {?}
              */

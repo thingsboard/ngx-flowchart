@@ -49,7 +49,7 @@ export class FcModelService {
     this.selectedObjects = selectedObjects;
 
     this.dropNode = dropNode || (() => {});
-    this.createEdge = createEdge || (() => of({label: 'label'}));
+    this.createEdge = createEdge || ((event, edge) => of({...edge, label: 'label'}));
     this.edgeAddedCallback = edgeAddedCallback || (() => {});
     this.nodeRemovedCallback = nodeRemovedCallback || (() => {});
     this.edgeRemovedCallback = edgeRemovedCallback || (() => {});

@@ -1,4 +1,4 @@
-import { __extends, __values } from 'tslib';
+import { __extends, __values, __assign } from 'tslib';
 import { InjectionToken, Injectable, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -377,9 +377,11 @@ var FcModelService = /** @class */ (function () {
          */
         function () { }));
         this.createEdge = createEdge || ((/**
+         * @param {?} event
+         * @param {?} edge
          * @return {?}
          */
-        function () { return of({ label: 'label' }); }));
+        function (event, edge) { return of(__assign({}, edge, { label: 'label' })); }));
         this.edgeAddedCallback = edgeAddedCallback || ((/**
          * @return {?}
          */
