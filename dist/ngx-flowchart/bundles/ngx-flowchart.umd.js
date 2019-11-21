@@ -2486,7 +2486,7 @@
             var prevEdge;
             if (connector.type === FlowchartConstants.leftConnectorType) {
                 var _loop_1 = function (edge) {
-                    if (edge === connector.id) {
+                    if (edge.destination === connector.id) {
                         swapConnector = this_1.modelService.connectors.getConnector(edge.source);
                         dragLabel = edge.label;
                         prevEdge = edge;

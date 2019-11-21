@@ -50,7 +50,7 @@ export class FcEdgeDraggingService {
     let prevEdge: FcEdge;
     if (connector.type === FlowchartConstants.leftConnectorType) {
       for (const edge of this.model.edges) {
-        if (edge === connector.id) {
+        if (edge.destination === connector.id) {
           swapConnector = this.modelService.connectors.getConnector(edge.source);
           dragLabel = edge.label;
           prevEdge = edge;
