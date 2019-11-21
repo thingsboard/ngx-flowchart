@@ -1,5 +1,5 @@
 import { FcModelService } from './model.service';
-import { FcRectBox } from 'ngx-flowchart-dev';
+import { FcRectBox } from './ngx-flowchart.models';
 import scrollparent from './scrollparent';
 
 interface Rectangle {
