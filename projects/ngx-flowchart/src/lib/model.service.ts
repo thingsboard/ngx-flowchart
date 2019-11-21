@@ -1,7 +1,8 @@
 import { FcModelValidationService } from './modelvalidation.service';
 import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { debounceTime } from 'rxjs/operators';
 
 export class FcModelService {
 
@@ -24,7 +25,8 @@ export class FcModelService {
 
   dropTargetId: string;
 
-  modelChanged: EventEmitter<any>;
+  private readonly modelChanged: EventEmitter<any>;
+  private readonly debouncer = new Subject<any>();
 
   connectors: ConnectorsModel;
   nodes: NodesModel;
@@ -61,10 +63,14 @@ export class FcModelService {
     this.connectors = new ConnectorsModel(this);
     this.nodes = new NodesModel(this);
     this.edges = new EdgesModel(this);
+
+    this.debouncer
+      .pipe(debounceTime(100))
+      .subscribe(() => this.modelChanged.emit());
   }
 
   public notifyModelChanged() {
-    this.modelChanged.emit();
+    this.debouncer.next();
   }
 
   public detectChanges() {
