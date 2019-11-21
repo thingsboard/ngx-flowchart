@@ -18,7 +18,8 @@ export declare class FcModelService {
     nodeRemovedCallback: (node: FcNode) => void;
     edgeRemovedCallback: (edge: FcEdge) => void;
     dropTargetId: string;
-    modelChanged: EventEmitter<any>;
+    private readonly modelChanged;
+    private readonly debouncer;
     connectors: ConnectorsModel;
     nodes: NodesModel;
     edges: EdgesModel;

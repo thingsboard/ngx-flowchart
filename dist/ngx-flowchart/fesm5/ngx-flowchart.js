@@ -1,6 +1,7 @@
 import { __extends, __values, __assign } from 'tslib';
 import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -350,11 +351,13 @@ function fcTopSort(graph) {
  */
 var FcModelService = /** @class */ (function () {
     function FcModelService(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+        var _this = this;
         this.connectorsHtmlElements = {};
         this.nodesHtmlElements = {};
         this.canvasHtmlElement = null;
         this.dragImage = null;
         this.svgHtmlElement = null;
+        this.debouncer = new Subject();
         this.modelValidation = modelValidation;
         this.model = model;
         this.modelChanged = modelChanged;
@@ -388,6 +391,12 @@ var FcModelService = /** @class */ (function () {
         this.connectors = new ConnectorsModel(this);
         this.nodes = new NodesModel(this);
         this.edges = new EdgesModel(this);
+        this.debouncer
+            .pipe(debounceTime(100))
+            .subscribe((/**
+         * @return {?}
+         */
+        function () { return _this.modelChanged.emit(); }));
     }
     /**
      * @return {?}
@@ -396,7 +405,7 @@ var FcModelService = /** @class */ (function () {
      * @return {?}
      */
     function () {
-        this.modelChanged.emit();
+        this.debouncer.next();
     };
     /**
      * @return {?}
@@ -787,8 +796,16 @@ if (false) {
     FcModelService.prototype.edgeRemovedCallback;
     /** @type {?} */
     FcModelService.prototype.dropTargetId;
-    /** @type {?} */
+    /**
+     * @type {?}
+     * @private
+     */
     FcModelService.prototype.modelChanged;
+    /**
+     * @type {?}
+     * @private
+     */
+    FcModelService.prototype.debouncer;
     /** @type {?} */
     FcModelService.prototype.connectors;
     /** @type {?} */

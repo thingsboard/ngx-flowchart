@@ -1,5 +1,6 @@
 import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -346,6 +347,7 @@ class FcModelService {
         this.canvasHtmlElement = null;
         this.dragImage = null;
         this.svgHtmlElement = null;
+        this.debouncer = new Subject();
         this.modelValidation = modelValidation;
         this.model = model;
         this.modelChanged = modelChanged;
@@ -379,12 +381,18 @@ class FcModelService {
         this.connectors = new ConnectorsModel(this);
         this.nodes = new NodesModel(this);
         this.edges = new EdgesModel(this);
+        this.debouncer
+            .pipe(debounceTime(100))
+            .subscribe((/**
+         * @return {?}
+         */
+        () => this.modelChanged.emit()));
     }
     /**
      * @return {?}
      */
     notifyModelChanged() {
-        this.modelChanged.emit();
+        this.debouncer.next();
     }
     /**
      * @return {?}
@@ -686,8 +694,16 @@ if (false) {
     FcModelService.prototype.edgeRemovedCallback;
     /** @type {?} */
     FcModelService.prototype.dropTargetId;
-    /** @type {?} */
+    /**
+     * @type {?}
+     * @private
+     */
     FcModelService.prototype.modelChanged;
+    /**
+     * @type {?}
+     * @private
+     */
+    FcModelService.prototype.debouncer;
     /** @type {?} */
     FcModelService.prototype.connectors;
     /** @type {?} */

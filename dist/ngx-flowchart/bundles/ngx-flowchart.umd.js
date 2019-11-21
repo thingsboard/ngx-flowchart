@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('@angular/common')) :
-    typeof define === 'function' && define.amd ? define('ngx-flowchart', ['exports', '@angular/core', 'rxjs', '@angular/common'], factory) :
-    (global = global || self, factory(global['ngx-flowchart'] = {}, global.ng.core, global.rxjs, global.ng.common));
-}(this, (function (exports, core, rxjs, common) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('rxjs/operators'), require('@angular/common')) :
+    typeof define === 'function' && define.amd ? define('ngx-flowchart', ['exports', '@angular/core', 'rxjs', 'rxjs/operators', '@angular/common'], factory) :
+    (global = global || self, factory(global['ngx-flowchart'] = {}, global.ng.core, global.rxjs, global.rxjs.operators, global.ng.common));
+}(this, (function (exports, core, rxjs, operators, common) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -548,11 +548,13 @@
      */
     var FcModelService = /** @class */ (function () {
         function FcModelService(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+            var _this = this;
             this.connectorsHtmlElements = {};
             this.nodesHtmlElements = {};
             this.canvasHtmlElement = null;
             this.dragImage = null;
             this.svgHtmlElement = null;
+            this.debouncer = new rxjs.Subject();
             this.modelValidation = modelValidation;
             this.model = model;
             this.modelChanged = modelChanged;
@@ -586,6 +588,12 @@
             this.connectors = new ConnectorsModel(this);
             this.nodes = new NodesModel(this);
             this.edges = new EdgesModel(this);
+            this.debouncer
+                .pipe(operators.debounceTime(100))
+                .subscribe((/**
+             * @return {?}
+             */
+            function () { return _this.modelChanged.emit(); }));
         }
         /**
          * @return {?}
@@ -594,7 +602,7 @@
          * @return {?}
          */
         function () {
-            this.modelChanged.emit();
+            this.debouncer.next();
         };
         /**
          * @return {?}
@@ -985,8 +993,16 @@
         FcModelService.prototype.edgeRemovedCallback;
         /** @type {?} */
         FcModelService.prototype.dropTargetId;
-        /** @type {?} */
+        /**
+         * @type {?}
+         * @private
+         */
         FcModelService.prototype.modelChanged;
+        /**
+         * @type {?}
+         * @private
+         */
+        FcModelService.prototype.debouncer;
         /** @type {?} */
         FcModelService.prototype.connectors;
         /** @type {?} */
