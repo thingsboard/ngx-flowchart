@@ -1,0 +1,182 @@
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: 25px 25px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, .1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, .1) 1px, transparent 1px);
+  background-color: transparent;
+  min-width: 100%;
+  min-height: 100%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  .fc-canvas-container {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    svg.fc-canvas-svg {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .fc-edge {
+    stroke: gray;
+    stroke-width: 4;
+    transition: stroke-width .2s;
+    fill: transparent;
+    &.fc-hover {
+      stroke: gray;
+      stroke-width: 6;
+      fill: transparent;
+    }
+    &.fc-selected {
+      stroke: red;
+      stroke-width: 4;
+      fill: transparent;
+    }
+    &.fc-active {
+      animation: dash 3s linear infinite;
+      stroke-dasharray: 20;
+    }
+    &.fc-dragging {
+      pointer-events: none;
+    }
+  }
+
+  .fc-arrow-marker polygon {
+    stroke: gray;
+    fill: gray;
+  }
+
+  .fc-arrow-marker-selected polygon {
+    stroke: red;
+    fill: red;
+  }
+
+  .edge-endpoint {
+    fill: gray;
+  }
+
+  .fc-noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+  }
+
+  .fc-edge-label {
+    position: absolute;
+    opacity: 0.8;
+    transition: transform .2s;
+    transform-origin: bottom left;
+    margin: 0 auto;
+    .fc-edge-label-text {
+      position: absolute;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      text-align: center;
+      font-size: 16px;
+      span {
+        cursor: default;
+        border: solid #ff3d00;
+        border-radius: 10px;
+        color: #ff3d00;
+        background-color: #fff;
+        padding: 3px 5px;
+      }
+    }
+    .fc-nodeedit {
+      top: -30px;
+      right: 14px;
+    }
+    .fc-nodedelete {
+      top: -30px;
+      right: -13px;
+    }
+    &.fc-hover {
+      transform: scale(1.25);
+    }
+    &.fc-selected,
+    &.fc-edit {
+      .fc-edge-label-text {
+        span {
+          border: solid red;
+          color: #fff;
+          font-weight: 600;
+          background-color: red;
+        }
+      }
+    }
+  }
+
+  .fc-select-rectangle {
+    border: 2px dashed #5262ff;
+    position: absolute;
+    background: rgba(20,125,255,0.1);
+    z-index: 2;
+  }
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 500;
+  }
+}
+
+:host ::ng-deep {
+
+  .fc-nodeedit {
+    display: none;
+    font-size: 15px;
+  }
+
+  .fc-nodedelete {
+    display: none;
+    font-size: 18px;
+  }
+
+  .fc-edit {
+    .fc-nodeedit,
+    .fc-nodedelete {
+      display: block;
+      position: absolute;
+      border: solid 2px #eee;
+
+      border-radius: 50%;
+      font-weight: 600;
+      line-height: 20px;
+
+      height: 20px;
+      padding-top: 2px;
+      width: 22px;
+
+      background: #494949;
+      color: #fff;
+      text-align: center;
+      vertical-align: bottom;
+
+      cursor: pointer;
+    }
+    .fc-nodeedit {
+      top: -24px;
+      right: 16px;
+    }
+    .fc-nodedelete {
+      top: -24px;
+      right: -13px;
+    }
+  }
+}

@@ -1,0 +1,95 @@
+<div (click)="canvasClick($event)" class="fc-canvas-container">
+  <svg class="fc-canvas-svg">
+    <defs>
+      <marker class="fc-arrow-marker" [attr.id]="arrowDefId" markerWidth="5" markerHeight="5" viewBox="-6 -6 12 12" refX="10" refY="0" markerUnits="strokeWidth" orient="auto">
+        <polygon points="-2,0 -5,5 5,0 -5,-5" stroke="gray" fill="gray" stroke-width="1px"/>
+      </marker>
+      <marker class="fc-arrow-marker-selected" [attr.id]="arrowDefIdSelected" markerWidth="5" markerHeight="5" viewBox="-6 -6 12 12" refX="10" refY="0" markerUnits="strokeWidth" orient="auto">
+        <polygon points="-2,0 -5,5 5,0 -5,-5" stroke="red" fill="red" stroke-width="1px"/>
+      </marker>
+    </defs>
+    <g *ngFor="let edge of model.edges; let $index = index">
+      <path
+        [attr.id]="'fc-edge-path-'+$index"
+        (mousedown)="edgeMouseDown($event, edge)"
+        (click)="edgeClick($event, edge)"
+        (dblclick)="edgeDoubleClick($event, edge)"
+        (mouseover)="edgeMouseOver($event, edge)"
+        (mouseenter)="edgeMouseEnter($event, edge)"
+        (mouseleave)="edgeMouseLeave($event, edge)"
+        [attr.class]="(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||
+                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||
+                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||
+                      flowchartConstants.edgeClass"
+        [attr.d]="getEdgeDAttribute(edge)"
+        [attr.marker-end]="'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'">
+      </path>
+    </g>
+    <g *ngIf="dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging">
+      <path [attr.class]="flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass"
+            [attr.d]="edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)"></path>
+      <circle class="edge-endpoint" r="4"
+              [attr.cx]="edgeDraggingService.edgeDragging.dragPoint2.x"
+              [attr.cy]="edgeDraggingService.edgeDragging.dragPoint2.y">
+      </circle>
+    </g>
+    <g *ngIf="dragAnimation === flowchartConstants.dragAnimationShadow"
+       class="shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}"
+       style="display:none">
+      <path d=""></path>
+      <circle class="edge-endpoint" r="4"></circle>
+    </g>
+  </svg>
+  <ng-container *ngFor="let node of model.nodes">
+    <fc-node
+         [selected]="modelService.nodes.isSelected(node)"
+         [edit]="modelService.nodes.isEdit(node)"
+         [underMouse]="node === mouseoverService.mouseoverscope.node"
+         [node]="node"
+         [mouseOverConnector]="mouseoverService.mouseoverscope.connector"
+         [modelservice]="modelService"
+         [dragging]="nodeDraggingService.isDraggingNode(node)"
+         [callbacks]="callbacks"
+         [userNodeCallbacks]="userNodeCallbacks">
+    </fc-node>
+  </ng-container>
+  <div *ngIf="dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging"
+       [attr.class]="'fc-noselect ' + flowchartConstants.edgeLabelClass"
+       [ngStyle]="{
+          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',
+          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'
+       }">
+    <div class="fc-edge-label-text">
+      <span [attr.id]="'fc-edge-label-dragging'" *ngIf="edgeDraggingService.edgeDragging.dragLabel">{{edgeDraggingService.edgeDragging.dragLabel}}</span>
+    </div>
+  </div>
+  <div
+    (mousedown)="edgeMouseDown($event, edge)"
+    (click)="edgeClick($event, edge)"
+    (dblclick)="edgeDoubleClick($event, edge)"
+    (mouseover)="edgeMouseOver($event, edge)"
+    (mouseenter)="edgeMouseEnter($event, edge)"
+    (mouseleave)="edgeMouseLeave($event, edge)"
+    [attr.class]="'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||
+                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||
+                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||
+                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||
+                      flowchartConstants.edgeLabelClass)"
+    [ngStyle]="{
+      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',
+      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'
+    }"
+    *ngFor="let edge of model.edges; let $index = index">
+    <div class="fc-edge-label-text">
+      <div *ngIf="modelService.isEditable()" class="fc-noselect fc-nodeedit" (click)="edgeEdit($event, edge)">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+      </div>
+      <div *ngIf="modelService.isEditable()" class="fc-noselect fc-nodedelete" (click)="edgeRemove($event, edge)">
+        &times;
+      </div>
+      <span [attr.id]="'fc-edge-label-'+$index" *ngIf="edge.label">{{edge.label}}</span>
+    </div>
+  </div>
+  <div id="select-rectangle" class="fc-select-rectangle" hidden>
+  </div>
+</div>

@@ -2,17 +2,29 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { NgxFlowchartModule } from 'ngx-flowchart';
+import { FC_NODE_COMPONENT_CONFIG, NgxFlowchartModule } from 'ngx-flowchart-dev';
+import { TestFcNodeComponent } from './test-node.component';
 
 @NgModule({
+  entryComponents: [
+    TestFcNodeComponent
+  ],
+  /*providers: [
+    {
+      provide: FC_NODE_COMPONENT_CONFIG,
+      useValue: {
+        nodeComponentType: TestFcNodeComponent
+      }
+    }
+  ],*/
   declarations: [
-    AppComponent
+    AppComponent,
+    TestFcNodeComponent
   ],
   imports: [
     BrowserModule,
     NgxFlowchartModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

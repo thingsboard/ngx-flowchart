@@ -24,6 +24,9 @@
       ],
       "ngx-flowchart/*": [
         "dist/ngx-flowchart/*"
+      ],
+      "ngx-flowchart-dev": [
+        "projects/ngx-flowchart/src/public-api"
       ]
     }
   }
