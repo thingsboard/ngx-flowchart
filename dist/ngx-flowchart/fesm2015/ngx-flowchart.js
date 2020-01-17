@@ -1,6 +1,7 @@
 import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -2627,6 +2628,7 @@ class NgxFlowchartComponent {
         this.cd = cd;
         this.zone = zone;
         this.modelChanged = new EventEmitter();
+        this.fitModelSizeByDefaultValue = true;
         this.flowchartConstants = FlowchartConstants;
         this.nodesDiffer = this.differs.find([]).create((/**
          * @param {?} index
@@ -2652,6 +2654,19 @@ class NgxFlowchartComponent {
      */
     get canvasClass() {
         return FlowchartConstants.canvasClass;
+    }
+    /**
+     * @return {?}
+     */
+    get fitModelSizeByDefault() {
+        return this.fitModelSizeByDefaultValue;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set fitModelSizeByDefault(value) {
+        this.fitModelSizeByDefaultValue = coerceBooleanProperty(value);
     }
     /**
      * @return {?}
@@ -2709,7 +2724,7 @@ class NgxFlowchartComponent {
                 event.preventDefault();
             })
         };
-        this.adjustCanvasSize(false);
+        this.adjustCanvasSize(this.fitModelSizeByDefault);
     }
     /**
      * @return {?}
@@ -2753,7 +2768,7 @@ class NgxFlowchartComponent {
                 }));
             }
             if (nodesChanged) {
-                this.adjustCanvasSize(false);
+                this.adjustCanvasSize(this.fitModelSizeByDefault);
             }
             if (nodesChanged || edgesChanged) {
                 this.cd.detectChanges();
@@ -2952,6 +2967,7 @@ NgxFlowchartComponent.propDecorators = {
     nodeHeight: [{ type: Input }],
     dropTargetId: [{ type: Input }],
     modelChanged: [{ type: Output }],
+    fitModelSizeByDefault: [{ type: Input }],
     dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
     drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
     mousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }],
@@ -2979,6 +2995,11 @@ if (false) {
     NgxFlowchartComponent.prototype.dropTargetId;
     /** @type {?} */
     NgxFlowchartComponent.prototype.modelChanged;
+    /**
+     * @type {?}
+     * @private
+     */
+    NgxFlowchartComponent.prototype.fitModelSizeByDefaultValue;
     /** @type {?} */
     NgxFlowchartComponent.prototype.callbacks;
     /** @type {?} */

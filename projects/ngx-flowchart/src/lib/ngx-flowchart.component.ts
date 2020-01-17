@@ -19,6 +19,7 @@ import { FcEdgeDrawingService } from './edge-drawing.service';
 import { FcEdgeDraggingService } from './edge-dragging.service';
 import { FcMouseOverService } from './mouseover.service';
 import { FcRectangleSelectService } from './rectangleselect.service';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'fc-canvas',
@@ -62,6 +63,15 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
   @Output()
   modelChanged = new EventEmitter();
+
+  private fitModelSizeByDefaultValue = true;
+  get fitModelSizeByDefault(): boolean {
+    return this.fitModelSizeByDefaultValue;
+  }
+  @Input()
+  set fitModelSizeByDefault(value: boolean) {
+    this.fitModelSizeByDefaultValue = coerceBooleanProperty(value);
+  }
 
   callbacks: FcCallbacks;
 
@@ -158,7 +168,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         event.preventDefault();
       }
     };
-    this.adjustCanvasSize(false);
+    this.adjustCanvasSize(this.fitModelSizeByDefault);
   }
 
   ngDoCheck(): void {
@@ -184,7 +194,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         });
       }
       if (nodesChanged) {
-        this.adjustCanvasSize(false);
+        this.adjustCanvasSize(this.fitModelSizeByDefault);
       }
       if (nodesChanged || edgesChanged) {
         this.cd.detectChanges();

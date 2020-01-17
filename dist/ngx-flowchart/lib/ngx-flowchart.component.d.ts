@@ -25,6 +25,8 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     nodeHeight: number;
     dropTargetId: string;
     modelChanged: EventEmitter<any>;
+    private fitModelSizeByDefaultValue;
+    fitModelSizeByDefault: boolean;
     callbacks: FcCallbacks;
     userNodeCallbacks: UserNodeCallbacks;
     modelService: FcModelService;

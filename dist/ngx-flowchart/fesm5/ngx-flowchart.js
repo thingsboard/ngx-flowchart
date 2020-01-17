@@ -2,6 +2,7 @@ import { __extends, __values, __assign } from 'tslib';
 import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -3121,6 +3122,7 @@ var NgxFlowchartComponent = /** @class */ (function () {
         this.cd = cd;
         this.zone = zone;
         this.modelChanged = new EventEmitter();
+        this.fitModelSizeByDefaultValue = true;
         this.flowchartConstants = FlowchartConstants;
         this.nodesDiffer = this.differs.find([]).create((/**
          * @param {?} index
@@ -3147,6 +3149,23 @@ var NgxFlowchartComponent = /** @class */ (function () {
          */
         function () {
             return FlowchartConstants.canvasClass;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NgxFlowchartComponent.prototype, "fitModelSizeByDefault", {
+        get: /**
+         * @return {?}
+         */
+        function () {
+            return this.fitModelSizeByDefaultValue;
+        },
+        set: /**
+         * @param {?} value
+         * @return {?}
+         */
+        function (value) {
+            this.fitModelSizeByDefaultValue = coerceBooleanProperty(value);
         },
         enumerable: true,
         configurable: true
@@ -3222,7 +3241,7 @@ var NgxFlowchartComponent = /** @class */ (function () {
                 event.preventDefault();
             })
         };
-        this.adjustCanvasSize(false);
+        this.adjustCanvasSize(this.fitModelSizeByDefault);
     };
     /**
      * @return {?}
@@ -3269,7 +3288,7 @@ var NgxFlowchartComponent = /** @class */ (function () {
                 }));
             }
             if (nodesChanged_1) {
-                this.adjustCanvasSize(false);
+                this.adjustCanvasSize(this.fitModelSizeByDefault);
             }
             if (nodesChanged_1 || edgesChanged_1) {
                 this.cd.detectChanges();
@@ -3540,6 +3559,7 @@ var NgxFlowchartComponent = /** @class */ (function () {
         nodeHeight: [{ type: Input }],
         dropTargetId: [{ type: Input }],
         modelChanged: [{ type: Output }],
+        fitModelSizeByDefault: [{ type: Input }],
         dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
         drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
         mousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }],
@@ -3569,6 +3589,11 @@ if (false) {
     NgxFlowchartComponent.prototype.dropTargetId;
     /** @type {?} */
     NgxFlowchartComponent.prototype.modelChanged;
+    /**
+     * @type {?}
+     * @private
+     */
+    NgxFlowchartComponent.prototype.fitModelSizeByDefaultValue;
     /** @type {?} */
     NgxFlowchartComponent.prototype.callbacks;
     /** @type {?} */

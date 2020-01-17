@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('rxjs/operators'), require('@angular/common')) :
-    typeof define === 'function' && define.amd ? define('ngx-flowchart', ['exports', '@angular/core', 'rxjs', 'rxjs/operators', '@angular/common'], factory) :
-    (global = global || self, factory(global['ngx-flowchart'] = {}, global.ng.core, global.rxjs, global.rxjs.operators, global.ng.common));
-}(this, (function (exports, core, rxjs, operators, common) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('rxjs/operators'), require('@angular/cdk/coercion'), require('@angular/common')) :
+    typeof define === 'function' && define.amd ? define('ngx-flowchart', ['exports', '@angular/core', 'rxjs', 'rxjs/operators', '@angular/cdk/coercion', '@angular/common'], factory) :
+    (global = global || self, factory(global['ngx-flowchart'] = {}, global.ng.core, global.rxjs, global.rxjs.operators, global.ng.cdk.coercion, global.ng.common));
+}(this, (function (exports, core, rxjs, operators, coercion, common) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -3318,6 +3318,7 @@
             this.cd = cd;
             this.zone = zone;
             this.modelChanged = new core.EventEmitter();
+            this.fitModelSizeByDefaultValue = true;
             this.flowchartConstants = FlowchartConstants;
             this.nodesDiffer = this.differs.find([]).create((/**
              * @param {?} index
@@ -3344,6 +3345,23 @@
              */
             function () {
                 return FlowchartConstants.canvasClass;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(NgxFlowchartComponent.prototype, "fitModelSizeByDefault", {
+            get: /**
+             * @return {?}
+             */
+            function () {
+                return this.fitModelSizeByDefaultValue;
+            },
+            set: /**
+             * @param {?} value
+             * @return {?}
+             */
+            function (value) {
+                this.fitModelSizeByDefaultValue = coercion.coerceBooleanProperty(value);
             },
             enumerable: true,
             configurable: true
@@ -3419,7 +3437,7 @@
                     event.preventDefault();
                 })
             };
-            this.adjustCanvasSize(false);
+            this.adjustCanvasSize(this.fitModelSizeByDefault);
         };
         /**
          * @return {?}
@@ -3466,7 +3484,7 @@
                     }));
                 }
                 if (nodesChanged_1) {
-                    this.adjustCanvasSize(false);
+                    this.adjustCanvasSize(this.fitModelSizeByDefault);
                 }
                 if (nodesChanged_1 || edgesChanged_1) {
                     this.cd.detectChanges();
@@ -3737,6 +3755,7 @@
             nodeHeight: [{ type: core.Input }],
             dropTargetId: [{ type: core.Input }],
             modelChanged: [{ type: core.Output }],
+            fitModelSizeByDefault: [{ type: core.Input }],
             dragover: [{ type: core.HostListener, args: ['dragover', ['$event'],] }],
             drop: [{ type: core.HostListener, args: ['drop', ['$event'],] }],
             mousedown: [{ type: core.HostListener, args: ['mousedown', ['$event'],] }],
@@ -3766,6 +3785,11 @@
         NgxFlowchartComponent.prototype.dropTargetId;
         /** @type {?} */
         NgxFlowchartComponent.prototype.modelChanged;
+        /**
+         * @type {?}
+         * @private
+         */
+        NgxFlowchartComponent.prototype.fitModelSizeByDefaultValue;
         /** @type {?} */
         NgxFlowchartComponent.prototype.callbacks;
         /** @type {?} */
