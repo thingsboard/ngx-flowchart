@@ -2709,7 +2709,7 @@ class NgxFlowchartComponent {
                 event.preventDefault();
             })
         };
-        this.adjustCanvasSize(true);
+        this.adjustCanvasSize(false);
     }
     /**
      * @return {?}
@@ -2753,7 +2753,7 @@ class NgxFlowchartComponent {
                 }));
             }
             if (nodesChanged) {
-                this.adjustCanvasSize(true);
+                this.adjustCanvasSize(false);
             }
             if (nodesChanged || edgesChanged) {
                 this.cd.detectChanges();

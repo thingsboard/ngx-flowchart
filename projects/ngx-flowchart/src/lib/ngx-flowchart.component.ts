@@ -158,7 +158,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         event.preventDefault();
       }
     };
-    this.adjustCanvasSize(true);
+    this.adjustCanvasSize(false);
   }
 
   ngDoCheck(): void {
@@ -184,7 +184,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         });
       }
       if (nodesChanged) {
-        this.adjustCanvasSize(true);
+        this.adjustCanvasSize(false);
       }
       if (nodesChanged || edgesChanged) {
         this.cd.detectChanges();
