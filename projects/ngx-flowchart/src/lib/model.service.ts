@@ -1,5 +1,15 @@
 import { FcModelValidationService } from './modelvalidation.service';
-import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
+import {
+  FcConnector,
+  FcConnectorRectInfo,
+  FcCoords,
+  FcEdge,
+  FcItemInfo,
+  FcModel,
+  FcNode,
+  FcRectBox,
+  FlowchartConstants
+} from './ngx-flowchart.models';
 import { Observable, of, Subject } from 'rxjs';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { debounceTime } from 'rxjs/operators';
@@ -11,7 +21,7 @@ export class FcModelService {
   private readonly detectChangesSubject: Subject<any>;
   selectedObjects: any[];
 
-  connectorsHtmlElements: HtmlElementMap = {};
+  connectorsRectInfos: ConnectorRectInfoMap = {};
   nodesHtmlElements: HtmlElementMap = {};
   canvasHtmlElement: HTMLElement = null;
   dragImage: HTMLImageElement = null;
@@ -235,6 +245,8 @@ export class FcModelService {
 
 interface HtmlElementMap { [id: string]: HTMLElement; }
 
+interface ConnectorRectInfoMap { [id: string]: FcConnectorRectInfo; }
+
 abstract class AbstractFcModel<T> {
 
   modelService: FcModelService;
@@ -281,33 +293,32 @@ class ConnectorsModel extends AbstractFcModel<FcConnector> {
     }
   }
 
-  public getHtmlElement(connectorId: string): HTMLElement {
-    return this.modelService.connectorsHtmlElements[connectorId];
+  public getConnectorRectInfo(connectorId: string): FcConnectorRectInfo {
+    return this.modelService.connectorsRectInfos[connectorId];
   }
 
-  public setHtmlElement(connectorId: string, element: HTMLElement) {
-    this.modelService.connectorsHtmlElements[connectorId] = element;
+  public setConnectorRectInfo(connectorId: string, connectorRectInfo: FcConnectorRectInfo) {
+    this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
     this.modelService.detectChanges();
   }
 
   private _getCoords(connectorId: string, centered?: boolean): FcCoords {
-    const element = this.getHtmlElement(connectorId);
+    const connectorRectInfo = this.getConnectorRectInfo(connectorId);
     const canvas = this.modelService.canvasHtmlElement;
-    if (element === null || element === undefined || canvas === null) {
+    if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
       return {x: 0, y: 0};
     }
-    const connectorElementBox = element.getBoundingClientRect();
-    const canvasElementBox = canvas.getBoundingClientRect();
-    let coords: FcCoords = {
-      x: connectorElementBox.left - canvasElementBox.left,
-      y: connectorElementBox.top - canvasElementBox.top
-    };
-    if (centered) {
-      coords = {
-        x: Math.round(coords.x + element.offsetWidth / 2),
-        y: Math.round(coords.y + element.offsetHeight / 2)
-      };
+    let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
+      connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
+    let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
+    if (!centered) {
+      x -= connectorRectInfo.width / 2;
+      y -= connectorRectInfo.height / 2;
     }
+    const coords: FcCoords = {
+      x: Math.round(x),
+      y: Math.round(y)
+    };
     return coords;
   }
 
@@ -426,12 +437,6 @@ class EdgesModel extends AbstractFcModel<FcEdge> {
 
   constructor(modelService: FcModelService) {
     super(modelService);
-  }
-
-  public ready(edge: FcEdge): boolean {
-    const source = this.modelService.connectors.getHtmlElement(edge.source);
-    const destination = this.modelService.connectors.getHtmlElement(edge.destination);
-    return source !== undefined && destination !== undefined;
   }
 
   public sourceCoord(edge: FcEdge): FcCoords {

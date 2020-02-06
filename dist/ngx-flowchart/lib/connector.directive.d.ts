@@ -1,11 +1,12 @@
 import { ElementRef, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FcCallbacks, FcConnector } from './ngx-flowchart.models';
+import { FcCallbacks, FcConnector, FcNodeRectInfo } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 export declare class FcConnectorDirective implements OnInit, OnChanges {
     elementRef: ElementRef<HTMLElement>;
     callbacks: FcCallbacks;
     modelservice: FcModelService;
     connector: FcConnector;
+    nodeRectInfo: FcNodeRectInfo;
     mouseOverConnector: FcConnector;
     constructor(elementRef: ElementRef<HTMLElement>);
     ngOnInit(): void;

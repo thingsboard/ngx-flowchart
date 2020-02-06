@@ -51,6 +51,20 @@ export interface FcNode extends FcCoords {
     readonly?: boolean;
     [key: string]: any;
 }
+export interface FcNodeRectInfo {
+    width(): number;
+    height(): number;
+    top(): number;
+    left(): number;
+    right(): number;
+    bottom(): number;
+}
+export interface FcConnectorRectInfo {
+    type: string;
+    width: number;
+    height: number;
+    nodeRectInfo: FcNodeRectInfo;
+}
 export interface FcEdge {
     label?: string;
     source?: string;

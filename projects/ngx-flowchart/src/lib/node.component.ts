@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ComponentFactoryResolver, Directive,
   ElementRef, HostBinding,
@@ -16,7 +17,7 @@ import {
   FcCallbacks,
   FcConnector,
   FcNode,
-  FcNodeComponentConfig,
+  FcNodeComponentConfig, FcNodeRectInfo,
   FlowchartConstants,
   UserNodeCallbacks
 } from './ngx-flowchart.models';
@@ -27,7 +28,7 @@ import { FcModelService } from './model.service';
   template: '<ng-template #nodeContent></ng-template>',
   styleUrls: ['./node.component.scss']
 })
-export class FcNodeContainerComponent implements OnInit, OnChanges {
+export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input()
   callbacks: FcCallbacks;
@@ -106,6 +107,13 @@ export class FcNodeContainerComponent implements OnInit, OnChanges {
     this.nodeComponent.node = this.node;
     this.nodeComponent.modelservice = this.modelservice;
     this.updateNodeComponent();
+    this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+    this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+  }
+
+  ngAfterViewInit(): void {
+    this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+    this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -220,6 +228,36 @@ export abstract class FcNodeComponent implements OnInit {
   dragging: boolean;
 
   flowchartConstants = FlowchartConstants;
+
+  width: number;
+
+  height: number;
+
+  nodeRectInfo: FcNodeRectInfo = {
+    top: () => {
+      return this.node.y;
+    },
+
+    left: () => {
+      return this.node.x;
+    },
+
+    bottom: () => {
+      return this.node.y + this.height;
+    },
+
+    right: () => {
+      return this.node.x + this.width;
+    },
+
+    width: () => {
+      return this.width;
+    },
+
+    height: () => {
+      return this.height;
+    }
+  };
 
   ngOnInit(): void {
   }

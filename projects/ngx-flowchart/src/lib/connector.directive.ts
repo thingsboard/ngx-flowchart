@@ -1,5 +1,5 @@
-import { Directive, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FcCallbacks, FcConnector, FlowchartConstants } from './ngx-flowchart.models';
+import { AfterViewInit, Directive, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { FcCallbacks, FcConnector, FcConnectorRectInfo, FcNodeRectInfo, FlowchartConstants } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 
 @Directive({
@@ -18,6 +18,9 @@ export class FcConnectorDirective implements OnInit, OnChanges {
   connector: FcConnector;
 
   @Input()
+  nodeRectInfo: FcNodeRectInfo;
+
+  @Input()
   mouseOverConnector: FcConnector;
 
   constructor(public elementRef: ElementRef<HTMLElement>) {
@@ -30,7 +33,13 @@ export class FcConnectorDirective implements OnInit, OnChanges {
       element.attr('draggable', 'true');
       this.updateConnectorClass();
     }
-    this.modelservice.connectors.setHtmlElement(this.connector.id, element[0]);
+    const connectorRectInfo: FcConnectorRectInfo = {
+      type: this.connector.type,
+      width: this.elementRef.nativeElement.offsetWidth,
+      height: this.elementRef.nativeElement.offsetHeight,
+      nodeRectInfo: this.nodeRectInfo
+    };
+    this.modelservice.connectors.setConnectorRectInfo(this.connector.id, connectorRectInfo);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

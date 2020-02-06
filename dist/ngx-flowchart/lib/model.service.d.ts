@@ -1,5 +1,5 @@
 import { FcModelValidationService } from './modelvalidation.service';
-import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
+import { FcConnector, FcConnectorRectInfo, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
 import { Observable, Subject } from 'rxjs';
 import { EventEmitter } from '@angular/core';
 export declare class FcModelService {
@@ -7,7 +7,7 @@ export declare class FcModelService {
     model: FcModel;
     private readonly detectChangesSubject;
     selectedObjects: any[];
-    connectorsHtmlElements: HtmlElementMap;
+    connectorsRectInfos: ConnectorRectInfoMap;
     nodesHtmlElements: HtmlElementMap;
     canvasHtmlElement: HTMLElement;
     dragImage: HTMLImageElement;
@@ -46,6 +46,9 @@ export declare class FcModelService {
 interface HtmlElementMap {
     [id: string]: HTMLElement;
 }
+interface ConnectorRectInfoMap {
+    [id: string]: FcConnectorRectInfo;
+}
 declare abstract class AbstractFcModel<T> {
     modelService: FcModelService;
     protected constructor(modelService: FcModelService);
@@ -58,8 +61,8 @@ declare abstract class AbstractFcModel<T> {
 declare class ConnectorsModel extends AbstractFcModel<FcConnector> {
     constructor(modelService: FcModelService);
     getConnector(connectorId: string): FcConnector;
-    getHtmlElement(connectorId: string): HTMLElement;
-    setHtmlElement(connectorId: string, element: HTMLElement): void;
+    getConnectorRectInfo(connectorId: string): FcConnectorRectInfo;
+    setConnectorRectInfo(connectorId: string, connectorRectInfo: FcConnectorRectInfo): void;
     private _getCoords;
     getCoords(connectorId: string): FcCoords;
     getCenteredCoord(connectorId: string): FcCoords;
@@ -79,7 +82,6 @@ declare class NodesModel extends AbstractFcModel<FcNode> {
 }
 declare class EdgesModel extends AbstractFcModel<FcEdge> {
     constructor(modelService: FcModelService);
-    ready(edge: FcEdge): boolean;
     sourceCoord(edge: FcEdge): FcCoords;
     destCoord(edge: FcEdge): FcCoords;
     delete(edge: FcEdge): void;

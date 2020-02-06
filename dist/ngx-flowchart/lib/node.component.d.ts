@@ -1,7 +1,7 @@
-import { ComponentFactoryResolver, ElementRef, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
-import { FcCallbacks, FcConnector, FcNode, FcNodeComponentConfig, UserNodeCallbacks } from './ngx-flowchart.models';
+import { AfterViewInit, ComponentFactoryResolver, ElementRef, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
+import { FcCallbacks, FcConnector, FcNode, FcNodeComponentConfig, FcNodeRectInfo, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
-export declare class FcNodeContainerComponent implements OnInit, OnChanges {
+export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
     private nodeComponentConfig;
     private elementRef;
     private componentFactoryResolver;
@@ -21,6 +21,7 @@ export declare class FcNodeContainerComponent implements OnInit, OnChanges {
     nodeContentContainer: ViewContainerRef;
     constructor(nodeComponentConfig: FcNodeComponentConfig, elementRef: ElementRef<HTMLElement>, componentFactoryResolver: ComponentFactoryResolver);
     ngOnInit(): void;
+    ngAfterViewInit(): void;
     ngOnChanges(changes: SimpleChanges): void;
     private updateNodeClass;
     private updateNodeComponent;
@@ -67,5 +68,8 @@ export declare abstract class FcNodeComponent implements OnInit {
         canvasResizeThreshold: number;
         canvasResizeStep: number;
     };
+    width: number;
+    height: number;
+    nodeRectInfo: FcNodeRectInfo;
     ngOnInit(): void;
 }

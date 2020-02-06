@@ -103,6 +103,50 @@ if (false) {
 /**
  * @record
  */
+function FcNodeRectInfo() { }
+if (false) {
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.width = function () { };
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.height = function () { };
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.top = function () { };
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.left = function () { };
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.right = function () { };
+    /**
+     * @return {?}
+     */
+    FcNodeRectInfo.prototype.bottom = function () { };
+}
+/**
+ * @record
+ */
+function FcConnectorRectInfo() { }
+if (false) {
+    /** @type {?} */
+    FcConnectorRectInfo.prototype.type;
+    /** @type {?} */
+    FcConnectorRectInfo.prototype.width;
+    /** @type {?} */
+    FcConnectorRectInfo.prototype.height;
+    /** @type {?} */
+    FcConnectorRectInfo.prototype.nodeRectInfo;
+}
+/**
+ * @record
+ */
 function FcEdge() { }
 if (false) {
     /** @type {?|undefined} */
@@ -353,7 +397,7 @@ function fcTopSort(graph) {
 var FcModelService = /** @class */ (function () {
     function FcModelService(modelValidation, model, modelChanged, detectChangesSubject, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
         var _this = this;
-        this.connectorsHtmlElements = {};
+        this.connectorsRectInfos = {};
         this.nodesHtmlElements = {};
         this.canvasHtmlElement = null;
         this.dragImage = null;
@@ -762,7 +806,7 @@ if (false) {
     /** @type {?} */
     FcModelService.prototype.selectedObjects;
     /** @type {?} */
-    FcModelService.prototype.connectorsHtmlElements;
+    FcModelService.prototype.connectorsRectInfos;
     /** @type {?} */
     FcModelService.prototype.nodesHtmlElements;
     /** @type {?} */
@@ -804,6 +848,10 @@ if (false) {
  * @record
  */
 function HtmlElementMap() { }
+/**
+ * @record
+ */
+function ConnectorRectInfoMap() { }
 /**
  * @abstract
  * @template T
@@ -926,25 +974,25 @@ var ConnectorsModel = /** @class */ (function (_super) {
      * @param {?} connectorId
      * @return {?}
      */
-    ConnectorsModel.prototype.getHtmlElement = /**
+    ConnectorsModel.prototype.getConnectorRectInfo = /**
      * @param {?} connectorId
      * @return {?}
      */
     function (connectorId) {
-        return this.modelService.connectorsHtmlElements[connectorId];
+        return this.modelService.connectorsRectInfos[connectorId];
     };
     /**
      * @param {?} connectorId
-     * @param {?} element
+     * @param {?} connectorRectInfo
      * @return {?}
      */
-    ConnectorsModel.prototype.setHtmlElement = /**
+    ConnectorsModel.prototype.setConnectorRectInfo = /**
      * @param {?} connectorId
-     * @param {?} element
+     * @param {?} connectorRectInfo
      * @return {?}
      */
-    function (connectorId, element) {
-        this.modelService.connectorsHtmlElements[connectorId] = element;
+    function (connectorId, connectorRectInfo) {
+        this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
         this.modelService.detectChanges();
     };
     /**
@@ -961,27 +1009,26 @@ var ConnectorsModel = /** @class */ (function (_super) {
      */
     function (connectorId, centered) {
         /** @type {?} */
-        var element = this.getHtmlElement(connectorId);
+        var connectorRectInfo = this.getConnectorRectInfo(connectorId);
         /** @type {?} */
         var canvas = this.modelService.canvasHtmlElement;
-        if (element === null || element === undefined || canvas === null) {
+        if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
             return { x: 0, y: 0 };
         }
         /** @type {?} */
-        var connectorElementBox = element.getBoundingClientRect();
+        var x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
+            connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
         /** @type {?} */
-        var canvasElementBox = canvas.getBoundingClientRect();
+        var y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
+        if (!centered) {
+            x -= connectorRectInfo.width / 2;
+            y -= connectorRectInfo.height / 2;
+        }
         /** @type {?} */
         var coords = {
-            x: connectorElementBox.left - canvasElementBox.left,
-            y: connectorElementBox.top - canvasElementBox.top
+            x: Math.round(x),
+            y: Math.round(y)
         };
-        if (centered) {
-            coords = {
-                x: Math.round(coords.x + element.offsetWidth / 2),
-                y: Math.round(coords.y + element.offsetHeight / 2)
-            };
-        }
         return coords;
     };
     /**
@@ -1229,21 +1276,6 @@ var EdgesModel = /** @class */ (function (_super) {
     function EdgesModel(modelService) {
         return _super.call(this, modelService) || this;
     }
-    /**
-     * @param {?} edge
-     * @return {?}
-     */
-    EdgesModel.prototype.ready = /**
-     * @param {?} edge
-     * @return {?}
-     */
-    function (edge) {
-        /** @type {?} */
-        var source = this.modelService.connectors.getHtmlElement(edge.source);
-        /** @type {?} */
-        var destination = this.modelService.connectors.getHtmlElement(edge.destination);
-        return source !== undefined && destination !== undefined;
-    };
     /**
      * @param {?} edge
      * @return {?}
@@ -3766,7 +3798,14 @@ var FcConnectorDirective = /** @class */ (function () {
             element.attr('draggable', 'true');
             this.updateConnectorClass();
         }
-        this.modelservice.connectors.setHtmlElement(this.connector.id, element[0]);
+        /** @type {?} */
+        var connectorRectInfo = {
+            type: this.connector.type,
+            width: this.elementRef.nativeElement.offsetWidth,
+            height: this.elementRef.nativeElement.offsetHeight,
+            nodeRectInfo: this.nodeRectInfo
+        };
+        this.modelservice.connectors.setConnectorRectInfo(this.connector.id, connectorRectInfo);
     };
     /**
      * @param {?} changes
@@ -3914,6 +3953,7 @@ var FcConnectorDirective = /** @class */ (function () {
         callbacks: [{ type: Input }],
         modelservice: [{ type: Input }],
         connector: [{ type: Input }],
+        nodeRectInfo: [{ type: Input }],
         mouseOverConnector: [{ type: Input }],
         dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
         drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
@@ -3931,6 +3971,8 @@ if (false) {
     FcConnectorDirective.prototype.modelservice;
     /** @type {?} */
     FcConnectorDirective.prototype.connector;
+    /** @type {?} */
+    FcConnectorDirective.prototype.nodeRectInfo;
     /** @type {?} */
     FcConnectorDirective.prototype.mouseOverConnector;
     /** @type {?} */
@@ -4026,6 +4068,18 @@ var FcNodeContainerComponent = /** @class */ (function () {
         this.nodeComponent.node = this.node;
         this.nodeComponent.modelservice = this.modelservice;
         this.updateNodeComponent();
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+    };
+    /**
+     * @return {?}
+     */
+    FcNodeContainerComponent.prototype.ngAfterViewInit = /**
+     * @return {?}
+     */
+    function () {
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
     };
     /**
      * @param {?} changes
@@ -4272,7 +4326,46 @@ if (false) {
  */
 var FcNodeComponent = /** @class */ (function () {
     function FcNodeComponent() {
+        var _this = this;
         this.flowchartConstants = FlowchartConstants;
+        this.nodeRectInfo = {
+            top: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.node.y;
+            }),
+            left: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.node.x;
+            }),
+            bottom: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.node.y + _this.height;
+            }),
+            right: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.node.x + _this.width;
+            }),
+            width: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.width;
+            }),
+            height: (/**
+             * @return {?}
+             */
+            function () {
+                return _this.height;
+            })
+        };
     }
     /**
      * @return {?}
@@ -4316,6 +4409,12 @@ if (false) {
     FcNodeComponent.prototype.dragging;
     /** @type {?} */
     FcNodeComponent.prototype.flowchartConstants;
+    /** @type {?} */
+    FcNodeComponent.prototype.width;
+    /** @type {?} */
+    FcNodeComponent.prototype.height;
+    /** @type {?} */
+    FcNodeComponent.prototype.nodeRectInfo;
 }
 
 /**
@@ -4330,7 +4429,7 @@ var DefaultFcNodeComponent = /** @class */ (function (_super) {
     DefaultFcNodeComponent.decorators = [
         { type: Component, args: [{
                     selector: 'fc-default-node',
-                    template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n",
+                    template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n",
                     styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}"]
                 }] }
     ];
