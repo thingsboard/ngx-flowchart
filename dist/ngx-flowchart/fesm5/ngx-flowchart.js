@@ -1861,11 +1861,18 @@ var FcNodeDraggingService = /** @class */ (function () {
             }
             else {
                 /** @type {?} */
-                var target = (/** @type {?} */ (event.target));
-                this.destinationHtmlElements.push(target);
-                this.oldDisplayStyles.push(target.style.display);
-                target.style.display = 'none';
-                this.nodeDraggingScope.shadowDragStarted = true;
+                var target_1 = (/** @type {?} */ (event.target));
+                /** @type {?} */
+                var cloneNode_1 = target_1.cloneNode(true);
+                target_1.parentNode.insertBefore(cloneNode_1, target_1);
+                target_1.style.visibility = 'collapse';
+                setTimeout((/**
+                 * @return {?}
+                 */
+                function () {
+                    target_1.parentNode.removeChild(cloneNode_1);
+                    target_1.style.visibility = 'visible';
+                }), 0);
             }
             return;
         }
@@ -1900,12 +1907,29 @@ var FcNodeDraggingService = /** @class */ (function () {
             originalEvent.dataTransfer.setDragImage(this.modelService.getDragImage(), 0, 0);
         }
         else {
-            for (var i = 0; i < this.draggedElements.length; i++) {
-                this.destinationHtmlElements.push(this.draggedElements[i]);
-                this.oldDisplayStyles.push(this.destinationHtmlElements[i].style.display);
-                this.destinationHtmlElements[i].style.display = 'none';
-            }
+            this.draggedElements.forEach((/**
+             * @param {?} draggedElement
+             * @return {?}
+             */
+            function (draggedElement) {
+                /** @type {?} */
+                var cloneNode = draggedElement.cloneNode(true);
+                draggedElement.parentNode.insertBefore(cloneNode, draggedElement);
+                draggedElement.style.visibility = 'collapse';
+                setTimeout((/**
+                 * @return {?}
+                 */
+                function () {
+                    draggedElement.parentNode.removeChild(cloneNode);
+                    draggedElement.style.visibility = 'visible';
+                }), 0);
+            }));
             if (this.dragAnimation === FlowchartConstants.dragAnimationShadow) {
+                for (var i = 0; i < this.draggedElements.length; i++) {
+                    this.destinationHtmlElements.push(this.draggedElements[i]);
+                    this.oldDisplayStyles.push(this.destinationHtmlElements[i].style.display);
+                    this.destinationHtmlElements[i].style.display = 'none';
+                }
                 this.nodeDraggingScope.shadowDragStarted = true;
             }
         }

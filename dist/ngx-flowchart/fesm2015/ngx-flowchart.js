@@ -1521,10 +1521,17 @@ class FcNodeDraggingService {
             else {
                 /** @type {?} */
                 const target = (/** @type {?} */ (event.target));
-                this.destinationHtmlElements.push(target);
-                this.oldDisplayStyles.push(target.style.display);
-                target.style.display = 'none';
-                this.nodeDraggingScope.shadowDragStarted = true;
+                /** @type {?} */
+                const cloneNode = target.cloneNode(true);
+                target.parentNode.insertBefore(cloneNode, target);
+                target.style.visibility = 'collapse';
+                setTimeout((/**
+                 * @return {?}
+                 */
+                () => {
+                    target.parentNode.removeChild(cloneNode);
+                    target.style.visibility = 'visible';
+                }), 0);
             }
             return;
         }
@@ -1559,12 +1566,29 @@ class FcNodeDraggingService {
             originalEvent.dataTransfer.setDragImage(this.modelService.getDragImage(), 0, 0);
         }
         else {
-            for (let i = 0; i < this.draggedElements.length; i++) {
-                this.destinationHtmlElements.push(this.draggedElements[i]);
-                this.oldDisplayStyles.push(this.destinationHtmlElements[i].style.display);
-                this.destinationHtmlElements[i].style.display = 'none';
-            }
+            this.draggedElements.forEach((/**
+             * @param {?} draggedElement
+             * @return {?}
+             */
+            (draggedElement) => {
+                /** @type {?} */
+                const cloneNode = draggedElement.cloneNode(true);
+                draggedElement.parentNode.insertBefore(cloneNode, draggedElement);
+                draggedElement.style.visibility = 'collapse';
+                setTimeout((/**
+                 * @return {?}
+                 */
+                () => {
+                    draggedElement.parentNode.removeChild(cloneNode);
+                    draggedElement.style.visibility = 'visible';
+                }), 0);
+            }));
             if (this.dragAnimation === FlowchartConstants.dragAnimationShadow) {
+                for (let i = 0; i < this.draggedElements.length; i++) {
+                    this.destinationHtmlElements.push(this.draggedElements[i]);
+                    this.oldDisplayStyles.push(this.destinationHtmlElements[i].style.display);
+                    this.destinationHtmlElements[i].style.display = 'none';
+                }
                 this.nodeDraggingScope.shadowDragStarted = true;
             }
         }
