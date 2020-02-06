@@ -63,6 +63,7 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     };
     private nodesDiffer;
     private edgesDiffer;
+    private readonly detectChangesSubject;
     constructor(elementRef: ElementRef<HTMLElement>, differs: IterableDiffers, modelValidation: FcModelValidationService, edgeDrawingService: FcEdgeDrawingService, cd: ChangeDetectorRef, zone: NgZone);
     ngOnInit(): void;
     ngDoCheck(): void;

@@ -8,7 +8,7 @@ export class FcModelService {
 
   modelValidation: FcModelValidationService;
   model: FcModel;
-  cd: ChangeDetectorRef;
+  private readonly detectChangesSubject: Subject<any>;
   selectedObjects: any[];
 
   connectorsHtmlElements: HtmlElementMap = {};
@@ -35,7 +35,7 @@ export class FcModelService {
   constructor(modelValidation: FcModelValidationService,
               model: FcModel,
               modelChanged: EventEmitter<any>,
-              cd: ChangeDetectorRef,
+              detectChangesSubject: Subject<any>,
               selectedObjects: any[],
               dropNode: (event: Event, node: FcNode) => void,
               createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>,
@@ -48,7 +48,7 @@ export class FcModelService {
     this.modelValidation = modelValidation;
     this.model = model;
     this.modelChanged = modelChanged;
-    this.cd = cd;
+    this.detectChangesSubject = detectChangesSubject;
     this.canvasHtmlElement = canvasHtmlElement;
     this.svgHtmlElement = svgHtmlElement;
     this.modelValidation.validateModel(this.model);
@@ -75,7 +75,7 @@ export class FcModelService {
 
   public detectChanges() {
     setTimeout(() => {
-      this.cd.detectChanges();
+      this.detectChangesSubject.next();
     }, 0);
   }
 
@@ -231,15 +231,6 @@ export class FcModelService {
     }
     return this.dragImage;
   }
-
-  public registerCallbacks(edgeAddedCallback: (edge: FcEdge) => void,
-                           nodeRemovedCallback: (node: FcNode) => void,
-                           edgeRemovedCallback: (edge: FcEdge) => void) {
-    this.edgeAddedCallback = edgeAddedCallback;
-    this.nodeRemovedCallback = nodeRemovedCallback;
-    this.edgeRemovedCallback = edgeRemovedCallback;
-  }
-
 }
 
 interface HtmlElementMap { [id: string]: HTMLElement; }

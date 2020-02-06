@@ -131,7 +131,7 @@ class BaseError {
   }
 }
 
-BaseError.prototype = new Error();
+Object.defineProperty(BaseError, 'prototype', new Error());
 
 export class ModelvalidationError extends BaseError {
   constructor(public message: string) {

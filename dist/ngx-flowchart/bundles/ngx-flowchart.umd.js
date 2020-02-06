@@ -414,7 +414,7 @@
         }
         return BaseError;
     }());
-    BaseError.prototype = new Error();
+    Object.defineProperty(BaseError, 'prototype', new Error());
     var ModelvalidationError = /** @class */ (function (_super) {
         __extends(ModelvalidationError, _super);
         function ModelvalidationError(message) {
@@ -547,7 +547,7 @@
      * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
      */
     var FcModelService = /** @class */ (function () {
-        function FcModelService(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+        function FcModelService(modelValidation, model, modelChanged, detectChangesSubject, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
             var _this = this;
             this.connectorsHtmlElements = {};
             this.nodesHtmlElements = {};
@@ -558,7 +558,7 @@
             this.modelValidation = modelValidation;
             this.model = model;
             this.modelChanged = modelChanged;
-            this.cd = cd;
+            this.detectChangesSubject = detectChangesSubject;
             this.canvasHtmlElement = canvasHtmlElement;
             this.svgHtmlElement = svgHtmlElement;
             this.modelValidation.validateModel(this.model);
@@ -616,7 +616,7 @@
              * @return {?}
              */
             function () {
-                _this.cd.detectChanges();
+                _this.detectChangesSubject.next();
             }), 0);
         };
         /**
@@ -943,23 +943,6 @@
             }
             return this.dragImage;
         };
-        /**
-         * @param {?} edgeAddedCallback
-         * @param {?} nodeRemovedCallback
-         * @param {?} edgeRemovedCallback
-         * @return {?}
-         */
-        FcModelService.prototype.registerCallbacks = /**
-         * @param {?} edgeAddedCallback
-         * @param {?} nodeRemovedCallback
-         * @param {?} edgeRemovedCallback
-         * @return {?}
-         */
-        function (edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback) {
-            this.edgeAddedCallback = edgeAddedCallback;
-            this.nodeRemovedCallback = nodeRemovedCallback;
-            this.edgeRemovedCallback = edgeRemovedCallback;
-        };
         return FcModelService;
     }());
     if (false) {
@@ -967,8 +950,11 @@
         FcModelService.prototype.modelValidation;
         /** @type {?} */
         FcModelService.prototype.model;
-        /** @type {?} */
-        FcModelService.prototype.cd;
+        /**
+         * @type {?}
+         * @private
+         */
+        FcModelService.prototype.detectChangesSubject;
         /** @type {?} */
         FcModelService.prototype.selectedObjects;
         /** @type {?} */
@@ -3311,6 +3297,7 @@
      */
     var NgxFlowchartComponent = /** @class */ (function () {
         function NgxFlowchartComponent(elementRef, differs, modelValidation, edgeDrawingService, cd, zone) {
+            var _this = this;
             this.elementRef = elementRef;
             this.differs = differs;
             this.modelValidation = modelValidation;
@@ -3336,8 +3323,15 @@
             function (index, item) {
                 return item;
             }));
+            this.detectChangesSubject = new rxjs.Subject();
             this.arrowDefId = 'arrow-' + Math.random();
             this.arrowDefIdSelected = this.arrowDefId + '-selected';
+            this.detectChangesSubject
+                .pipe(operators.debounceTime(50))
+                .subscribe((/**
+             * @return {?}
+             */
+            function () { return _this.cd.detectChanges(); }));
         }
         Object.defineProperty(NgxFlowchartComponent.prototype, "canvasClass", {
             get: /**
@@ -3403,7 +3397,7 @@
             this.userNodeCallbacks = this.userCallbacks.nodeCallbacks;
             /** @type {?} */
             var element = $(this.elementRef.nativeElement);
-            this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
+            this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.detectChangesSubject, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
             if (this.dropTargetId) {
                 this.modelService.dropTargetId = this.dropTargetId;
             }
@@ -3487,7 +3481,7 @@
                     this.adjustCanvasSize(this.fitModelSizeByDefault);
                 }
                 if (nodesChanged_1 || edgesChanged_1) {
-                    this.cd.detectChanges();
+                    this.detectChangesSubject.next();
                 }
             }
         };
@@ -3820,6 +3814,11 @@
          * @private
          */
         NgxFlowchartComponent.prototype.edgesDiffer;
+        /**
+         * @type {?}
+         * @private
+         */
+        NgxFlowchartComponent.prototype.detectChangesSubject;
         /**
          * @type {?}
          * @private

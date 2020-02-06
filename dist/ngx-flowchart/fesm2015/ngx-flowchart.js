@@ -216,7 +216,7 @@ class BaseError {
         Error.apply(this, arguments);
     }
 }
-BaseError.prototype = new Error();
+Object.defineProperty(BaseError, 'prototype', new Error());
 class ModelvalidationError extends BaseError {
     /**
      * @param {?} message
@@ -332,7 +332,7 @@ class FcModelService {
      * @param {?} modelValidation
      * @param {?} model
      * @param {?} modelChanged
-     * @param {?} cd
+     * @param {?} detectChangesSubject
      * @param {?} selectedObjects
      * @param {?} dropNode
      * @param {?} createEdge
@@ -342,7 +342,7 @@ class FcModelService {
      * @param {?} canvasHtmlElement
      * @param {?} svgHtmlElement
      */
-    constructor(modelValidation, model, modelChanged, cd, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
+    constructor(modelValidation, model, modelChanged, detectChangesSubject, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
         this.connectorsHtmlElements = {};
         this.nodesHtmlElements = {};
         this.canvasHtmlElement = null;
@@ -352,7 +352,7 @@ class FcModelService {
         this.modelValidation = modelValidation;
         this.model = model;
         this.modelChanged = modelChanged;
-        this.cd = cd;
+        this.detectChangesSubject = detectChangesSubject;
         this.canvasHtmlElement = canvasHtmlElement;
         this.svgHtmlElement = svgHtmlElement;
         this.modelValidation.validateModel(this.model);
@@ -403,7 +403,7 @@ class FcModelService {
          * @return {?}
          */
         () => {
-            this.cd.detectChanges();
+            this.detectChangesSubject.next();
         }), 0);
     }
     /**
@@ -652,25 +652,17 @@ class FcModelService {
         }
         return this.dragImage;
     }
-    /**
-     * @param {?} edgeAddedCallback
-     * @param {?} nodeRemovedCallback
-     * @param {?} edgeRemovedCallback
-     * @return {?}
-     */
-    registerCallbacks(edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback) {
-        this.edgeAddedCallback = edgeAddedCallback;
-        this.nodeRemovedCallback = nodeRemovedCallback;
-        this.edgeRemovedCallback = edgeRemovedCallback;
-    }
 }
 if (false) {
     /** @type {?} */
     FcModelService.prototype.modelValidation;
     /** @type {?} */
     FcModelService.prototype.model;
-    /** @type {?} */
-    FcModelService.prototype.cd;
+    /**
+     * @type {?}
+     * @private
+     */
+    FcModelService.prototype.detectChangesSubject;
     /** @type {?} */
     FcModelService.prototype.selectedObjects;
     /** @type {?} */
@@ -2646,8 +2638,15 @@ class NgxFlowchartComponent {
         (index, item) => {
             return item;
         }));
+        this.detectChangesSubject = new Subject();
         this.arrowDefId = 'arrow-' + Math.random();
         this.arrowDefIdSelected = this.arrowDefId + '-selected';
+        this.detectChangesSubject
+            .pipe(debounceTime(50))
+            .subscribe((/**
+         * @return {?}
+         */
+        () => this.cd.detectChanges()));
     }
     /**
      * @return {?}
@@ -2690,7 +2689,7 @@ class NgxFlowchartComponent {
         this.userNodeCallbacks = this.userCallbacks.nodeCallbacks;
         /** @type {?} */
         const element = $(this.elementRef.nativeElement);
-        this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
+        this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.detectChangesSubject, this.selectedObjects, this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved, this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
         if (this.dropTargetId) {
             this.modelService.dropTargetId = this.dropTargetId;
         }
@@ -2771,7 +2770,7 @@ class NgxFlowchartComponent {
                 this.adjustCanvasSize(this.fitModelSizeByDefault);
             }
             if (nodesChanged || edgesChanged) {
-                this.cd.detectChanges();
+                this.detectChangesSubject.next();
             }
         }
     }
@@ -3030,6 +3029,11 @@ if (false) {
      * @private
      */
     NgxFlowchartComponent.prototype.edgesDiffer;
+    /**
+     * @type {?}
+     * @private
+     */
+    NgxFlowchartComponent.prototype.detectChangesSubject;
     /**
      * @type {?}
      * @private

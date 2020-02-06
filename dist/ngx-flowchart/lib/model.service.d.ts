@@ -1,11 +1,11 @@
 import { FcModelValidationService } from './modelvalidation.service';
 import { FcConnector, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcRectBox } from './ngx-flowchart.models';
-import { Observable } from 'rxjs';
-import { ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { EventEmitter } from '@angular/core';
 export declare class FcModelService {
     modelValidation: FcModelValidationService;
     model: FcModel;
-    cd: ChangeDetectorRef;
+    private readonly detectChangesSubject;
     selectedObjects: any[];
     connectorsHtmlElements: HtmlElementMap;
     nodesHtmlElements: HtmlElementMap;
@@ -23,7 +23,7 @@ export declare class FcModelService {
     connectors: ConnectorsModel;
     nodes: NodesModel;
     edges: EdgesModel;
-    constructor(modelValidation: FcModelValidationService, model: FcModel, modelChanged: EventEmitter<any>, cd: ChangeDetectorRef, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement);
+    constructor(modelValidation: FcModelValidationService, model: FcModel, modelChanged: EventEmitter<any>, detectChangesSubject: Subject<any>, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement);
     notifyModelChanged(): void;
     detectChanges(): void;
     selectObject(object: any): void;
@@ -42,7 +42,6 @@ export declare class FcModelService {
     isEditable(): boolean;
     isDropSource(): boolean;
     getDragImage(): HTMLImageElement;
-    registerCallbacks(edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void): void;
 }
 interface HtmlElementMap {
     [id: string]: HTMLElement;

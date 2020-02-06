@@ -20,6 +20,8 @@ import { FcEdgeDraggingService } from './edge-dragging.service';
 import { FcMouseOverService } from './mouseover.service';
 import { FcRectangleSelectService } from './rectangleselect.service';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'fc-canvas',
@@ -96,6 +98,8 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
     return item;
   });
 
+  private readonly detectChangesSubject = new Subject<any>();
+
   constructor(private elementRef: ElementRef<HTMLElement>,
               private differs: IterableDiffers,
               private modelValidation: FcModelValidationService,
@@ -104,6 +108,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
               private zone: NgZone) {
     this.arrowDefId = 'arrow-' + Math.random();
     this.arrowDefIdSelected = this.arrowDefId + '-selected';
+    this.detectChangesSubject
+      .pipe(debounceTime(50))
+      .subscribe(() => this.cd.detectChanges());
   }
 
   ngOnInit() {
@@ -127,7 +134,8 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
     const element = $(this.elementRef.nativeElement);
 
-    this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged, this.cd, this.selectedObjects,
+    this.modelService = new FcModelService(this.modelValidation, this.model, this.modelChanged,
+      this.detectChangesSubject, this.selectedObjects,
       this.userCallbacks.dropNode, this.userCallbacks.createEdge, this.userCallbacks.edgeAdded, this.userCallbacks.nodeRemoved,
       this.userCallbacks.edgeRemoved, element[0], element[0].querySelector('svg'));
 
@@ -197,7 +205,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         this.adjustCanvasSize(this.fitModelSizeByDefault);
       }
       if (nodesChanged || edgesChanged) {
-        this.cd.detectChanges();
+        this.detectChangesSubject.next();
       }
     }
   }
