@@ -11,8 +11,8 @@
     <div class="button-overlay">
       <button (click)="addNewNode()" title="Add a new node to then chart">Add Node</button>
       <button (click)="deleteSelected()"
-              [disabled]="fcCanvas.modelService.nodes.getSelectedNodes().length === 0 &&
-                          fcCanvas.modelService.edges.getSelectedEdges().length === 0"
+              [disabled]="!fcCanvas.modelService || (fcCanvas.modelService.nodes.getSelectedNodes().length === 0 &&
+                          fcCanvas.modelService.edges.getSelectedEdges().length === 0)"
               title="Delete selected nodes and connections">Delete Selected</button>
       <button (click)="activateWorkflow()">
         Activate Workflow

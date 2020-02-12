@@ -1,6 +1,7 @@
 import { AfterViewInit, ComponentFactoryResolver, ElementRef, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
 import { FcCallbacks, FcConnector, FcNode, FcNodeComponentConfig, FcNodeRectInfo, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
+import * as i0 from "@angular/core";
 export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
     private nodeComponentConfig;
     private elementRef;
@@ -14,9 +15,9 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     mouseOverConnector: FcConnector;
     modelservice: FcModelService;
     dragging: boolean;
-    readonly nodeId: string;
-    readonly top: string;
-    readonly left: string;
+    get nodeId(): string;
+    get top(): string;
+    get left(): string;
     nodeComponent: FcNodeComponent;
     nodeContentContainer: ViewContainerRef;
     constructor(nodeComponentConfig: FcNodeComponentConfig, elementRef: ElementRef<HTMLElement>, componentFactoryResolver: ComponentFactoryResolver);
@@ -32,6 +33,8 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     click(event: MouseEvent): void;
     mouseover(event: MouseEvent): void;
     mouseout(event: MouseEvent): void;
+    static ɵfac: i0.ɵɵFactoryDef<FcNodeContainerComponent>;
+    static ɵcmp: i0.ɵɵComponentDefWithMeta<FcNodeContainerComponent, "fc-node", never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never>;
 }
 export declare abstract class FcNodeComponent implements OnInit {
     callbacks: FcCallbacks;
@@ -72,4 +75,6 @@ export declare abstract class FcNodeComponent implements OnInit {
     height: number;
     nodeRectInfo: FcNodeRectInfo;
     ngOnInit(): void;
+    static ɵfac: i0.ɵɵFactoryDef<FcNodeComponent>;
+    static ɵdir: i0.ɵɵDirectiveDefWithMeta<FcNodeComponent, never, never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never>;
 }

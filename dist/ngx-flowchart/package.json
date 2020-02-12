@@ -2,13 +2,11 @@
   "name": "ngx-flowchart",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^8.0.3",
-    "@angular/core": "^8.0.3",
+    "@angular/common": "^9.0.0",
+    "@angular/core": "^9.0.0",
     "jquery": "^3.4.1",
-    "typescript": "^3.1"
-  },
-  "devDependencies": {
-    "@types/jquery": "^3.3.31"
+    "typescript": "^3.7.5",
+    "tslib": "^1.10.0"
   },
   "main": "bundles/ngx-flowchart.umd.js",
   "module": "fesm5/ngx-flowchart.js",
@@ -18,9 +16,8 @@
   "fesm5": "fesm5/ngx-flowchart.js",
   "fesm2015": "fesm2015/ngx-flowchart.js",
   "typings": "ngx-flowchart.d.ts",
-  "metadata": "ngx-flowchart.metadata.json",
   "sideEffects": false,
-  "dependencies": {
-    "tslib": "^1.9.0"
+  "scripts": {
+    "prepublishOnly": "node --eval \"console.error('ERROR: Trying to publish a package that has been compiled by Ivy. This is not allowed.\\nPlease delete and rebuild the package, without compiling with Ivy, before attempting to publish.\\n')\" && exit 1"
   }
 }
