@@ -198,6 +198,7 @@ export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChange
 
 }
 
+@Directive()
 export abstract class FcNodeComponent implements OnInit {
 
   @Input()
