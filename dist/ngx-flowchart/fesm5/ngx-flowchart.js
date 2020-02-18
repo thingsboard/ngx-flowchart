@@ -1,9 +1,9 @@
-import { __extends, __values, __assign } from 'tslib';
-import { InjectionToken, ɵɵdefineInjectable, ɵsetClassMetadata, Injectable, ɵɵdirectiveInject, ElementRef, ComponentFactoryResolver, ɵɵdefineComponent, ɵɵstaticViewQuery, ViewContainerRef, ɵɵqueryRefresh, ɵɵloadQuery, ɵɵlistener, ɵɵattribute, ɵɵstyleProp, ɵɵNgOnChangesFeature, ɵɵtemplate, ɵɵtemplateRefExtractor, Component, Inject, Input, HostBinding, ViewChild, HostListener, ɵɵdefineDirective, Directive, ɵɵgetCurrentView, ɵɵnamespaceSVG, ɵɵelementStart, ɵɵrestoreView, ɵɵnextContext, ɵɵelementEnd, ɵɵadvance, ɵɵelement, ɵɵclassMapInterpolate2, ɵɵnamespaceHTML, ɵɵelementContainerStart, ɵɵelementContainerEnd, ɵɵproperty, ɵɵtext, ɵɵtextInterpolate, ɵɵpureFunction2, EventEmitter, IterableDiffers, ChangeDetectorRef, NgZone, ChangeDetectionStrategy, Output, ɵɵInheritDefinitionFeature, ɵɵclassMap, ɵɵdefineNgModule, ɵɵdefineInjector, ɵɵsetNgModuleScope, NgModule } from '@angular/core';
+import { __extends, __values, __assign, __decorate, __metadata, __param } from 'tslib';
+import { InjectionToken, Injectable, EventEmitter, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Component, ChangeDetectionStrategy, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { NgForOf, NgIf, NgStyle, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 var FC_NODE_COMPONENT_CONFIG = new InjectionToken('fc-node.component.config');
 var htmlPrefix = 'fc';
@@ -693,13 +693,12 @@ var FcModelValidationService = /** @class */ (function () {
         }
         return connector;
     };
-    FcModelValidationService.ɵfac = function FcModelValidationService_Factory(t) { return new (t || FcModelValidationService)(); };
-    FcModelValidationService.ɵprov = ɵɵdefineInjectable({ token: FcModelValidationService, factory: FcModelValidationService.ɵfac });
+    FcModelValidationService = __decorate([
+        Injectable(),
+        __metadata("design:paramtypes", [])
+    ], FcModelValidationService);
     return FcModelValidationService;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcModelValidationService, [{
-        type: Injectable
-    }], function () { return []; }, null); })();
 
 var nodeDropScope = {
     dropElement: null
@@ -1054,13 +1053,12 @@ var FcEdgeDrawingService = /** @class */ (function () {
             y: pt2.y - this.computeEdgeTangentOffset(pt1, pt2)
         };
     };
-    FcEdgeDrawingService.ɵfac = function FcEdgeDrawingService_Factory(t) { return new (t || FcEdgeDrawingService)(); };
-    FcEdgeDrawingService.ɵprov = ɵɵdefineInjectable({ token: FcEdgeDrawingService, factory: FcEdgeDrawingService.ɵfac });
+    FcEdgeDrawingService = __decorate([
+        Injectable(),
+        __metadata("design:paramtypes", [])
+    ], FcEdgeDrawingService);
     return FcEdgeDrawingService;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcEdgeDrawingService, [{
-        type: Injectable
-    }], function () { return []; }, null); })();
 
 var FcEdgeDraggingService = /** @class */ (function () {
     function FcEdgeDraggingService(modelValidation, edgeDrawingService, modelService, model, isValidEdgeCallback, applyFunction, dragAnimation, edgeStyle) {
@@ -1359,11 +1357,13 @@ var regex = /(auto|scroll)/;
 var style = function (node, prop) {
     return getComputedStyle(node, null).getPropertyValue(prop);
 };
+var ɵ0 = style;
 var scroll = function (node) {
     return regex.test(style(node, 'overflow') +
         style(node, 'overflow-y') +
         style(node, 'overflow-x'));
 };
+var ɵ1 = scroll;
 var scrollparent = function (node) {
     return !node || node === document.body
         ? document.body
@@ -1371,6 +1371,7 @@ var scrollparent = function (node) {
             ? node
             : scrollparent(node.parentNode);
 };
+var ɵ2 = scrollparent;
 
 var FcRectangleSelectService = /** @class */ (function () {
     function FcRectangleSelectService(modelService, selectElement, applyFunction) {
@@ -1462,397 +1463,6 @@ var FcRectangleSelectService = /** @class */ (function () {
     return FcRectangleSelectService;
 }());
 
-var _c0 = ["nodeContent"];
-function FcNodeContainerComponent_ng_template_0_Template(rf, ctx) { }
-var FcNodeContainerComponent = /** @class */ (function () {
-    function FcNodeContainerComponent(nodeComponentConfig, elementRef, componentFactoryResolver) {
-        this.nodeComponentConfig = nodeComponentConfig;
-        this.elementRef = elementRef;
-        this.componentFactoryResolver = componentFactoryResolver;
-    }
-    Object.defineProperty(FcNodeContainerComponent.prototype, "nodeId", {
-        get: function () {
-            return this.node.id;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FcNodeContainerComponent.prototype, "top", {
-        get: function () {
-            return this.node.y + 'px';
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FcNodeContainerComponent.prototype, "left", {
-        get: function () {
-            return this.node.x + 'px';
-        },
-        enumerable: true,
-        configurable: true
-    });
-    FcNodeContainerComponent.prototype.ngOnInit = function () {
-        if (!this.userNodeCallbacks) {
-            this.userNodeCallbacks = {};
-        }
-        this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (function () { });
-        this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (function () { });
-        this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (function () { });
-        this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (function () { });
-        this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (function () { });
-        var element = $(this.elementRef.nativeElement);
-        element.addClass(FlowchartConstants.nodeClass);
-        if (!this.node.readonly) {
-            element.attr('draggable', 'true');
-        }
-        this.updateNodeClass();
-        this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
-        this.nodeContentContainer.clear();
-        var componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
-        var componentRef = this.nodeContentContainer.createComponent(componentFactory);
-        this.nodeComponent = componentRef.instance;
-        this.nodeComponent.callbacks = this.callbacks;
-        this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
-        this.nodeComponent.node = this.node;
-        this.nodeComponent.modelservice = this.modelservice;
-        this.updateNodeComponent();
-        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-    };
-    FcNodeContainerComponent.prototype.ngAfterViewInit = function () {
-        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-    };
-    FcNodeContainerComponent.prototype.ngOnChanges = function (changes) {
-        var e_1, _a;
-        var updateNode = false;
-        try {
-            for (var _b = __values(Object.keys(changes)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var propName = _c.value;
-                var change = changes[propName];
-                if (!change.firstChange && change.currentValue !== change.previousValue) {
-                    if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
-                        updateNode = true;
-                    }
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        if (updateNode) {
-            this.updateNodeClass();
-            this.updateNodeComponent();
-        }
-    };
-    FcNodeContainerComponent.prototype.updateNodeClass = function () {
-        var element = $(this.elementRef.nativeElement);
-        this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
-        this.toggleClass(element, FlowchartConstants.editClass, this.edit);
-        this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
-        this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
-    };
-    FcNodeContainerComponent.prototype.updateNodeComponent = function () {
-        this.nodeComponent.selected = this.selected;
-        this.nodeComponent.edit = this.edit;
-        this.nodeComponent.underMouse = this.underMouse;
-        this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
-        this.nodeComponent.dragging = this.dragging;
-    };
-    FcNodeContainerComponent.prototype.toggleClass = function (element, clazz, set) {
-        if (set) {
-            element.addClass(clazz);
-        }
-        else {
-            element.removeClass(clazz);
-        }
-    };
-    FcNodeContainerComponent.prototype.mousedown = function (event) {
-        event.stopPropagation();
-    };
-    FcNodeContainerComponent.prototype.dragstart = function (event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeDragstart(event, this.node);
-        }
-    };
-    FcNodeContainerComponent.prototype.dragend = function (event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeDragend(event);
-        }
-    };
-    FcNodeContainerComponent.prototype.click = function (event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeClicked(event, this.node);
-        }
-    };
-    FcNodeContainerComponent.prototype.mouseover = function (event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeMouseOver(event, this.node);
-        }
-    };
-    FcNodeContainerComponent.prototype.mouseout = function (event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeMouseOut(event, this.node);
-        }
-    };
-    FcNodeContainerComponent.ɵfac = function FcNodeContainerComponent_Factory(t) { return new (t || FcNodeContainerComponent)(ɵɵdirectiveInject(FC_NODE_COMPONENT_CONFIG), ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(ComponentFactoryResolver)); };
-    FcNodeContainerComponent.ɵcmp = ɵɵdefineComponent({ type: FcNodeContainerComponent, selectors: [["fc-node"]], viewQuery: function FcNodeContainerComponent_Query(rf, ctx) { if (rf & 1) {
-            ɵɵstaticViewQuery(_c0, true, ViewContainerRef);
-        } if (rf & 2) {
-            var _t;
-            ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.nodeContentContainer = _t.first);
-        } }, hostVars: 5, hostBindings: function FcNodeContainerComponent_HostBindings(rf, ctx) { if (rf & 1) {
-            ɵɵlistener("mousedown", function FcNodeContainerComponent_mousedown_HostBindingHandler($event) { return ctx.mousedown($event); })("dragstart", function FcNodeContainerComponent_dragstart_HostBindingHandler($event) { return ctx.dragstart($event); })("dragend", function FcNodeContainerComponent_dragend_HostBindingHandler($event) { return ctx.dragend($event); })("click", function FcNodeContainerComponent_click_HostBindingHandler($event) { return ctx.click($event); })("mouseover", function FcNodeContainerComponent_mouseover_HostBindingHandler($event) { return ctx.mouseover($event); })("mouseout", function FcNodeContainerComponent_mouseout_HostBindingHandler($event) { return ctx.mouseout($event); });
-        } if (rf & 2) {
-            ɵɵattribute("id", ctx.nodeId);
-            ɵɵstyleProp("top", ctx.top)("left", ctx.left);
-        } }, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, features: [ɵɵNgOnChangesFeature()], decls: 2, vars: 0, consts: [["nodeContent", ""]], template: function FcNodeContainerComponent_Template(rf, ctx) { if (rf & 1) {
-            ɵɵtemplate(0, FcNodeContainerComponent_ng_template_0_Template, 0, 0, "ng-template", null, 0, ɵɵtemplateRefExtractor);
-        } }, styles: ["[_nghost-%COMP%]{position:absolute;z-index:1}.fc-dragging[_nghost-%COMP%]{z-index:10}[_nghost-%COMP%]     .fc-leftConnectors, [_nghost-%COMP%]     .fc-rightConnectors{position:absolute;top:0;height:100%;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;z-index:-10}[_nghost-%COMP%]     .fc-leftConnectors .fc-magnet, [_nghost-%COMP%]     .fc-rightConnectors .fc-magnet{-webkit-box-align:center;align-items:center}[_nghost-%COMP%]     .fc-leftConnectors{left:-20px}[_nghost-%COMP%]     .fc-rightConnectors{right:-20px}[_nghost-%COMP%]     .fc-magnet{display:-webkit-box;display:flex;-webkit-box-flex:1;flex-grow:1;height:60px;-webkit-box-pack:center;justify-content:center}[_nghost-%COMP%]     .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}[_nghost-%COMP%]     .fc-connector.fc-hover{background-color:#000}"] });
-    return FcNodeContainerComponent;
-}());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcNodeContainerComponent, [{
-        type: Component,
-        args: [{
-                selector: 'fc-node',
-                template: '<ng-template #nodeContent></ng-template>',
-                styleUrls: ['./node.component.scss']
-            }]
-    }], function () { return [{ type: undefined, decorators: [{
-                type: Inject,
-                args: [FC_NODE_COMPONENT_CONFIG]
-            }] }, { type: ElementRef }, { type: ComponentFactoryResolver }]; }, { callbacks: [{
-            type: Input
-        }], userNodeCallbacks: [{
-            type: Input
-        }], node: [{
-            type: Input
-        }], selected: [{
-            type: Input
-        }], edit: [{
-            type: Input
-        }], underMouse: [{
-            type: Input
-        }], mouseOverConnector: [{
-            type: Input
-        }], modelservice: [{
-            type: Input
-        }], dragging: [{
-            type: Input
-        }], nodeId: [{
-            type: HostBinding,
-            args: ['attr.id']
-        }], top: [{
-            type: HostBinding,
-            args: ['style.top']
-        }], left: [{
-            type: HostBinding,
-            args: ['style.left']
-        }], nodeContentContainer: [{
-            type: ViewChild,
-            args: ['nodeContent', { read: ViewContainerRef, static: true }]
-        }], mousedown: [{
-            type: HostListener,
-            args: ['mousedown', ['$event']]
-        }], dragstart: [{
-            type: HostListener,
-            args: ['dragstart', ['$event']]
-        }], dragend: [{
-            type: HostListener,
-            args: ['dragend', ['$event']]
-        }], click: [{
-            type: HostListener,
-            args: ['click', ['$event']]
-        }], mouseover: [{
-            type: HostListener,
-            args: ['mouseover', ['$event']]
-        }], mouseout: [{
-            type: HostListener,
-            args: ['mouseout', ['$event']]
-        }] }); })();
-var FcNodeComponent = /** @class */ (function () {
-    function FcNodeComponent() {
-        var _this = this;
-        this.flowchartConstants = FlowchartConstants;
-        this.nodeRectInfo = {
-            top: function () {
-                return _this.node.y;
-            },
-            left: function () {
-                return _this.node.x;
-            },
-            bottom: function () {
-                return _this.node.y + _this.height;
-            },
-            right: function () {
-                return _this.node.x + _this.width;
-            },
-            width: function () {
-                return _this.width;
-            },
-            height: function () {
-                return _this.height;
-            }
-        };
-    }
-    FcNodeComponent.prototype.ngOnInit = function () {
-    };
-    FcNodeComponent.ɵfac = function FcNodeComponent_Factory(t) { return new (t || FcNodeComponent)(); };
-    FcNodeComponent.ɵdir = ɵɵdefineDirective({ type: FcNodeComponent, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" } });
-    return FcNodeComponent;
-}());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcNodeComponent, [{
-        type: Directive
-    }], null, { callbacks: [{
-            type: Input
-        }], userNodeCallbacks: [{
-            type: Input
-        }], node: [{
-            type: Input
-        }], selected: [{
-            type: Input
-        }], edit: [{
-            type: Input
-        }], underMouse: [{
-            type: Input
-        }], mouseOverConnector: [{
-            type: Input
-        }], modelservice: [{
-            type: Input
-        }], dragging: [{
-            type: Input
-        }] }); })();
-
-function NgxFlowchartComponent__svg_g_7_Template(rf, ctx) { if (rf & 1) {
-    var _r59 = ɵɵgetCurrentView();
-    ɵɵnamespaceSVG();
-    ɵɵelementStart(0, "g");
-    ɵɵelementStart(1, "path", 12);
-    ɵɵlistener("mousedown", function NgxFlowchartComponent__svg_g_7_Template__svg_path_mousedown_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r58 = ɵɵnextContext(); return ctx_r58.edgeMouseDown($event, edge_r56); })("click", function NgxFlowchartComponent__svg_g_7_Template__svg_path_click_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r60 = ɵɵnextContext(); return ctx_r60.edgeClick($event, edge_r56); })("dblclick", function NgxFlowchartComponent__svg_g_7_Template__svg_path_dblclick_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r61 = ɵɵnextContext(); return ctx_r61.edgeDoubleClick($event, edge_r56); })("mouseover", function NgxFlowchartComponent__svg_g_7_Template__svg_path_mouseover_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r62 = ɵɵnextContext(); return ctx_r62.edgeMouseOver($event, edge_r56); })("mouseenter", function NgxFlowchartComponent__svg_g_7_Template__svg_path_mouseenter_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r63 = ɵɵnextContext(); return ctx_r63.edgeMouseEnter($event, edge_r56); })("mouseleave", function NgxFlowchartComponent__svg_g_7_Template__svg_path_mouseleave_1_listener($event) { ɵɵrestoreView(_r59); var edge_r56 = ctx.$implicit; var ctx_r64 = ɵɵnextContext(); return ctx_r64.edgeMouseLeave($event, edge_r56); });
-    ɵɵelementEnd();
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var edge_r56 = ctx.$implicit;
-    var $index_r57 = ctx.index;
-    var ctx_r50 = ɵɵnextContext();
-    ɵɵadvance(1);
-    ɵɵattribute("id", "fc-edge-path-" + $index_r57)("class", ctx_r50.modelService.edges.isSelected(edge_r56) && ctx_r50.flowchartConstants.selectedClass + " " + ctx_r50.flowchartConstants.edgeClass || edge_r56 === ctx_r50.mouseoverService.mouseoverscope.edge && ctx_r50.flowchartConstants.hoverClass + " " + ctx_r50.flowchartConstants.edgeClass || edge_r56.active && ctx_r50.flowchartConstants.activeClass + " " + ctx_r50.flowchartConstants.edgeClass || ctx_r50.flowchartConstants.edgeClass)("d", ctx_r50.getEdgeDAttribute(edge_r56))("marker-end", "url(#" + (ctx_r50.modelService.edges.isSelected(edge_r56) ? ctx_r50.arrowDefIdSelected : ctx_r50.arrowDefId) + ")");
-} }
-function NgxFlowchartComponent__svg_g_8_Template(rf, ctx) { if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵelementStart(0, "g");
-    ɵɵelement(1, "path");
-    ɵɵelement(2, "circle", 13);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var ctx_r51 = ɵɵnextContext();
-    ɵɵadvance(1);
-    ɵɵattribute("class", ctx_r51.flowchartConstants.edgeClass + " " + ctx_r51.flowchartConstants.draggingClass)("d", ctx_r51.edgeDrawingService.getEdgeDAttribute(ctx_r51.edgeDraggingService.edgeDragging.dragPoint1, ctx_r51.edgeDraggingService.edgeDragging.dragPoint2, ctx_r51.edgeStyle));
-    ɵɵadvance(1);
-    ɵɵattribute("cx", ctx_r51.edgeDraggingService.edgeDragging.dragPoint2.x)("cy", ctx_r51.edgeDraggingService.edgeDragging.dragPoint2.y);
-} }
-function NgxFlowchartComponent__svg_g_9_Template(rf, ctx) { if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵelementStart(0, "g", 14);
-    ɵɵelement(1, "path", 15);
-    ɵɵelement(2, "circle", 13);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var ctx_r52 = ɵɵnextContext();
-    ɵɵclassMapInterpolate2("shadow-svg-class ", ctx_r52.flowchartConstants.edgeClass, " ", ctx_r52.flowchartConstants.draggingClass, "");
-} }
-function NgxFlowchartComponent_ng_container_10_Template(rf, ctx) { if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵnamespaceHTML();
-    ɵɵelementContainerStart(0);
-    ɵɵelement(1, "fc-node", 16);
-    ɵɵelementContainerEnd();
-} if (rf & 2) {
-    var node_r65 = ctx.$implicit;
-    var ctx_r53 = ɵɵnextContext();
-    ɵɵadvance(1);
-    ɵɵproperty("selected", ctx_r53.modelService.nodes.isSelected(node_r65))("edit", ctx_r53.modelService.nodes.isEdit(node_r65))("underMouse", node_r65 === ctx_r53.mouseoverService.mouseoverscope.node)("node", node_r65)("mouseOverConnector", ctx_r53.mouseoverService.mouseoverscope.connector)("modelservice", ctx_r53.modelService)("dragging", ctx_r53.nodeDraggingService.isDraggingNode(node_r65))("callbacks", ctx_r53.callbacks)("userNodeCallbacks", ctx_r53.userNodeCallbacks);
-} }
-function NgxFlowchartComponent_div_11_span_2_Template(rf, ctx) { if (rf & 1) {
-    ɵɵelementStart(0, "span");
-    ɵɵtext(1);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var ctx_r66 = ɵɵnextContext(2);
-    ɵɵattribute("id", "fc-edge-label-dragging");
-    ɵɵadvance(1);
-    ɵɵtextInterpolate(ctx_r66.edgeDraggingService.edgeDragging.dragLabel);
-} }
-var _c0$1 = function (a0, a1) { return { top: a0, left: a1 }; };
-function NgxFlowchartComponent_div_11_Template(rf, ctx) { if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵnamespaceHTML();
-    ɵɵelementStart(0, "div", 17);
-    ɵɵelementStart(1, "div", 18);
-    ɵɵtemplate(2, NgxFlowchartComponent_div_11_span_2_Template, 2, 2, "span", 7);
-    ɵɵelementEnd();
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var ctx_r54 = ɵɵnextContext();
-    ɵɵproperty("ngStyle", ɵɵpureFunction2(3, _c0$1, ctx_r54.edgeDrawingService.getEdgeCenter(ctx_r54.edgeDraggingService.edgeDragging.dragPoint1, ctx_r54.edgeDraggingService.edgeDragging.dragPoint2).y + "px", ctx_r54.edgeDrawingService.getEdgeCenter(ctx_r54.edgeDraggingService.edgeDragging.dragPoint1, ctx_r54.edgeDraggingService.edgeDragging.dragPoint2).x + "px"));
-    ɵɵattribute("class", "fc-noselect " + ctx_r54.flowchartConstants.edgeLabelClass);
-    ɵɵadvance(2);
-    ɵɵproperty("ngIf", ctx_r54.edgeDraggingService.edgeDragging.dragLabel);
-} }
-function NgxFlowchartComponent_div_12_div_2_Template(rf, ctx) { if (rf & 1) {
-    var _r73 = ɵɵgetCurrentView();
-    ɵɵelementStart(0, "div", 22);
-    ɵɵlistener("click", function NgxFlowchartComponent_div_12_div_2_Template_div_click_0_listener($event) { ɵɵrestoreView(_r73); var edge_r67 = ɵɵnextContext().$implicit; var ctx_r72 = ɵɵnextContext(); return ctx_r72.edgeEdit($event, edge_r67); });
-    ɵɵelement(1, "i", 23);
-    ɵɵelementEnd();
-} }
-function NgxFlowchartComponent_div_12_div_3_Template(rf, ctx) { if (rf & 1) {
-    var _r76 = ɵɵgetCurrentView();
-    ɵɵelementStart(0, "div", 24);
-    ɵɵlistener("click", function NgxFlowchartComponent_div_12_div_3_Template_div_click_0_listener($event) { ɵɵrestoreView(_r76); var edge_r67 = ɵɵnextContext().$implicit; var ctx_r75 = ɵɵnextContext(); return ctx_r75.edgeRemove($event, edge_r67); });
-    ɵɵtext(1, " \u00D7 ");
-    ɵɵelementEnd();
-} }
-function NgxFlowchartComponent_div_12_span_4_Template(rf, ctx) { if (rf & 1) {
-    ɵɵelementStart(0, "span");
-    ɵɵtext(1);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var ctx_r78 = ɵɵnextContext();
-    var $index_r68 = ctx_r78.index;
-    var edge_r67 = ctx_r78.$implicit;
-    ɵɵattribute("id", "fc-edge-label-" + $index_r68);
-    ɵɵadvance(1);
-    ɵɵtextInterpolate(edge_r67.label);
-} }
-function NgxFlowchartComponent_div_12_Template(rf, ctx) { if (rf & 1) {
-    var _r80 = ɵɵgetCurrentView();
-    ɵɵnamespaceSVG();
-    ɵɵnamespaceHTML();
-    ɵɵelementStart(0, "div", 19);
-    ɵɵlistener("mousedown", function NgxFlowchartComponent_div_12_Template_div_mousedown_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r79 = ɵɵnextContext(); return ctx_r79.edgeMouseDown($event, edge_r67); })("click", function NgxFlowchartComponent_div_12_Template_div_click_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r81 = ɵɵnextContext(); return ctx_r81.edgeClick($event, edge_r67); })("dblclick", function NgxFlowchartComponent_div_12_Template_div_dblclick_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r82 = ɵɵnextContext(); return ctx_r82.edgeDoubleClick($event, edge_r67); })("mouseover", function NgxFlowchartComponent_div_12_Template_div_mouseover_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r83 = ɵɵnextContext(); return ctx_r83.edgeMouseOver($event, edge_r67); })("mouseenter", function NgxFlowchartComponent_div_12_Template_div_mouseenter_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r84 = ɵɵnextContext(); return ctx_r84.edgeMouseEnter($event, edge_r67); })("mouseleave", function NgxFlowchartComponent_div_12_Template_div_mouseleave_0_listener($event) { ɵɵrestoreView(_r80); var edge_r67 = ctx.$implicit; var ctx_r85 = ɵɵnextContext(); return ctx_r85.edgeMouseLeave($event, edge_r67); });
-    ɵɵelementStart(1, "div", 18);
-    ɵɵtemplate(2, NgxFlowchartComponent_div_12_div_2_Template, 2, 0, "div", 20);
-    ɵɵtemplate(3, NgxFlowchartComponent_div_12_div_3_Template, 2, 0, "div", 21);
-    ɵɵtemplate(4, NgxFlowchartComponent_div_12_span_4_Template, 2, 2, "span", 7);
-    ɵɵelementEnd();
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var edge_r67 = ctx.$implicit;
-    var ctx_r55 = ɵɵnextContext();
-    ɵɵproperty("ngStyle", ɵɵpureFunction2(5, _c0$1, ctx_r55.edgeDrawingService.getEdgeCenter(ctx_r55.modelService.edges.sourceCoord(edge_r67), ctx_r55.modelService.edges.destCoord(edge_r67)).y + "px", ctx_r55.edgeDrawingService.getEdgeCenter(ctx_r55.modelService.edges.sourceCoord(edge_r67), ctx_r55.modelService.edges.destCoord(edge_r67)).x + "px"));
-    ɵɵattribute("class", "fc-noselect " + (ctx_r55.modelService.edges.isEdit(edge_r67) && ctx_r55.flowchartConstants.editClass + " " + ctx_r55.flowchartConstants.edgeLabelClass || ctx_r55.modelService.edges.isSelected(edge_r67) && ctx_r55.flowchartConstants.selectedClass + " " + ctx_r55.flowchartConstants.edgeLabelClass || edge_r67 === ctx_r55.mouseoverService.mouseoverscope.edge && ctx_r55.flowchartConstants.hoverClass + " " + ctx_r55.flowchartConstants.edgeLabelClass || edge_r67.active && ctx_r55.flowchartConstants.activeClass + " " + ctx_r55.flowchartConstants.edgeLabelClass || ctx_r55.flowchartConstants.edgeLabelClass));
-    ɵɵadvance(2);
-    ɵɵproperty("ngIf", ctx_r55.modelService.isEditable());
-    ɵɵadvance(1);
-    ɵɵproperty("ngIf", ctx_r55.modelService.isEditable());
-    ɵɵadvance(1);
-    ɵɵproperty("ngIf", edge_r67.label);
-} }
 var NgxFlowchartComponent = /** @class */ (function () {
     function NgxFlowchartComponent(elementRef, differs, modelValidation, edgeDrawingService, cd, zone) {
         var _this = this;
@@ -2066,103 +1676,110 @@ var NgxFlowchartComponent = /** @class */ (function () {
     NgxFlowchartComponent.prototype.mouseup = function (event) {
         this.rectangleSelectService.mouseup(event);
     };
-    NgxFlowchartComponent.ɵfac = function NgxFlowchartComponent_Factory(t) { return new (t || NgxFlowchartComponent)(ɵɵdirectiveInject(ElementRef), ɵɵdirectiveInject(IterableDiffers), ɵɵdirectiveInject(FcModelValidationService), ɵɵdirectiveInject(FcEdgeDrawingService), ɵɵdirectiveInject(ChangeDetectorRef), ɵɵdirectiveInject(NgZone)); };
-    NgxFlowchartComponent.ɵcmp = ɵɵdefineComponent({ type: NgxFlowchartComponent, selectors: [["fc-canvas"]], hostVars: 1, hostBindings: function NgxFlowchartComponent_HostBindings(rf, ctx) { if (rf & 1) {
-            ɵɵlistener("dragover", function NgxFlowchartComponent_dragover_HostBindingHandler($event) { return ctx.dragover($event); })("drop", function NgxFlowchartComponent_drop_HostBindingHandler($event) { return ctx.drop($event); })("mousedown", function NgxFlowchartComponent_mousedown_HostBindingHandler($event) { return ctx.mousedown($event); })("mousemove", function NgxFlowchartComponent_mousemove_HostBindingHandler($event) { return ctx.mousemove($event); })("mouseup", function NgxFlowchartComponent_mouseup_HostBindingHandler($event) { return ctx.mouseup($event); });
-        } if (rf & 2) {
-            ɵɵattribute("class", ctx.canvasClass);
-        } }, inputs: { model: "model", selectedObjects: "selectedObjects", edgeStyle: "edgeStyle", userCallbacks: "userCallbacks", automaticResize: "automaticResize", dragAnimation: "dragAnimation", nodeWidth: "nodeWidth", nodeHeight: "nodeHeight", dropTargetId: "dropTargetId", fitModelSizeByDefault: "fitModelSizeByDefault" }, outputs: { modelChanged: "modelChanged" }, decls: 14, vars: 8, consts: [[1, "fc-canvas-container", 3, "click"], [1, "fc-canvas-svg"], ["markerWidth", "5", "markerHeight", "5", "viewBox", "-6 -6 12 12", "refX", "10", "refY", "0", "markerUnits", "strokeWidth", "orient", "auto", 1, "fc-arrow-marker"], ["points", "-2,0 -5,5 5,0 -5,-5", "stroke", "gray", "fill", "gray", "stroke-width", "1px"], ["markerWidth", "5", "markerHeight", "5", "viewBox", "-6 -6 12 12", "refX", "10", "refY", "0", "markerUnits", "strokeWidth", "orient", "auto", 1, "fc-arrow-marker-selected"], ["points", "-2,0 -5,5 5,0 -5,-5", "stroke", "red", "fill", "red", "stroke-width", "1px"], [4, "ngFor", "ngForOf"], [4, "ngIf"], ["style", "display:none", 3, "class", 4, "ngIf"], [3, "ngStyle", 4, "ngIf"], [3, "ngStyle", "mousedown", "click", "dblclick", "mouseover", "mouseenter", "mouseleave", 4, "ngFor", "ngForOf"], ["id", "select-rectangle", "hidden", "", 1, "fc-select-rectangle"], [3, "mousedown", "click", "dblclick", "mouseover", "mouseenter", "mouseleave"], ["r", "4", 1, "edge-endpoint"], [2, "display", "none"], ["d", ""], [3, "selected", "edit", "underMouse", "node", "mouseOverConnector", "modelservice", "dragging", "callbacks", "userNodeCallbacks"], [3, "ngStyle"], [1, "fc-edge-label-text"], [3, "ngStyle", "mousedown", "click", "dblclick", "mouseover", "mouseenter", "mouseleave"], ["class", "fc-noselect fc-nodeedit", 3, "click", 4, "ngIf"], ["class", "fc-noselect fc-nodedelete", 3, "click", 4, "ngIf"], [1, "fc-noselect", "fc-nodeedit", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-pencil"], [1, "fc-noselect", "fc-nodedelete", 3, "click"]], template: function NgxFlowchartComponent_Template(rf, ctx) { if (rf & 1) {
-            ɵɵelementStart(0, "div", 0);
-            ɵɵlistener("click", function NgxFlowchartComponent_Template_div_click_0_listener($event) { return ctx.canvasClick($event); });
-            ɵɵnamespaceSVG();
-            ɵɵelementStart(1, "svg", 1);
-            ɵɵelementStart(2, "defs");
-            ɵɵelementStart(3, "marker", 2);
-            ɵɵelement(4, "polygon", 3);
-            ɵɵelementEnd();
-            ɵɵelementStart(5, "marker", 4);
-            ɵɵelement(6, "polygon", 5);
-            ɵɵelementEnd();
-            ɵɵelementEnd();
-            ɵɵtemplate(7, NgxFlowchartComponent__svg_g_7_Template, 2, 4, "g", 6);
-            ɵɵtemplate(8, NgxFlowchartComponent__svg_g_8_Template, 3, 4, "g", 7);
-            ɵɵtemplate(9, NgxFlowchartComponent__svg_g_9_Template, 3, 4, "g", 8);
-            ɵɵelementEnd();
-            ɵɵtemplate(10, NgxFlowchartComponent_ng_container_10_Template, 2, 9, "ng-container", 6);
-            ɵɵtemplate(11, NgxFlowchartComponent_div_11_Template, 3, 6, "div", 9);
-            ɵɵtemplate(12, NgxFlowchartComponent_div_12_Template, 5, 8, "div", 10);
-            ɵɵnamespaceHTML();
-            ɵɵelement(13, "div", 11);
-            ɵɵelementEnd();
-        } if (rf & 2) {
-            ɵɵadvance(3);
-            ɵɵattribute("id", ctx.arrowDefId);
-            ɵɵadvance(2);
-            ɵɵattribute("id", ctx.arrowDefIdSelected);
-            ɵɵadvance(2);
-            ɵɵproperty("ngForOf", ctx.model.edges);
-            ɵɵadvance(1);
-            ɵɵproperty("ngIf", ctx.dragAnimation === ctx.flowchartConstants.dragAnimationRepaint && ctx.edgeDraggingService.edgeDragging.isDragging);
-            ɵɵadvance(1);
-            ɵɵproperty("ngIf", ctx.dragAnimation === ctx.flowchartConstants.dragAnimationShadow);
-            ɵɵadvance(1);
-            ɵɵproperty("ngForOf", ctx.model.nodes);
-            ɵɵadvance(1);
-            ɵɵproperty("ngIf", ctx.dragAnimation === ctx.flowchartConstants.dragAnimationRepaint && ctx.edgeDraggingService.edgeDragging.isDragging);
-            ɵɵadvance(1);
-            ɵɵproperty("ngForOf", ctx.model.edges);
-        } }, directives: [NgForOf, NgIf, FcNodeContainerComponent, NgStyle], styles: ["[_nghost-%COMP%]{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}[_nghost-%COMP%]   .fc-canvas-container[_ngcontent-%COMP%]{display:block;position:relative;width:100%;height:100%}[_nghost-%COMP%]   .fc-canvas-container[_ngcontent-%COMP%]   svg.fc-canvas-svg[_ngcontent-%COMP%]{display:block;position:relative;width:100%;height:100%}[_nghost-%COMP%]   .fc-edge[_ngcontent-%COMP%]{stroke:gray;stroke-width:4;-webkit-transition:stroke-width .2s;transition:stroke-width .2s;fill:transparent}[_nghost-%COMP%]   .fc-edge.fc-hover[_ngcontent-%COMP%]{stroke:gray;stroke-width:6;fill:transparent}[_nghost-%COMP%]   .fc-edge.fc-selected[_ngcontent-%COMP%]{stroke:red;stroke-width:4;fill:transparent}[_nghost-%COMP%]   .fc-edge.fc-active[_ngcontent-%COMP%]{-webkit-animation:3s linear infinite dash;animation:3s linear infinite dash;stroke-dasharray:20}[_nghost-%COMP%]   .fc-edge.fc-dragging[_ngcontent-%COMP%]{pointer-events:none}[_nghost-%COMP%]   .fc-arrow-marker[_ngcontent-%COMP%]   polygon[_ngcontent-%COMP%]{stroke:gray;fill:gray}[_nghost-%COMP%]   .fc-arrow-marker-selected[_ngcontent-%COMP%]   polygon[_ngcontent-%COMP%]{stroke:red;fill:red}[_nghost-%COMP%]   .edge-endpoint[_ngcontent-%COMP%]{fill:gray}[_nghost-%COMP%]   .fc-noselect[_ngcontent-%COMP%]{-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}[_nghost-%COMP%]   .fc-edge-label[_ngcontent-%COMP%]{position:absolute;opacity:.8;-webkit-transition:-webkit-transform .2s;transition:transform .2s;transition:transform .2s,-webkit-transform .2s;-webkit-transform-origin:bottom left;transform-origin:bottom left;margin:0 auto}[_nghost-%COMP%]   .fc-edge-label[_ngcontent-%COMP%]   .fc-edge-label-text[_ngcontent-%COMP%]{position:absolute;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}[_nghost-%COMP%]   .fc-edge-label[_ngcontent-%COMP%]   .fc-edge-label-text[_ngcontent-%COMP%]   span[_ngcontent-%COMP%]{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}[_nghost-%COMP%]   .fc-edge-label[_ngcontent-%COMP%]   .fc-nodeedit[_ngcontent-%COMP%]{top:-30px;right:14px}[_nghost-%COMP%]   .fc-edge-label[_ngcontent-%COMP%]   .fc-nodedelete[_ngcontent-%COMP%]{top:-30px;right:-13px}[_nghost-%COMP%]   .fc-edge-label.fc-hover[_ngcontent-%COMP%]{-webkit-transform:scale(1.25);transform:scale(1.25)}[_nghost-%COMP%]   .fc-edge-label.fc-edit[_ngcontent-%COMP%]   .fc-edge-label-text[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], [_nghost-%COMP%]   .fc-edge-label.fc-selected[_ngcontent-%COMP%]   .fc-edge-label-text[_ngcontent-%COMP%]   span[_ngcontent-%COMP%]{border:solid red;color:#fff;font-weight:600;background-color:red}[_nghost-%COMP%]   .fc-select-rectangle[_ngcontent-%COMP%]{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@-webkit-keyframes dash{from{stroke-dashoffset:500}}@keyframes dash{from{stroke-dashoffset:500}}[_nghost-%COMP%]     .fc-nodeedit{display:none;font-size:15px}[_nghost-%COMP%]     .fc-nodedelete{display:none;font-size:18px}[_nghost-%COMP%]     .fc-edit .fc-nodedelete, [_nghost-%COMP%]     .fc-edit .fc-nodeedit{display:block;position:absolute;border:2px solid #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}[_nghost-%COMP%]     .fc-edit .fc-nodeedit{top:-24px;right:16px}[_nghost-%COMP%]     .fc-edit .fc-nodedelete{top:-24px;right:-13px}"], changeDetection: 0 });
+    NgxFlowchartComponent.ctorParameters = function () { return [
+        { type: ElementRef },
+        { type: IterableDiffers },
+        { type: FcModelValidationService },
+        { type: FcEdgeDrawingService },
+        { type: ChangeDetectorRef },
+        { type: NgZone }
+    ]; };
+    __decorate([
+        HostBinding('attr.class'),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [])
+    ], NgxFlowchartComponent.prototype, "canvasClass", null);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], NgxFlowchartComponent.prototype, "model", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Array)
+    ], NgxFlowchartComponent.prototype, "selectedObjects", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", String)
+    ], NgxFlowchartComponent.prototype, "edgeStyle", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], NgxFlowchartComponent.prototype, "userCallbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], NgxFlowchartComponent.prototype, "automaticResize", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", String)
+    ], NgxFlowchartComponent.prototype, "dragAnimation", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Number)
+    ], NgxFlowchartComponent.prototype, "nodeWidth", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Number)
+    ], NgxFlowchartComponent.prototype, "nodeHeight", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", String)
+    ], NgxFlowchartComponent.prototype, "dropTargetId", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", Object)
+    ], NgxFlowchartComponent.prototype, "modelChanged", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], NgxFlowchartComponent.prototype, "fitModelSizeByDefault", null);
+    __decorate([
+        HostListener('dragover', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], NgxFlowchartComponent.prototype, "dragover", null);
+    __decorate([
+        HostListener('drop', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], NgxFlowchartComponent.prototype, "drop", null);
+    __decorate([
+        HostListener('mousedown', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], NgxFlowchartComponent.prototype, "mousedown", null);
+    __decorate([
+        HostListener('mousemove', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], NgxFlowchartComponent.prototype, "mousemove", null);
+    __decorate([
+        HostListener('mouseup', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], NgxFlowchartComponent.prototype, "mouseup", null);
+    NgxFlowchartComponent = __decorate([
+        Component({
+            selector: 'fc-canvas',
+            template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n",
+            changeDetection: ChangeDetectionStrategy.OnPush,
+            styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;-webkit-transition:stroke-width .2s;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{-webkit-animation:3s linear infinite dash;animation:3s linear infinite dash;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;-webkit-transition:-webkit-transform .2s;transition:transform .2s;transition:transform .2s,-webkit-transform .2s;-webkit-transform-origin:bottom left;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{-webkit-transform:scale(1.25);transform:scale(1.25)}:host .fc-edge-label.fc-edit .fc-edge-label-text span,:host .fc-edge-label.fc-selected .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@-webkit-keyframes dash{from{stroke-dashoffset:500}}@keyframes dash{from{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodedelete,:host ::ng-deep .fc-edit .fc-nodeedit{display:block;position:absolute;border:2px solid #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}"]
+        }),
+        __metadata("design:paramtypes", [ElementRef,
+            IterableDiffers,
+            FcModelValidationService,
+            FcEdgeDrawingService,
+            ChangeDetectorRef,
+            NgZone])
+    ], NgxFlowchartComponent);
     return NgxFlowchartComponent;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(NgxFlowchartComponent, [{
-        type: Component,
-        args: [{
-                selector: 'fc-canvas',
-                templateUrl: './ngx-flowchart.component.html',
-                styleUrls: ['./ngx-flowchart.component.scss'],
-                changeDetection: ChangeDetectionStrategy.OnPush
-            }]
-    }], function () { return [{ type: ElementRef }, { type: IterableDiffers }, { type: FcModelValidationService }, { type: FcEdgeDrawingService }, { type: ChangeDetectorRef }, { type: NgZone }]; }, { canvasClass: [{
-            type: HostBinding,
-            args: ['attr.class']
-        }], model: [{
-            type: Input
-        }], selectedObjects: [{
-            type: Input
-        }], edgeStyle: [{
-            type: Input
-        }], userCallbacks: [{
-            type: Input
-        }], automaticResize: [{
-            type: Input
-        }], dragAnimation: [{
-            type: Input
-        }], nodeWidth: [{
-            type: Input
-        }], nodeHeight: [{
-            type: Input
-        }], dropTargetId: [{
-            type: Input
-        }], modelChanged: [{
-            type: Output
-        }], fitModelSizeByDefault: [{
-            type: Input
-        }], dragover: [{
-            type: HostListener,
-            args: ['dragover', ['$event']]
-        }], drop: [{
-            type: HostListener,
-            args: ['drop', ['$event']]
-        }], mousedown: [{
-            type: HostListener,
-            args: ['mousedown', ['$event']]
-        }], mousemove: [{
-            type: HostListener,
-            args: ['mousemove', ['$event']]
-        }], mouseup: [{
-            type: HostListener,
-            args: ['mouseup', ['$event']]
-        }] }); })();
 
 var FcMagnetDirective = /** @class */ (function () {
     function FcMagnetDirective(elementRef) {
@@ -2184,35 +1801,50 @@ var FcMagnetDirective = /** @class */ (function () {
     FcMagnetDirective.prototype.dragend = function (event) {
         this.callbacks.edgeDragend(event);
     };
-    FcMagnetDirective.ɵfac = function FcMagnetDirective_Factory(t) { return new (t || FcMagnetDirective)(ɵɵdirectiveInject(ElementRef)); };
-    FcMagnetDirective.ɵdir = ɵɵdefineDirective({ type: FcMagnetDirective, selectors: [["", "fc-magnet", ""]], hostBindings: function FcMagnetDirective_HostBindings(rf, ctx) { if (rf & 1) {
-            ɵɵlistener("dragover", function FcMagnetDirective_dragover_HostBindingHandler($event) { return ctx.dragover($event); })("dragleave", function FcMagnetDirective_dragleave_HostBindingHandler($event) { return ctx.dragleave($event); })("drop", function FcMagnetDirective_drop_HostBindingHandler($event) { return ctx.drop($event); })("dragend", function FcMagnetDirective_dragend_HostBindingHandler($event) { return ctx.dragend($event); });
-        } }, inputs: { callbacks: "callbacks", connector: "connector" } });
+    FcMagnetDirective.ctorParameters = function () { return [
+        { type: ElementRef }
+    ]; };
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcMagnetDirective.prototype, "callbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcMagnetDirective.prototype, "connector", void 0);
+    __decorate([
+        HostListener('dragover', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcMagnetDirective.prototype, "dragover", null);
+    __decorate([
+        HostListener('dragleave', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcMagnetDirective.prototype, "dragleave", null);
+    __decorate([
+        HostListener('drop', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcMagnetDirective.prototype, "drop", null);
+    __decorate([
+        HostListener('dragend', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcMagnetDirective.prototype, "dragend", null);
+    FcMagnetDirective = __decorate([
+        Directive({
+            // tslint:disable-next-line:directive-selector
+            selector: '[fc-magnet]'
+        }),
+        __metadata("design:paramtypes", [ElementRef])
+    ], FcMagnetDirective);
     return FcMagnetDirective;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcMagnetDirective, [{
-        type: Directive,
-        args: [{
-                // tslint:disable-next-line:directive-selector
-                selector: '[fc-magnet]'
-            }]
-    }], function () { return [{ type: ElementRef }]; }, { callbacks: [{
-            type: Input
-        }], connector: [{
-            type: Input
-        }], dragover: [{
-            type: HostListener,
-            args: ['dragover', ['$event']]
-        }], dragleave: [{
-            type: HostListener,
-            args: ['dragleave', ['$event']]
-        }], drop: [{
-            type: HostListener,
-            args: ['drop', ['$event']]
-        }], dragend: [{
-            type: HostListener,
-            args: ['dragend', ['$event']]
-        }] }); })();
 
 var FcConnectorDirective = /** @class */ (function () {
     function FcConnectorDirective(elementRef) {
@@ -2298,193 +1930,438 @@ var FcConnectorDirective = /** @class */ (function () {
             this.callbacks.connectorMouseLeave(event, this.connector);
         }
     };
-    FcConnectorDirective.ɵfac = function FcConnectorDirective_Factory(t) { return new (t || FcConnectorDirective)(ɵɵdirectiveInject(ElementRef)); };
-    FcConnectorDirective.ɵdir = ɵɵdefineDirective({ type: FcConnectorDirective, selectors: [["", "fc-connector", ""]], hostBindings: function FcConnectorDirective_HostBindings(rf, ctx) { if (rf & 1) {
-            ɵɵlistener("dragover", function FcConnectorDirective_dragover_HostBindingHandler($event) { return ctx.dragover($event); })("drop", function FcConnectorDirective_drop_HostBindingHandler($event) { return ctx.drop($event); })("dragend", function FcConnectorDirective_dragend_HostBindingHandler($event) { return ctx.dragend($event); })("dragstart", function FcConnectorDirective_dragstart_HostBindingHandler($event) { return ctx.dragstart($event); })("mouseenter", function FcConnectorDirective_mouseenter_HostBindingHandler($event) { return ctx.mouseenter($event); })("mouseleave", function FcConnectorDirective_mouseleave_HostBindingHandler($event) { return ctx.mouseleave($event); });
-        } }, inputs: { callbacks: "callbacks", modelservice: "modelservice", connector: "connector", nodeRectInfo: "nodeRectInfo", mouseOverConnector: "mouseOverConnector" }, features: [ɵɵNgOnChangesFeature()] });
+    FcConnectorDirective.ctorParameters = function () { return [
+        { type: ElementRef }
+    ]; };
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcConnectorDirective.prototype, "callbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", FcModelService)
+    ], FcConnectorDirective.prototype, "modelservice", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcConnectorDirective.prototype, "connector", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcConnectorDirective.prototype, "nodeRectInfo", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcConnectorDirective.prototype, "mouseOverConnector", void 0);
+    __decorate([
+        HostListener('dragover', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "dragover", null);
+    __decorate([
+        HostListener('drop', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "drop", null);
+    __decorate([
+        HostListener('dragend', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "dragend", null);
+    __decorate([
+        HostListener('dragstart', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "dragstart", null);
+    __decorate([
+        HostListener('mouseenter', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "mouseenter", null);
+    __decorate([
+        HostListener('mouseleave', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcConnectorDirective.prototype, "mouseleave", null);
+    FcConnectorDirective = __decorate([
+        Directive({
+            // tslint:disable-next-line:directive-selector
+            selector: '[fc-connector]'
+        }),
+        __metadata("design:paramtypes", [ElementRef])
+    ], FcConnectorDirective);
     return FcConnectorDirective;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FcConnectorDirective, [{
-        type: Directive,
-        args: [{
-                // tslint:disable-next-line:directive-selector
-                selector: '[fc-connector]'
-            }]
-    }], function () { return [{ type: ElementRef }]; }, { callbacks: [{
-            type: Input
-        }], modelservice: [{
-            type: Input
-        }], connector: [{
-            type: Input
-        }], nodeRectInfo: [{
-            type: Input
-        }], mouseOverConnector: [{
-            type: Input
-        }], dragover: [{
-            type: HostListener,
-            args: ['dragover', ['$event']]
-        }], drop: [{
-            type: HostListener,
-            args: ['drop', ['$event']]
-        }], dragend: [{
-            type: HostListener,
-            args: ['dragend', ['$event']]
-        }], dragstart: [{
-            type: HostListener,
-            args: ['dragstart', ['$event']]
-        }], mouseenter: [{
-            type: HostListener,
-            args: ['mouseenter', ['$event']]
-        }], mouseleave: [{
-            type: HostListener,
-            args: ['mouseleave', ['$event']]
-        }] }); })();
 
-function DefaultFcNodeComponent_div_6_Template(rf, ctx) { if (rf & 1) {
-    ɵɵelementStart(0, "div", 5);
-    ɵɵelement(1, "div", 6);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var connector_r90 = ctx.$implicit;
-    var ctx_r86 = ɵɵnextContext();
-    ɵɵproperty("connector", connector_r90)("callbacks", ctx_r86.callbacks);
-    ɵɵadvance(1);
-    ɵɵproperty("connector", connector_r90)("nodeRectInfo", ctx_r86.nodeRectInfo)("mouseOverConnector", ctx_r86.mouseOverConnector)("callbacks", ctx_r86.callbacks)("modelservice", ctx_r86.modelservice);
-} }
-function DefaultFcNodeComponent_div_8_Template(rf, ctx) { if (rf & 1) {
-    ɵɵelementStart(0, "div", 5);
-    ɵɵelement(1, "div", 6);
-    ɵɵelementEnd();
-} if (rf & 2) {
-    var connector_r91 = ctx.$implicit;
-    var ctx_r87 = ɵɵnextContext();
-    ɵɵproperty("connector", connector_r91)("callbacks", ctx_r87.callbacks);
-    ɵɵadvance(1);
-    ɵɵproperty("connector", connector_r91)("nodeRectInfo", ctx_r87.nodeRectInfo)("mouseOverConnector", ctx_r87.mouseOverConnector)("callbacks", ctx_r87.callbacks)("modelservice", ctx_r87.modelservice);
-} }
-function DefaultFcNodeComponent_div_9_Template(rf, ctx) { if (rf & 1) {
-    var _r93 = ɵɵgetCurrentView();
-    ɵɵelementStart(0, "div", 7);
-    ɵɵlistener("click", function DefaultFcNodeComponent_div_9_Template_div_click_0_listener($event) { ɵɵrestoreView(_r93); var ctx_r92 = ɵɵnextContext(); return ctx_r92.userNodeCallbacks.nodeEdit($event, ctx_r92.node); });
-    ɵɵelement(1, "i", 8);
-    ɵɵelementEnd();
-} }
-function DefaultFcNodeComponent_div_10_Template(rf, ctx) { if (rf & 1) {
-    var _r95 = ɵɵgetCurrentView();
-    ɵɵelementStart(0, "div", 9);
-    ɵɵlistener("click", function DefaultFcNodeComponent_div_10_Template_div_click_0_listener($event) { ɵɵrestoreView(_r95); var ctx_r94 = ɵɵnextContext(); return ctx_r94.modelservice.nodes.delete(ctx_r94.node); });
-    ɵɵtext(1, " \u00D7 ");
-    ɵɵelementEnd();
-} }
+var FcNodeContainerComponent = /** @class */ (function () {
+    function FcNodeContainerComponent(nodeComponentConfig, elementRef, componentFactoryResolver) {
+        this.nodeComponentConfig = nodeComponentConfig;
+        this.elementRef = elementRef;
+        this.componentFactoryResolver = componentFactoryResolver;
+    }
+    Object.defineProperty(FcNodeContainerComponent.prototype, "nodeId", {
+        get: function () {
+            return this.node.id;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FcNodeContainerComponent.prototype, "top", {
+        get: function () {
+            return this.node.y + 'px';
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FcNodeContainerComponent.prototype, "left", {
+        get: function () {
+            return this.node.x + 'px';
+        },
+        enumerable: true,
+        configurable: true
+    });
+    FcNodeContainerComponent.prototype.ngOnInit = function () {
+        if (!this.userNodeCallbacks) {
+            this.userNodeCallbacks = {};
+        }
+        this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (function () { });
+        this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (function () { });
+        this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (function () { });
+        this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (function () { });
+        this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (function () { });
+        var element = $(this.elementRef.nativeElement);
+        element.addClass(FlowchartConstants.nodeClass);
+        if (!this.node.readonly) {
+            element.attr('draggable', 'true');
+        }
+        this.updateNodeClass();
+        this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
+        this.nodeContentContainer.clear();
+        var componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
+        var componentRef = this.nodeContentContainer.createComponent(componentFactory);
+        this.nodeComponent = componentRef.instance;
+        this.nodeComponent.callbacks = this.callbacks;
+        this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
+        this.nodeComponent.node = this.node;
+        this.nodeComponent.modelservice = this.modelservice;
+        this.updateNodeComponent();
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+    };
+    FcNodeContainerComponent.prototype.ngAfterViewInit = function () {
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+    };
+    FcNodeContainerComponent.prototype.ngOnChanges = function (changes) {
+        var e_1, _a;
+        var updateNode = false;
+        try {
+            for (var _b = __values(Object.keys(changes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var propName = _c.value;
+                var change = changes[propName];
+                if (!change.firstChange && change.currentValue !== change.previousValue) {
+                    if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
+                        updateNode = true;
+                    }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        if (updateNode) {
+            this.updateNodeClass();
+            this.updateNodeComponent();
+        }
+    };
+    FcNodeContainerComponent.prototype.updateNodeClass = function () {
+        var element = $(this.elementRef.nativeElement);
+        this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
+        this.toggleClass(element, FlowchartConstants.editClass, this.edit);
+        this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
+        this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
+    };
+    FcNodeContainerComponent.prototype.updateNodeComponent = function () {
+        this.nodeComponent.selected = this.selected;
+        this.nodeComponent.edit = this.edit;
+        this.nodeComponent.underMouse = this.underMouse;
+        this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
+        this.nodeComponent.dragging = this.dragging;
+    };
+    FcNodeContainerComponent.prototype.toggleClass = function (element, clazz, set) {
+        if (set) {
+            element.addClass(clazz);
+        }
+        else {
+            element.removeClass(clazz);
+        }
+    };
+    FcNodeContainerComponent.prototype.mousedown = function (event) {
+        event.stopPropagation();
+    };
+    FcNodeContainerComponent.prototype.dragstart = function (event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeDragstart(event, this.node);
+        }
+    };
+    FcNodeContainerComponent.prototype.dragend = function (event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeDragend(event);
+        }
+    };
+    FcNodeContainerComponent.prototype.click = function (event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeClicked(event, this.node);
+        }
+    };
+    FcNodeContainerComponent.prototype.mouseover = function (event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeMouseOver(event, this.node);
+        }
+    };
+    FcNodeContainerComponent.prototype.mouseout = function (event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeMouseOut(event, this.node);
+        }
+    };
+    FcNodeContainerComponent.ctorParameters = function () { return [
+        { type: undefined, decorators: [{ type: Inject, args: [FC_NODE_COMPONENT_CONFIG,] }] },
+        { type: ElementRef },
+        { type: ComponentFactoryResolver }
+    ]; };
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeContainerComponent.prototype, "callbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeContainerComponent.prototype, "userNodeCallbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeContainerComponent.prototype, "node", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeContainerComponent.prototype, "selected", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeContainerComponent.prototype, "edit", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeContainerComponent.prototype, "underMouse", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeContainerComponent.prototype, "mouseOverConnector", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", FcModelService)
+    ], FcNodeContainerComponent.prototype, "modelservice", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeContainerComponent.prototype, "dragging", void 0);
+    __decorate([
+        HostBinding('attr.id'),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [])
+    ], FcNodeContainerComponent.prototype, "nodeId", null);
+    __decorate([
+        HostBinding('style.top'),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [])
+    ], FcNodeContainerComponent.prototype, "top", null);
+    __decorate([
+        HostBinding('style.left'),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [])
+    ], FcNodeContainerComponent.prototype, "left", null);
+    __decorate([
+        ViewChild('nodeContent', { read: ViewContainerRef, static: true }),
+        __metadata("design:type", ViewContainerRef)
+    ], FcNodeContainerComponent.prototype, "nodeContentContainer", void 0);
+    __decorate([
+        HostListener('mousedown', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "mousedown", null);
+    __decorate([
+        HostListener('dragstart', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "dragstart", null);
+    __decorate([
+        HostListener('dragend', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [DragEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "dragend", null);
+    __decorate([
+        HostListener('click', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "click", null);
+    __decorate([
+        HostListener('mouseover', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "mouseover", null);
+    __decorate([
+        HostListener('mouseout', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], FcNodeContainerComponent.prototype, "mouseout", null);
+    FcNodeContainerComponent = __decorate([
+        Component({
+            selector: 'fc-node',
+            template: '<ng-template #nodeContent></ng-template>',
+            styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{-webkit-box-align:center;align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:-webkit-box;display:flex;-webkit-box-flex:1;flex-grow:1;height:60px;-webkit-box-pack:center;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}"]
+        }),
+        __param(0, Inject(FC_NODE_COMPONENT_CONFIG)),
+        __metadata("design:paramtypes", [Object, ElementRef,
+            ComponentFactoryResolver])
+    ], FcNodeContainerComponent);
+    return FcNodeContainerComponent;
+}());
+var FcNodeComponent = /** @class */ (function () {
+    function FcNodeComponent() {
+        var _this = this;
+        this.flowchartConstants = FlowchartConstants;
+        this.nodeRectInfo = {
+            top: function () {
+                return _this.node.y;
+            },
+            left: function () {
+                return _this.node.x;
+            },
+            bottom: function () {
+                return _this.node.y + _this.height;
+            },
+            right: function () {
+                return _this.node.x + _this.width;
+            },
+            width: function () {
+                return _this.width;
+            },
+            height: function () {
+                return _this.height;
+            }
+        };
+    }
+    FcNodeComponent.prototype.ngOnInit = function () {
+    };
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeComponent.prototype, "callbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeComponent.prototype, "userNodeCallbacks", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeComponent.prototype, "node", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeComponent.prototype, "selected", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeComponent.prototype, "edit", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeComponent.prototype, "underMouse", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FcNodeComponent.prototype, "mouseOverConnector", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", FcModelService)
+    ], FcNodeComponent.prototype, "modelservice", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Boolean)
+    ], FcNodeComponent.prototype, "dragging", void 0);
+    FcNodeComponent = __decorate([
+        Directive()
+    ], FcNodeComponent);
+    return FcNodeComponent;
+}());
+
 var DefaultFcNodeComponent = /** @class */ (function (_super) {
     __extends(DefaultFcNodeComponent, _super);
     function DefaultFcNodeComponent() {
         return _super.call(this) || this;
     }
-    DefaultFcNodeComponent.ɵfac = function DefaultFcNodeComponent_Factory(t) { return new (t || DefaultFcNodeComponent)(); };
-    DefaultFcNodeComponent.ɵcmp = ɵɵdefineComponent({ type: DefaultFcNodeComponent, selectors: [["fc-default-node"]], features: [ɵɵInheritDefinitionFeature], decls: 11, vars: 14, consts: [[3, "dblclick"], [1, "innerNode"], ["fc-magnet", "", 3, "connector", "callbacks", 4, "ngFor", "ngForOf"], ["class", "fc-nodeedit", 3, "click", 4, "ngIf"], ["class", "fc-nodedelete", 3, "click", 4, "ngIf"], ["fc-magnet", "", 3, "connector", "callbacks"], ["fc-connector", "", 3, "connector", "nodeRectInfo", "mouseOverConnector", "callbacks", "modelservice"], [1, "fc-nodeedit", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-pencil"], [1, "fc-nodedelete", 3, "click"]], template: function DefaultFcNodeComponent_Template(rf, ctx) { if (rf & 1) {
-            ɵɵelementStart(0, "div", 0);
-            ɵɵlistener("dblclick", function DefaultFcNodeComponent_Template_div_dblclick_0_listener($event) { return ctx.userNodeCallbacks.doubleClick($event, ctx.node); });
-            ɵɵelement(1, "div");
-            ɵɵelementStart(2, "div", 1);
-            ɵɵelementStart(3, "p");
-            ɵɵtext(4);
-            ɵɵelementEnd();
-            ɵɵelementStart(5, "div");
-            ɵɵtemplate(6, DefaultFcNodeComponent_div_6_Template, 2, 7, "div", 2);
-            ɵɵelementEnd();
-            ɵɵelementStart(7, "div");
-            ɵɵtemplate(8, DefaultFcNodeComponent_div_8_Template, 2, 7, "div", 2);
-            ɵɵelementEnd();
-            ɵɵelementEnd();
-            ɵɵtemplate(9, DefaultFcNodeComponent_div_9_Template, 2, 0, "div", 3);
-            ɵɵtemplate(10, DefaultFcNodeComponent_div_10_Template, 2, 0, "div", 4);
-            ɵɵelementEnd();
-        } if (rf & 2) {
-            ɵɵadvance(1);
-            ɵɵclassMap(ctx.flowchartConstants.nodeOverlayClass);
-            ɵɵadvance(3);
-            ɵɵtextInterpolate(ctx.node.name);
-            ɵɵadvance(1);
-            ɵɵclassMap(ctx.flowchartConstants.leftConnectorClass);
-            ɵɵadvance(1);
-            ɵɵproperty("ngForOf", ctx.modelservice.nodes.getConnectorsByType(ctx.node, ctx.flowchartConstants.leftConnectorType));
-            ɵɵadvance(1);
-            ɵɵclassMap(ctx.flowchartConstants.rightConnectorClass);
-            ɵɵadvance(1);
-            ɵɵproperty("ngForOf", ctx.modelservice.nodes.getConnectorsByType(ctx.node, ctx.flowchartConstants.rightConnectorType));
-            ɵɵadvance(1);
-            ɵɵproperty("ngIf", ctx.modelservice.isEditable() && !ctx.node.readonly);
-            ɵɵadvance(1);
-            ɵɵproperty("ngIf", ctx.modelservice.isEditable() && !ctx.node.readonly);
-        } }, directives: [NgForOf, NgIf, FcMagnetDirective, FcConnectorDirective], styles: ["[_nghost-%COMP%]   .fc-node-overlay[_ngcontent-%COMP%]{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}[_nghost-%COMP%]   .fc-hover[_nghost-%COMP%]   .fc-node-overlay[_ngcontent-%COMP%], .fc-hover   [_nghost-%COMP%]   .fc-node-overlay[_ngcontent-%COMP%]{opacity:.25;-webkit-transition:opacity .2s;transition:opacity .2s}[_nghost-%COMP%]   .fc-selected[_nghost-%COMP%]   .fc-node-overlay[_ngcontent-%COMP%], .fc-selected   [_nghost-%COMP%]   .fc-node-overlay[_ngcontent-%COMP%]{opacity:.25}[_nghost-%COMP%]   .innerNode[_ngcontent-%COMP%]{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}[_nghost-%COMP%]   .innerNode[_ngcontent-%COMP%]   p[_ngcontent-%COMP%]{padding:0 15px;text-align:center}"] });
+    DefaultFcNodeComponent = __decorate([
+        Component({
+            selector: 'fc-default-node',
+            template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n",
+            styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;-webkit-transition:opacity .2s;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}"]
+        }),
+        __metadata("design:paramtypes", [])
+    ], DefaultFcNodeComponent);
     return DefaultFcNodeComponent;
 }(FcNodeComponent));
-/*@__PURE__*/ (function () { ɵsetClassMetadata(DefaultFcNodeComponent, [{
-        type: Component,
-        args: [{
-                selector: 'fc-default-node',
-                templateUrl: './default-node.component.html',
-                styleUrls: ['./default-node.component.scss']
-            }]
-    }], function () { return []; }, null); })();
 
+var ɵ0$1 = {
+    nodeComponentType: DefaultFcNodeComponent
+};
 var NgxFlowchartModule = /** @class */ (function () {
     function NgxFlowchartModule() {
     }
-    NgxFlowchartModule.ɵmod = ɵɵdefineNgModule({ type: NgxFlowchartModule });
-    NgxFlowchartModule.ɵinj = ɵɵdefineInjector({ factory: function NgxFlowchartModule_Factory(t) { return new (t || NgxFlowchartModule)(); }, providers: [
-            FcModelValidationService,
-            FcEdgeDrawingService,
-            {
-                provide: FC_NODE_COMPONENT_CONFIG,
-                useValue: {
-                    nodeComponentType: DefaultFcNodeComponent
+    NgxFlowchartModule = __decorate([
+        NgModule({
+            entryComponents: [
+                DefaultFcNodeComponent
+            ],
+            declarations: [NgxFlowchartComponent,
+                FcMagnetDirective,
+                FcConnectorDirective,
+                FcNodeContainerComponent,
+                DefaultFcNodeComponent],
+            providers: [
+                FcModelValidationService,
+                FcEdgeDrawingService,
+                {
+                    provide: FC_NODE_COMPONENT_CONFIG,
+                    useValue: ɵ0$1
                 }
-            }
-        ], imports: [[
+            ],
+            imports: [
                 CommonModule
-            ]] });
+            ],
+            exports: [NgxFlowchartComponent,
+                FcMagnetDirective,
+                FcConnectorDirective,
+                DefaultFcNodeComponent]
+        })
+    ], NgxFlowchartModule);
     return NgxFlowchartModule;
 }());
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && ɵɵsetNgModuleScope(NgxFlowchartModule, { declarations: [NgxFlowchartComponent,
-        FcMagnetDirective,
-        FcConnectorDirective,
-        FcNodeContainerComponent,
-        DefaultFcNodeComponent], imports: [CommonModule], exports: [NgxFlowchartComponent,
-        FcMagnetDirective,
-        FcConnectorDirective,
-        DefaultFcNodeComponent] }); })();
-/*@__PURE__*/ (function () { ɵsetClassMetadata(NgxFlowchartModule, [{
-        type: NgModule,
-        args: [{
-                entryComponents: [
-                    DefaultFcNodeComponent
-                ],
-                declarations: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    FcNodeContainerComponent,
-                    DefaultFcNodeComponent],
-                providers: [
-                    FcModelValidationService,
-                    FcEdgeDrawingService,
-                    {
-                        provide: FC_NODE_COMPONENT_CONFIG,
-                        useValue: {
-                            nodeComponentType: DefaultFcNodeComponent
-                        }
-                    }
-                ],
-                imports: [
-                    CommonModule
-                ],
-                exports: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    DefaultFcNodeComponent]
-            }]
-    }], null, null); })();
 
 /*
  * Public API Surface of ngx-flowchart
@@ -2494,5 +2371,5 @@ var NgxFlowchartModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort };
+export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort, ɵ0$1 as ɵ0, FcNodeContainerComponent as ɵa, FcModelValidationService as ɵb, FcEdgeDrawingService as ɵc };
 //# sourceMappingURL=ngx-flowchart.js.map

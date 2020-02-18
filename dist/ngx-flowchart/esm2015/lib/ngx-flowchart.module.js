@@ -1,3 +1,4 @@
+import { __decorate } from "tslib";
 import { NgModule } from '@angular/core';
 import { NgxFlowchartComponent } from './ngx-flowchart.component';
 import { FcModelValidationService } from './modelvalidation.service';
@@ -8,58 +9,38 @@ import { FcConnectorDirective } from './connector.directive';
 import { FcNodeContainerComponent } from './node.component';
 import { FC_NODE_COMPONENT_CONFIG } from './ngx-flowchart.models';
 import { DefaultFcNodeComponent } from './default-node.component';
-import * as i0 from "@angular/core";
-export class NgxFlowchartModule {
-}
-NgxFlowchartModule.ɵmod = i0.ɵɵdefineNgModule({ type: NgxFlowchartModule });
-NgxFlowchartModule.ɵinj = i0.ɵɵdefineInjector({ factory: function NgxFlowchartModule_Factory(t) { return new (t || NgxFlowchartModule)(); }, providers: [
-        FcModelValidationService,
-        FcEdgeDrawingService,
-        {
-            provide: FC_NODE_COMPONENT_CONFIG,
-            useValue: {
-                nodeComponentType: DefaultFcNodeComponent
+const ɵ0 = {
+    nodeComponentType: DefaultFcNodeComponent
+};
+let NgxFlowchartModule = class NgxFlowchartModule {
+};
+NgxFlowchartModule = __decorate([
+    NgModule({
+        entryComponents: [
+            DefaultFcNodeComponent
+        ],
+        declarations: [NgxFlowchartComponent,
+            FcMagnetDirective,
+            FcConnectorDirective,
+            FcNodeContainerComponent,
+            DefaultFcNodeComponent],
+        providers: [
+            FcModelValidationService,
+            FcEdgeDrawingService,
+            {
+                provide: FC_NODE_COMPONENT_CONFIG,
+                useValue: ɵ0
             }
-        }
-    ], imports: [[
+        ],
+        imports: [
             CommonModule
-        ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(NgxFlowchartModule, { declarations: [NgxFlowchartComponent,
-        FcMagnetDirective,
-        FcConnectorDirective,
-        FcNodeContainerComponent,
-        DefaultFcNodeComponent], imports: [CommonModule], exports: [NgxFlowchartComponent,
-        FcMagnetDirective,
-        FcConnectorDirective,
-        DefaultFcNodeComponent] }); })();
-/*@__PURE__*/ (function () { i0.ɵsetClassMetadata(NgxFlowchartModule, [{
-        type: NgModule,
-        args: [{
-                entryComponents: [
-                    DefaultFcNodeComponent
-                ],
-                declarations: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    FcNodeContainerComponent,
-                    DefaultFcNodeComponent],
-                providers: [
-                    FcModelValidationService,
-                    FcEdgeDrawingService,
-                    {
-                        provide: FC_NODE_COMPONENT_CONFIG,
-                        useValue: {
-                            nodeComponentType: DefaultFcNodeComponent
-                        }
-                    }
-                ],
-                imports: [
-                    CommonModule
-                ],
-                exports: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    DefaultFcNodeComponent]
-            }]
-    }], null, null); })();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibmd4LWZsb3djaGFydC5tb2R1bGUuanMiLCJzb3VyY2VSb290Ijoibmc6Ly9uZ3gtZmxvd2NoYXJ0LyIsInNvdXJjZXMiOlsibGliL25neC1mbG93Y2hhcnQubW9kdWxlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sRUFBRSxRQUFRLEVBQUUsTUFBTSxlQUFlLENBQUM7QUFDekMsT0FBTyxFQUFFLHFCQUFxQixFQUFFLE1BQU0sMkJBQTJCLENBQUM7QUFDbEUsT0FBTyxFQUFFLHdCQUF3QixFQUFFLE1BQU0sMkJBQTJCLENBQUM7QUFDckUsT0FBTyxFQUFFLG9CQUFvQixFQUFFLE1BQU0sd0JBQXdCLENBQUM7QUFDOUQsT0FBTyxFQUFFLFlBQVksRUFBRSxNQUFNLGlCQUFpQixDQUFDO0FBQy9DLE9BQU8sRUFBRSxpQkFBaUIsRUFBRSxNQUFNLG9CQUFvQixDQUFDO0FBQ3ZELE9BQU8sRUFBRSxvQkFBb0IsRUFBRSxNQUFNLHVCQUF1QixDQUFDO0FBQzdELE9BQU8sRUFBRSx3QkFBd0IsRUFBRSxNQUFNLGtCQUFrQixDQUFDO0FBQzVELE9BQU8sRUFBRSx3QkFBd0IsRUFBRSxNQUFNLHdCQUF3QixDQUFDO0FBQ2xFLE9BQU8sRUFBRSxzQkFBc0IsRUFBRSxNQUFNLDBCQUEwQixDQUFDOztBQTZCbEUsTUFBTSxPQUFPLGtCQUFrQjs7c0RBQWxCLGtCQUFrQjttSEFBbEIsa0JBQWtCLG1CQWxCbEI7UUFDVCx3QkFBd0I7UUFDeEIsb0JBQW9CO1FBQ3BCO1lBQ0UsT0FBTyxFQUFFLHdCQUF3QjtZQUNqQyxRQUFRLEVBQUU7Z0JBQ1IsaUJBQWlCLEVBQUUsc0JBQXNCO2FBQzFDO1NBQ0Y7S0FDRixZQUNRO1lBQ1AsWUFBWTtTQUNiO3dGQU1VLGtCQUFrQixtQkF2QmQscUJBQXFCO1FBQ2xDLGlCQUFpQjtRQUNqQixvQkFBb0I7UUFDcEIsd0JBQXdCO1FBQ3hCLHNCQUFzQixhQVl0QixZQUFZLGFBRUoscUJBQXFCO1FBQzdCLGlCQUFpQjtRQUNqQixvQkFBb0I7UUFDcEIsc0JBQXNCO2tEQUViLGtCQUFrQjtjQTNCOUIsUUFBUTtlQUFDO2dCQUNSLGVBQWUsRUFBRTtvQkFDZixzQkFBc0I7aUJBQ3ZCO2dCQUNELFlBQVksRUFBRSxDQUFDLHFCQUFxQjtvQkFDbEMsaUJBQWlCO29CQUNqQixvQkFBb0I7b0JBQ3BCLHdCQUF3QjtvQkFDeEIsc0JBQXNCLENBQUM7Z0JBQ3pCLFNBQVMsRUFBRTtvQkFDVCx3QkFBd0I7b0JBQ3hCLG9CQUFvQjtvQkFDcEI7d0JBQ0UsT0FBTyxFQUFFLHdCQUF3Qjt3QkFDakMsUUFBUSxFQUFFOzRCQUNSLGlCQUFpQixFQUFFLHNCQUFzQjt5QkFDMUM7cUJBQ0Y7aUJBQ0Y7Z0JBQ0QsT0FBTyxFQUFFO29CQUNQLFlBQVk7aUJBQ2I7Z0JBQ0QsT0FBTyxFQUFFLENBQUMscUJBQXFCO29CQUM3QixpQkFBaUI7b0JBQ2pCLG9CQUFvQjtvQkFDcEIsc0JBQXNCLENBQUM7YUFDMUIiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBOZ01vZHVsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTmd4Rmxvd2NoYXJ0Q29tcG9uZW50IH0gZnJvbSAnLi9uZ3gtZmxvd2NoYXJ0LmNvbXBvbmVudCc7XG5pbXBvcnQgeyBGY01vZGVsVmFsaWRhdGlvblNlcnZpY2UgfSBmcm9tICcuL21vZGVsdmFsaWRhdGlvbi5zZXJ2aWNlJztcbmltcG9ydCB7IEZjRWRnZURyYXdpbmdTZXJ2aWNlIH0gZnJvbSAnLi9lZGdlLWRyYXdpbmcuc2VydmljZSc7XG5pbXBvcnQgeyBDb21tb25Nb2R1bGUgfSBmcm9tICdAYW5ndWxhci9jb21tb24nO1xuaW1wb3J0IHsgRmNNYWduZXREaXJlY3RpdmUgfSBmcm9tICcuL21hZ25ldC5kaXJlY3RpdmUnO1xuaW1wb3J0IHsgRmNDb25uZWN0b3JEaXJlY3RpdmUgfSBmcm9tICcuL2Nvbm5lY3Rvci5kaXJlY3RpdmUnO1xuaW1wb3J0IHsgRmNOb2RlQ29udGFpbmVyQ29tcG9uZW50IH0gZnJvbSAnLi9ub2RlLmNvbXBvbmVudCc7XG5pbXBvcnQgeyBGQ19OT0RFX0NPTVBPTkVOVF9DT05GSUcgfSBmcm9tICcuL25neC1mbG93Y2hhcnQubW9kZWxzJztcbmltcG9ydCB7IERlZmF1bHRGY05vZGVDb21wb25lbnQgfSBmcm9tICcuL2RlZmF1bHQtbm9kZS5jb21wb25lbnQnO1xuXG5ATmdNb2R1bGUoe1xuICBlbnRyeUNvbXBvbmVudHM6IFtcbiAgICBEZWZhdWx0RmNOb2RlQ29tcG9uZW50XG4gIF0sXG4gIGRlY2xhcmF0aW9uczogW05neEZsb3djaGFydENvbXBvbmVudCxcbiAgICBGY01hZ25ldERpcmVjdGl2ZSxcbiAgICBGY0Nvbm5lY3RvckRpcmVjdGl2ZSxcbiAgICBGY05vZGVDb250YWluZXJDb21wb25lbnQsXG4gICAgRGVmYXVsdEZjTm9kZUNvbXBvbmVudF0sXG4gIHByb3ZpZGVyczogW1xuICAgIEZjTW9kZWxWYWxpZGF0aW9uU2VydmljZSxcbiAgICBGY0VkZ2VEcmF3aW5nU2VydmljZSxcbiAgICB7XG4gICAgICBwcm92aWRlOiBGQ19OT0RFX0NPTVBPTkVOVF9DT05GSUcsXG4gICAgICB1c2VWYWx1ZToge1xuICAgICAgICBub2RlQ29tcG9uZW50VHlwZTogRGVmYXVsdEZjTm9kZUNvbXBvbmVudFxuICAgICAgfVxuICAgIH1cbiAgXSxcbiAgaW1wb3J0czogW1xuICAgIENvbW1vbk1vZHVsZVxuICBdLFxuICBleHBvcnRzOiBbTmd4Rmxvd2NoYXJ0Q29tcG9uZW50LFxuICAgIEZjTWFnbmV0RGlyZWN0aXZlLFxuICAgIEZjQ29ubmVjdG9yRGlyZWN0aXZlLFxuICAgIERlZmF1bHRGY05vZGVDb21wb25lbnRdXG59KVxuZXhwb3J0IGNsYXNzIE5neEZsb3djaGFydE1vZHVsZSB7IH1cbiJdfQ==
+        ],
+        exports: [NgxFlowchartComponent,
+            FcMagnetDirective,
+            FcConnectorDirective,
+            DefaultFcNodeComponent]
+    })
+], NgxFlowchartModule);
+export { NgxFlowchartModule };
+export { ɵ0 };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibmd4LWZsb3djaGFydC5tb2R1bGUuanMiLCJzb3VyY2VSb290Ijoibmc6Ly9uZ3gtZmxvd2NoYXJ0LyIsInNvdXJjZXMiOlsibGliL25neC1mbG93Y2hhcnQubW9kdWxlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxPQUFPLEVBQUUsUUFBUSxFQUFFLE1BQU0sZUFBZSxDQUFDO0FBQ3pDLE9BQU8sRUFBRSxxQkFBcUIsRUFBRSxNQUFNLDJCQUEyQixDQUFDO0FBQ2xFLE9BQU8sRUFBRSx3QkFBd0IsRUFBRSxNQUFNLDJCQUEyQixDQUFDO0FBQ3JFLE9BQU8sRUFBRSxvQkFBb0IsRUFBRSxNQUFNLHdCQUF3QixDQUFDO0FBQzlELE9BQU8sRUFBRSxZQUFZLEVBQUUsTUFBTSxpQkFBaUIsQ0FBQztBQUMvQyxPQUFPLEVBQUUsaUJBQWlCLEVBQUUsTUFBTSxvQkFBb0IsQ0FBQztBQUN2RCxPQUFPLEVBQUUsb0JBQW9CLEVBQUUsTUFBTSx1QkFBdUIsQ0FBQztBQUM3RCxPQUFPLEVBQUUsd0JBQXdCLEVBQUUsTUFBTSxrQkFBa0IsQ0FBQztBQUM1RCxPQUFPLEVBQUUsd0JBQXdCLEVBQUUsTUFBTSx3QkFBd0IsQ0FBQztBQUNsRSxPQUFPLEVBQUUsc0JBQXNCLEVBQUUsTUFBTSwwQkFBMEIsQ0FBQztXQWdCbEQ7SUFDUixpQkFBaUIsRUFBRSxzQkFBc0I7Q0FDMUM7QUFXUCxJQUFhLGtCQUFrQixHQUEvQixNQUFhLGtCQUFrQjtDQUFJLENBQUE7QUFBdEIsa0JBQWtCO0lBM0I5QixRQUFRLENBQUM7UUFDUixlQUFlLEVBQUU7WUFDZixzQkFBc0I7U0FDdkI7UUFDRCxZQUFZLEVBQUUsQ0FBQyxxQkFBcUI7WUFDbEMsaUJBQWlCO1lBQ2pCLG9CQUFvQjtZQUNwQix3QkFBd0I7WUFDeEIsc0JBQXNCLENBQUM7UUFDekIsU0FBUyxFQUFFO1lBQ1Qsd0JBQXdCO1lBQ3hCLG9CQUFvQjtZQUNwQjtnQkFDRSxPQUFPLEVBQUUsd0JBQXdCO2dCQUNqQyxRQUFRLElBRVA7YUFDRjtTQUNGO1FBQ0QsT0FBTyxFQUFFO1lBQ1AsWUFBWTtTQUNiO1FBQ0QsT0FBTyxFQUFFLENBQUMscUJBQXFCO1lBQzdCLGlCQUFpQjtZQUNqQixvQkFBb0I7WUFDcEIsc0JBQXNCLENBQUM7S0FDMUIsQ0FBQztHQUNXLGtCQUFrQixDQUFJO1NBQXRCLGtCQUFrQiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IE5nTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBOZ3hGbG93Y2hhcnRDb21wb25lbnQgfSBmcm9tICcuL25neC1mbG93Y2hhcnQuY29tcG9uZW50JztcbmltcG9ydCB7IEZjTW9kZWxWYWxpZGF0aW9uU2VydmljZSB9IGZyb20gJy4vbW9kZWx2YWxpZGF0aW9uLnNlcnZpY2UnO1xuaW1wb3J0IHsgRmNFZGdlRHJhd2luZ1NlcnZpY2UgfSBmcm9tICcuL2VkZ2UtZHJhd2luZy5zZXJ2aWNlJztcbmltcG9ydCB7IENvbW1vbk1vZHVsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbic7XG5pbXBvcnQgeyBGY01hZ25ldERpcmVjdGl2ZSB9IGZyb20gJy4vbWFnbmV0LmRpcmVjdGl2ZSc7XG5pbXBvcnQgeyBGY0Nvbm5lY3RvckRpcmVjdGl2ZSB9IGZyb20gJy4vY29ubmVjdG9yLmRpcmVjdGl2ZSc7XG5pbXBvcnQgeyBGY05vZGVDb250YWluZXJDb21wb25lbnQgfSBmcm9tICcuL25vZGUuY29tcG9uZW50JztcbmltcG9ydCB7IEZDX05PREVfQ09NUE9ORU5UX0NPTkZJRyB9IGZyb20gJy4vbmd4LWZsb3djaGFydC5tb2RlbHMnO1xuaW1wb3J0IHsgRGVmYXVsdEZjTm9kZUNvbXBvbmVudCB9IGZyb20gJy4vZGVmYXVsdC1ub2RlLmNvbXBvbmVudCc7XG5cbkBOZ01vZHVsZSh7XG4gIGVudHJ5Q29tcG9uZW50czogW1xuICAgIERlZmF1bHRGY05vZGVDb21wb25lbnRcbiAgXSxcbiAgZGVjbGFyYXRpb25zOiBbTmd4Rmxvd2NoYXJ0Q29tcG9uZW50LFxuICAgIEZjTWFnbmV0RGlyZWN0aXZlLFxuICAgIEZjQ29ubmVjdG9yRGlyZWN0aXZlLFxuICAgIEZjTm9kZUNvbnRhaW5lckNvbXBvbmVudCxcbiAgICBEZWZhdWx0RmNOb2RlQ29tcG9uZW50XSxcbiAgcHJvdmlkZXJzOiBbXG4gICAgRmNNb2RlbFZhbGlkYXRpb25TZXJ2aWNlLFxuICAgIEZjRWRnZURyYXdpbmdTZXJ2aWNlLFxuICAgIHtcbiAgICAgIHByb3ZpZGU6IEZDX05PREVfQ09NUE9ORU5UX0NPTkZJRyxcbiAgICAgIHVzZVZhbHVlOiB7XG4gICAgICAgIG5vZGVDb21wb25lbnRUeXBlOiBEZWZhdWx0RmNOb2RlQ29tcG9uZW50XG4gICAgICB9XG4gICAgfVxuICBdLFxuICBpbXBvcnRzOiBbXG4gICAgQ29tbW9uTW9kdWxlXG4gIF0sXG4gIGV4cG9ydHM6IFtOZ3hGbG93Y2hhcnRDb21wb25lbnQsXG4gICAgRmNNYWduZXREaXJlY3RpdmUsXG4gICAgRmNDb25uZWN0b3JEaXJlY3RpdmUsXG4gICAgRGVmYXVsdEZjTm9kZUNvbXBvbmVudF1cbn0pXG5leHBvcnQgY2xhc3MgTmd4Rmxvd2NoYXJ0TW9kdWxlIHsgfVxuIl19

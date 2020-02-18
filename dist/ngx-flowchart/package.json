@@ -16,8 +16,6 @@
   "fesm5": "fesm5/ngx-flowchart.js",
   "fesm2015": "fesm2015/ngx-flowchart.js",
   "typings": "ngx-flowchart.d.ts",
-  "sideEffects": false,
-  "scripts": {
-    "prepublishOnly": "node --eval \"console.error('ERROR: Trying to publish a package that has been compiled by Ivy. This is not allowed.\\nPlease delete and rebuild the package, without compiling with Ivy, before attempting to publish.\\n')\" && exit 1"
-  }
+  "metadata": "ngx-flowchart.metadata.json",
+  "sideEffects": false
 }

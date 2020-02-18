@@ -140,6 +140,7 @@
           },
           "configurations": {
             "production": {
+              "tsConfig": "projects/ngx-flowchart/tsconfig.lib.prod.json",
               "project": "projects/ngx-flowchart/ng-package.prod.json"
             }
           }

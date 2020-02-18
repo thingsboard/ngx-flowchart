@@ -1,5 +1,4 @@
 import { FcConnector, FcEdge, FcModel, FcNode } from './ngx-flowchart.models';
-import * as i0 from "@angular/core";
 export declare class FcModelValidationService {
     constructor();
     validateModel(model: FcModel): FcModel;
@@ -10,6 +9,4 @@ export declare class FcModelValidationService {
     private _validateEdge;
     validateEdge(edge: FcEdge, nodes: Array<FcNode>): FcEdge;
     validateConnector(connector: FcConnector): FcConnector;
-    static ɵfac: i0.ɵɵFactoryDef<FcModelValidationService>;
-    static ɵprov: i0.ɵɵInjectableDef<FcModelValidationService>;
 }

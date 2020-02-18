@@ -7,7 +7,6 @@ import { FcEdgeDrawingService } from './edge-drawing.service';
 import { FcEdgeDraggingService } from './edge-dragging.service';
 import { FcMouseOverService } from './mouseover.service';
 import { FcRectangleSelectService } from './rectangleselect.service';
-import * as i0 from "@angular/core";
 export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     private elementRef;
     private differs;
@@ -85,6 +84,4 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     mousedown(event: MouseEvent): void;
     mousemove(event: MouseEvent): void;
     mouseup(event: MouseEvent): void;
-    static ɵfac: i0.ɵɵFactoryDef<NgxFlowchartComponent>;
-    static ɵcmp: i0.ɵɵComponentDefWithMeta<NgxFlowchartComponent, "fc-canvas", never, { "model": "model"; "selectedObjects": "selectedObjects"; "edgeStyle": "edgeStyle"; "userCallbacks": "userCallbacks"; "automaticResize": "automaticResize"; "dragAnimation": "dragAnimation"; "nodeWidth": "nodeWidth"; "nodeHeight": "nodeHeight"; "dropTargetId": "dropTargetId"; "fitModelSizeByDefault": "fitModelSizeByDefault"; }, { "modelChanged": "modelChanged"; }, never>;
 }
