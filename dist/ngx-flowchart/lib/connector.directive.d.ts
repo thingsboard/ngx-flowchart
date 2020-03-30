@@ -12,10 +12,10 @@ export declare class FcConnectorDirective implements OnInit, OnChanges {
     ngOnInit(): void;
     ngOnChanges(changes: SimpleChanges): void;
     private updateConnectorClass;
-    dragover(event: DragEvent): void;
-    drop(event: DragEvent): boolean;
-    dragend(event: DragEvent): void;
-    dragstart(event: DragEvent): void;
+    dragover(event: Event | any): void;
+    drop(event: Event | any): boolean;
+    dragend(event: Event | any): void;
+    dragstart(event: Event | any): void;
     mouseenter(event: MouseEvent): void;
     mouseleave(event: MouseEvent): void;
 }

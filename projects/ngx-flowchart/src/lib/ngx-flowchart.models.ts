@@ -119,14 +119,14 @@ export interface UserNodeCallbacks {
 }
 
 export interface FcCallbacks {
-  nodeDragstart: (event: DragEvent, node: FcNode) => void;
-  nodeDragend: (event: DragEvent) => void;
-  edgeDragstart: (event: DragEvent, connector: FcConnector) => void;
-  edgeDragend: (event: DragEvent) => void;
-  edgeDrop: (event: DragEvent, targetConnector: FcConnector) => boolean;
-  edgeDragoverConnector: (event: DragEvent, connector: FcConnector) => boolean;
-  edgeDragoverMagnet: (event: DragEvent, connector: FcConnector) => boolean;
-  edgeDragleaveMagnet: (event: DragEvent) => void;
+  nodeDragstart: (event: Event | any, node: FcNode) => void;
+  nodeDragend: (event: Event | any) => void;
+  edgeDragstart: (event: Event | any, connector: FcConnector) => void;
+  edgeDragend: (event: Event | any) => void;
+  edgeDrop: (event: Event | any, targetConnector: FcConnector) => boolean;
+  edgeDragoverConnector: (event: Event | any, connector: FcConnector) => boolean;
+  edgeDragoverMagnet: (event: Event | any, connector: FcConnector) => boolean;
+  edgeDragleaveMagnet: (event: Event | any) => void;
   nodeMouseOver: (event: MouseEvent, node: FcNode) => void;
   nodeMouseOut: (event: MouseEvent, node: FcNode) => void;
   connectorMouseEnter: (event: MouseEvent, connector: FcConnector) => void;

@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FcCallbacks, FcConnector, FcConnectorRectInfo, FcNodeRectInfo, FlowchartConstants } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 
@@ -67,7 +67,7 @@ export class FcConnectorDirective implements OnInit, OnChanges {
   }
 
   @HostListener('dragover', ['$event'])
-  dragover(event: DragEvent) {
+  dragover(event: Event | any) {
     // Skip - conflict with magnet
     /* if (this.modelservice.isEditable()) {
       return this.callbacks.edgeDragoverConnector(event, this.connector);
@@ -75,21 +75,21 @@ export class FcConnectorDirective implements OnInit, OnChanges {
   }
 
   @HostListener('drop', ['$event'])
-  drop(event: DragEvent) {
+  drop(event: Event | any) {
     if (this.modelservice.isEditable()) {
       return this.callbacks.edgeDrop(event, this.connector);
     }
   }
 
   @HostListener('dragend', ['$event'])
-  dragend(event: DragEvent) {
+  dragend(event: Event | any) {
     if (this.modelservice.isEditable()) {
       this.callbacks.edgeDragend(event);
     }
   }
 
   @HostListener('dragstart', ['$event'])
-  dragstart(event: DragEvent) {
+  dragstart(event: Event | any) {
     if (this.modelservice.isEditable()) {
       this.callbacks.edgeDragstart(event, this.connector);
     }

@@ -162,14 +162,14 @@ export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChange
   }
 
   @HostListener('dragstart', ['$event'])
-  dragstart(event: DragEvent) {
+  dragstart(event: Event | any) {
     if (!this.node.readonly) {
       this.callbacks.nodeDragstart(event, this.node);
     }
   }
 
   @HostListener('dragend', ['$event'])
-  dragend(event: DragEvent) {
+  dragend(event: Event | any) {
     if (!this.node.readonly) {
       this.callbacks.nodeDragend(event);
     }

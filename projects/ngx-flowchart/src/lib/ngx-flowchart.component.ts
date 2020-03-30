@@ -281,13 +281,13 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
   }
 
   @HostListener('dragover', ['$event'])
-  dragover(event: DragEvent) {
+  dragover(event: Event | any) {
     this.nodeDraggingService.dragover(event);
     this.edgeDraggingService.dragover(event);
   }
 
   @HostListener('drop', ['$event'])
-  drop(event: DragEvent) {
+  drop(event: Event | any) {
     if (event.preventDefault) {
       event.preventDefault();
     }

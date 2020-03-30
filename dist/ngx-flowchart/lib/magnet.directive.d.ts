@@ -6,8 +6,8 @@ export declare class FcMagnetDirective implements OnInit {
     connector: FcConnector;
     constructor(elementRef: ElementRef<HTMLElement>);
     ngOnInit(): void;
-    dragover(event: DragEvent): boolean;
-    dragleave(event: DragEvent): void;
-    drop(event: DragEvent): boolean;
-    dragend(event: DragEvent): void;
+    dragover(event: Event | any): boolean;
+    dragleave(event: Event | any): void;
+    drop(event: Event | any): boolean;
+    dragend(event: Event | any): void;
 }

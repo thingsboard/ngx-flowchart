@@ -79,8 +79,8 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     edgeMouseOver(event: MouseEvent, edge: FcEdge): void;
     edgeMouseEnter(event: MouseEvent, edge: FcEdge): void;
     edgeMouseLeave(event: MouseEvent, edge: FcEdge): void;
-    dragover(event: DragEvent): void;
-    drop(event: DragEvent): void;
+    dragover(event: Event | any): void;
+    drop(event: Event | any): void;
     mousedown(event: MouseEvent): void;
     mousemove(event: MouseEvent): void;
     mouseup(event: MouseEvent): void;

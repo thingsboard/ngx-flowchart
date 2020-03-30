@@ -1933,13 +1933,13 @@
         __decorate([
             core.HostListener('dragover', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], NgxFlowchartComponent.prototype, "dragover", null);
         __decorate([
             core.HostListener('drop', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], NgxFlowchartComponent.prototype, "drop", null);
         __decorate([
@@ -2011,25 +2011,25 @@
         __decorate([
             core.HostListener('dragover', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcMagnetDirective.prototype, "dragover", null);
         __decorate([
             core.HostListener('dragleave', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcMagnetDirective.prototype, "dragleave", null);
         __decorate([
             core.HostListener('drop', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcMagnetDirective.prototype, "drop", null);
         __decorate([
             core.HostListener('dragend', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcMagnetDirective.prototype, "dragend", null);
         FcMagnetDirective = __decorate([
@@ -2152,25 +2152,25 @@
         __decorate([
             core.HostListener('dragover', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcConnectorDirective.prototype, "dragover", null);
         __decorate([
             core.HostListener('drop', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcConnectorDirective.prototype, "drop", null);
         __decorate([
             core.HostListener('dragend', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcConnectorDirective.prototype, "dragend", null);
         __decorate([
             core.HostListener('dragstart', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcConnectorDirective.prototype, "dragstart", null);
         __decorate([
@@ -2399,13 +2399,13 @@
         __decorate([
             core.HostListener('dragstart', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcNodeContainerComponent.prototype, "dragstart", null);
         __decorate([
             core.HostListener('dragend', ['$event']),
             __metadata("design:type", Function),
-            __metadata("design:paramtypes", [DragEvent]),
+            __metadata("design:paramtypes", [Object]),
             __metadata("design:returntype", void 0)
         ], FcNodeContainerComponent.prototype, "dragend", null);
         __decorate([

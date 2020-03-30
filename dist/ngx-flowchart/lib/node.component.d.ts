@@ -27,8 +27,8 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     private updateNodeComponent;
     private toggleClass;
     mousedown(event: MouseEvent): void;
-    dragstart(event: DragEvent): void;
-    dragend(event: DragEvent): void;
+    dragstart(event: Event | any): void;
+    dragend(event: Event | any): void;
     click(event: MouseEvent): void;
     mouseover(event: MouseEvent): void;
     mouseout(event: MouseEvent): void;

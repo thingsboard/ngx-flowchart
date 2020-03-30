@@ -64,7 +64,7 @@ export class FcNodeDraggingService {
     return this.nodeDraggingScope.draggedNodes.includes(node);
   }
 
-  public dragstart(event: DragEvent, node: FcNode) {
+  public dragstart(event: Event | any, node: FcNode) {
     if (node.readonly) {
       return;
     }
@@ -93,7 +93,7 @@ export class FcNodeDraggingService {
       offsetsX.push(parseInt(element.css('left'), 10) - event.clientX);
       offsetsY.push(parseInt(element.css('top'), 10) - event.clientY);
     }
-    const originalEvent: DragEvent = (event as any).originalEvent || event;
+    const originalEvent: Event | any = (event as any).originalEvent || event;
     if (this.modelService.isDropSource()) {
       if (nodeDropScope.dropElement) {
         nodeDropScope.dropElement.parentNode.removeChild(nodeDropScope.dropElement);
@@ -181,13 +181,13 @@ export class FcNodeDraggingService {
     }
   }
 
-  public drop(event: DragEvent): boolean {
+  public drop(event: Event | any): boolean {
     if (this.modelService.isDropSource()) {
       event.preventDefault();
       return false;
     }
     let dropNode: FcNode = null;
-    const originalEvent: DragEvent = (event as any).originalEvent || event;
+    const originalEvent: Event | any = (event as any).originalEvent || event;
     const infoText = originalEvent.dataTransfer.getData('text');
     if (infoText) {
       let dropNodeInfo: DropNodeInfo = null;
@@ -225,7 +225,7 @@ export class FcNodeDraggingService {
     }
   }
 
-  public dragover(event: DragEvent) {
+  public dragover(event: Event | any) {
     if (nodeDropScope.dropElement) {
       const offsetInfo = nodeDropScope.dropElement.offsetInfo;
       nodeDropScope.dropElement.style.left = (offsetInfo.offsetX + event.clientX) + 'px';
@@ -284,7 +284,7 @@ export class FcNodeDraggingService {
     }
   }
 
-  public dragend(event: DragEvent) {
+  public dragend(event: Event | any) {
     this.applyFunction(() => {
       if (nodeDropScope.dropElement) {
         nodeDropScope.dropElement.parentNode.removeChild(nodeDropScope.dropElement);
