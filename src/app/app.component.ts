@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, HostBinding, HostListener, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, HostListener, ViewChild } from '@angular/core';
 import { FcModel, FcNode, FlowchartConstants, NgxFlowchartComponent, UserCallbacks } from 'ngx-flowchart-dev';
 import { of } from 'rxjs';
-import { A, CONTROL, DELETE, ESCAPE } from '@angular/cdk/keycodes';
+import { DELETE } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-root',

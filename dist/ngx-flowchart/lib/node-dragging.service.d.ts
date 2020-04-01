@@ -17,10 +17,10 @@ export declare class FcNodeDraggingService {
     private getYCoordinate;
     private resizeCanvas;
     isDraggingNode(node: FcNode): boolean;
-    dragstart(event: DragEvent, node: FcNode): void;
-    drop(event: DragEvent): boolean;
-    dragover(event: DragEvent): boolean;
-    dragend(event: DragEvent): void;
+    dragstart(event: Event | any, node: FcNode): void;
+    drop(event: Event | any): boolean;
+    dragover(event: Event | any): boolean;
+    dragend(event: Event | any): void;
 }
 export interface NodeDraggingScope {
     draggedNodes: Array<FcNode>;

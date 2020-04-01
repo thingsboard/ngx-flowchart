@@ -22,22 +22,22 @@ export class FcMagnetDirective implements OnInit {
   }
 
   @HostListener('dragover', ['$event'])
-  dragover(event: DragEvent) {
+  dragover(event: Event | any) {
     return this.callbacks.edgeDragoverMagnet(event, this.connector);
   }
 
   @HostListener('dragleave', ['$event'])
-  dragleave(event: DragEvent) {
+  dragleave(event: Event | any) {
     this.callbacks.edgeDragleaveMagnet(event);
   }
 
   @HostListener('drop', ['$event'])
-  drop(event: DragEvent) {
+  drop(event: Event | any) {
     return this.callbacks.edgeDrop(event, this.connector);
   }
 
   @HostListener('dragend', ['$event'])
-  dragend(event: DragEvent) {
+  dragend(event: Event | any) {
     this.callbacks.edgeDragend(event);
   }
 

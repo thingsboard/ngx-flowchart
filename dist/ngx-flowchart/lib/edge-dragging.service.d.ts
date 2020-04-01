@@ -18,13 +18,13 @@ export declare class FcEdgeDraggingService {
     private readonly dragAnimation;
     private readonly edgeStyle;
     constructor(modelValidation: FcModelValidationService, edgeDrawingService: FcEdgeDrawingService, modelService: FcModelService, model: FcModel, isValidEdgeCallback: (source: FcConnector, destination: FcConnector) => boolean, applyFunction: <T>(fn: (...args: any[]) => T) => T, dragAnimation: string, edgeStyle: string);
-    dragstart(event: DragEvent, connector: FcConnector): void;
-    dragover(event: DragEvent): void;
-    dragoverConnector(event: DragEvent, connector: FcConnector): boolean;
-    dragleaveMagnet(event: DragEvent): void;
-    dragoverMagnet(event: DragEvent, connector: FcConnector): boolean;
-    dragend(event: DragEvent): void;
-    drop(event: DragEvent, targetConnector: FcConnector): boolean;
+    dragstart(event: Event | any, connector: FcConnector): void;
+    dragover(event: Event | any): void;
+    dragoverConnector(event: Event | any, connector: FcConnector): boolean;
+    dragleaveMagnet(event: Event | any): void;
+    dragoverMagnet(event: Event | any, connector: FcConnector): boolean;
+    dragend(event: Event | any): void;
+    drop(event: Event | any, targetConnector: FcConnector): boolean;
 }
 export interface EdgeDragging {
     isDragging: boolean;

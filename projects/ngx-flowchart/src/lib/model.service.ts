@@ -11,7 +11,7 @@ import {
   FlowchartConstants
 } from './ngx-flowchart.models';
 import { Observable, of, Subject } from 'rxjs';
-import { ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { EventEmitter } from '@angular/core';
 import { debounceTime } from 'rxjs/operators';
 
 export class FcModelService {

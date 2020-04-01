@@ -44,7 +44,7 @@ export class FcEdgeDraggingService {
     this.edgeStyle = edgeStyle;
   }
 
-  public dragstart(event: DragEvent, connector: FcConnector) {
+  public dragstart(event: Event | any, connector: FcConnector) {
     let swapConnector: FcConnector;
     let dragLabel: string;
     let prevEdge: FcEdge;
@@ -82,7 +82,7 @@ export class FcEdgeDraggingService {
       x: event.clientX + this.dragOffset.x,
       y: event.clientY + this.dragOffset.y
     };
-    const originalEvent: DragEvent = (event as any).originalEvent || event;
+    const originalEvent: Event | any = (event as any).originalEvent || event;
 
     originalEvent.dataTransfer.setData('Text', 'Just to support firefox');
     if (originalEvent.dataTransfer.setDragImage) {
@@ -111,7 +111,7 @@ export class FcEdgeDraggingService {
     event.stopPropagation();
   }
 
-  public dragover(event: DragEvent) {
+  public dragover(event: Event | any) {
     if (this.edgeDragging.isDragging) {
       if (!this.edgeDragging.magnetActive && this.dragAnimation === FlowchartConstants.dragAnimationShadow) {
         if (this.destinationHtmlElement !== null) {
@@ -149,7 +149,7 @@ export class FcEdgeDraggingService {
     }
   }
 
-  public dragoverConnector(event: DragEvent, connector: FcConnector): boolean {
+  public dragoverConnector(event: Event | any, connector: FcConnector): boolean {
     if (this.edgeDragging.isDragging) {
       this.dragover(event);
       try {
@@ -172,11 +172,11 @@ export class FcEdgeDraggingService {
     }
   }
 
-  public dragleaveMagnet(event: DragEvent) {
+  public dragleaveMagnet(event: Event | any) {
     this.edgeDragging.magnetActive = false;
   }
 
-  public dragoverMagnet(event: DragEvent, connector: FcConnector): boolean {
+  public dragoverMagnet(event: Event | any, connector: FcConnector): boolean {
     if (this.edgeDragging.isDragging) {
       this.dragover(event);
       try {
@@ -217,7 +217,7 @@ export class FcEdgeDraggingService {
     }
   }
 
-  public dragend(event: DragEvent) {
+  public dragend(event: Event | any) {
     if (this.edgeDragging.isDragging) {
       this.edgeDragging.isDragging = false;
       this.edgeDragging.dragPoint1 = null;
@@ -238,7 +238,7 @@ export class FcEdgeDraggingService {
     }
   }
 
-  public drop(event: DragEvent, targetConnector: FcConnector): boolean {
+  public drop(event: Event | any, targetConnector: FcConnector): boolean {
     if (this.edgeDragging.isDragging) {
       try {
         this.modelValidation.validateEdges(this.model.edges.concat([{
