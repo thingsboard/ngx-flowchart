@@ -1,4 +1,5 @@
-import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { OnInit } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { FcCallbacks, FcConnector, FlowchartConstants } from './ngx-flowchart.models';
 
 @Directive({

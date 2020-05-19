@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, DoCheck, ElementRef, EventEmitter, IterableDiffers, NgZone, OnInit } from '@angular/core';
+import { DoCheck, OnInit } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, EventEmitter, IterableDiffers, NgZone } from '@angular/core';
 import { FcCallbacks, FcEdge, FcModel, UserCallbacks, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 import { FcModelValidationService } from './modelvalidation.service';

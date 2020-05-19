@@ -1,14 +1,13 @@
+import { AfterViewInit, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
-  AfterViewInit,
   Component,
-  ComponentFactoryResolver, Directive,
-  ElementRef, HostBinding,
+  ComponentFactoryResolver,
+  Directive,
+  ElementRef,
+  HostBinding,
   HostListener,
   Inject,
   Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
@@ -17,7 +16,8 @@ import {
   FcCallbacks,
   FcConnector,
   FcNode,
-  FcNodeComponentConfig, FcNodeRectInfo,
+  FcNodeComponentConfig,
+  FcNodeRectInfo,
   FlowchartConstants,
   UserNodeCallbacks
 } from './ngx-flowchart.models';
