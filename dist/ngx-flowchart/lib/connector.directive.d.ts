@@ -1,4 +1,5 @@
-import { ElementRef, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ElementRef } from '@angular/core';
 import { FcCallbacks, FcConnector, FcNodeRectInfo } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 export declare class FcConnectorDirective implements OnInit, OnChanges {

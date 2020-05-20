@@ -1,4 +1,5 @@
-import { ElementRef, OnInit } from '@angular/core';
+import { OnInit } from '@angular/core';
+import { ElementRef } from '@angular/core';
 import { FcCallbacks, FcConnector } from './ngx-flowchart.models';
 export declare class FcMagnetDirective implements OnInit {
     elementRef: ElementRef<HTMLElement>;

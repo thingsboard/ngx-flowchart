@@ -5,8 +5,7 @@
     "@angular/common": "^9.1.3",
     "@angular/core": "^9.1.3",
     "jquery": "^3.5.0",
-    "typescript": "^3.7.5",
-    "tslib": "^1.10.0"
+    "typescript": "^3.7.5"
   },
   "main": "bundles/ngx-flowchart.umd.js",
   "module": "fesm5/ngx-flowchart.js",
@@ -17,5 +16,8 @@
   "fesm2015": "fesm2015/ngx-flowchart.js",
   "typings": "ngx-flowchart.d.ts",
   "metadata": "ngx-flowchart.metadata.json",
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.10.0"
+  }
 }

@@ -1,4 +1,5 @@
-import { AfterViewInit, ComponentFactoryResolver, ElementRef, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ComponentFactoryResolver, ElementRef, ViewContainerRef } from '@angular/core';
 import { FcCallbacks, FcConnector, FcNode, FcNodeComponentConfig, FcNodeRectInfo, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
