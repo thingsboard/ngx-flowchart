@@ -1,7 +1,9 @@
-import { InjectionToken, Injectable, EventEmitter, Component, ChangeDetectionStrategy, ElementRef, IterableDiffers, ChangeDetectorRef, NgZone, HostBinding, Input, Output, HostListener, Directive, Inject, ComponentFactoryResolver, ViewChild, ViewContainerRef, NgModule } from '@angular/core';
+import * as i0 from '@angular/core';
+import { InjectionToken, Injectable, ViewContainerRef, Component, Inject, Input, HostBinding, ViewChild, HostListener, Directive, EventEmitter, ChangeDetectionStrategy, Output, NgModule } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import * as i4 from '@angular/common';
 import { CommonModule } from '@angular/common';
 
 const FC_NODE_COMPONENT_CONFIG = new InjectionToken('fc-node.component.config');
@@ -605,10 +607,11 @@ class FcModelValidationService {
         return connector;
     }
 }
-FcModelValidationService.decorators = [
-    { type: Injectable }
-];
-FcModelValidationService.ctorParameters = () => [];
+FcModelValidationService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+FcModelValidationService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService, decorators: [{
+            type: Injectable
+        }], ctorParameters: function () { return []; } });
 
 const nodeDropScope = {
     dropElement: null
@@ -939,10 +942,11 @@ class FcEdgeDrawingService {
         };
     }
 }
-FcEdgeDrawingService.decorators = [
-    { type: Injectable }
-];
-FcEdgeDrawingService.ctorParameters = () => [];
+FcEdgeDrawingService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+FcEdgeDrawingService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService, decorators: [{
+            type: Injectable
+        }], ctorParameters: function () { return []; } });
 
 class FcEdgeDraggingService {
     constructor(modelValidation, edgeDrawingService, modelService, model, isValidEdgeCallback, applyFunction, dragAnimation, edgeStyle) {
@@ -1212,17 +1216,14 @@ class FcMouseOverService {
 
 const regex = /(auto|scroll)/;
 const style = (node, prop) => getComputedStyle(node, null).getPropertyValue(prop);
-const ɵ0 = style;
 const scroll = (node) => regex.test(style(node, 'overflow') +
     style(node, 'overflow-y') +
     style(node, 'overflow-x'));
-const ɵ1 = scroll;
 const scrollparent = (node) => !node || node === document.body
     ? document.body
     : scroll(node)
         ? node
         : scrollparent(node.parentNode);
-const ɵ2 = scrollparent;
 
 class FcRectangleSelectService {
     constructor(modelService, selectElement, applyFunction) {
@@ -1311,6 +1312,232 @@ class FcRectangleSelectService {
         });
     }
 }
+
+class FcNodeContainerComponent {
+    constructor(nodeComponentConfig, elementRef, componentFactoryResolver) {
+        this.nodeComponentConfig = nodeComponentConfig;
+        this.elementRef = elementRef;
+        this.componentFactoryResolver = componentFactoryResolver;
+    }
+    get nodeId() {
+        return this.node.id;
+    }
+    get top() {
+        return this.node.y + 'px';
+    }
+    get left() {
+        return this.node.x + 'px';
+    }
+    ngOnInit() {
+        if (!this.userNodeCallbacks) {
+            this.userNodeCallbacks = {};
+        }
+        this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (() => { });
+        this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (() => { });
+        this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (() => { });
+        this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (() => { });
+        this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (() => { });
+        const element = $(this.elementRef.nativeElement);
+        element.addClass(FlowchartConstants.nodeClass);
+        if (!this.node.readonly) {
+            element.attr('draggable', 'true');
+        }
+        this.updateNodeClass();
+        this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
+        this.nodeContentContainer.clear();
+        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
+        const componentRef = this.nodeContentContainer.createComponent(componentFactory);
+        this.nodeComponent = componentRef.instance;
+        this.nodeComponent.callbacks = this.callbacks;
+        this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
+        this.nodeComponent.node = this.node;
+        this.nodeComponent.modelservice = this.modelservice;
+        this.updateNodeComponent();
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+    }
+    ngAfterViewInit() {
+        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+    }
+    ngOnChanges(changes) {
+        let updateNode = false;
+        for (const propName of Object.keys(changes)) {
+            const change = changes[propName];
+            if (!change.firstChange && change.currentValue !== change.previousValue) {
+                if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
+                    updateNode = true;
+                }
+            }
+        }
+        if (updateNode) {
+            this.updateNodeClass();
+            this.updateNodeComponent();
+        }
+    }
+    updateNodeClass() {
+        const element = $(this.elementRef.nativeElement);
+        this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
+        this.toggleClass(element, FlowchartConstants.editClass, this.edit);
+        this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
+        this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
+    }
+    updateNodeComponent() {
+        this.nodeComponent.selected = this.selected;
+        this.nodeComponent.edit = this.edit;
+        this.nodeComponent.underMouse = this.underMouse;
+        this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
+        this.nodeComponent.dragging = this.dragging;
+    }
+    toggleClass(element, clazz, set) {
+        if (set) {
+            element.addClass(clazz);
+        }
+        else {
+            element.removeClass(clazz);
+        }
+    }
+    mousedown(event) {
+        event.stopPropagation();
+    }
+    dragstart(event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeDragstart(event, this.node);
+        }
+    }
+    dragend(event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeDragend(event);
+        }
+    }
+    click(event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeClicked(event, this.node);
+        }
+    }
+    mouseover(event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeMouseOver(event, this.node);
+        }
+    }
+    mouseout(event) {
+        if (!this.node.readonly) {
+            this.callbacks.nodeMouseOut(event, this.node);
+        }
+    }
+}
+FcNodeContainerComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeContainerComponent, deps: [{ token: FC_NODE_COMPONENT_CONFIG }, { token: i0.ElementRef }, { token: i0.ComponentFactoryResolver }], target: i0.ɵɵFactoryTarget.Component });
+FcNodeContainerComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeContainerComponent, selector: "fc-node", inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, host: { listeners: { "mousedown": "mousedown($event)", "dragstart": "dragstart($event)", "dragend": "dragend($event)", "click": "click($event)", "mouseover": "mouseover($event)", "mouseout": "mouseout($event)" }, properties: { "attr.id": "this.nodeId", "style.top": "this.top", "style.left": "this.left" } }, viewQueries: [{ propertyName: "nodeContentContainer", first: true, predicate: ["nodeContent"], descendants: true, read: ViewContainerRef, static: true }], usesOnChanges: true, ngImport: i0, template: '<ng-template #nodeContent></ng-template>', isInline: true, styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:flex;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}\n"] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeContainerComponent, decorators: [{
+            type: Component,
+            args: [{
+                    selector: 'fc-node',
+                    template: '<ng-template #nodeContent></ng-template>',
+                    styleUrls: ['./node.component.scss']
+                }]
+        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
+                    type: Inject,
+                    args: [FC_NODE_COMPONENT_CONFIG]
+                }] }, { type: i0.ElementRef }, { type: i0.ComponentFactoryResolver }]; }, propDecorators: { callbacks: [{
+                type: Input
+            }], userNodeCallbacks: [{
+                type: Input
+            }], node: [{
+                type: Input
+            }], selected: [{
+                type: Input
+            }], edit: [{
+                type: Input
+            }], underMouse: [{
+                type: Input
+            }], mouseOverConnector: [{
+                type: Input
+            }], modelservice: [{
+                type: Input
+            }], dragging: [{
+                type: Input
+            }], nodeId: [{
+                type: HostBinding,
+                args: ['attr.id']
+            }], top: [{
+                type: HostBinding,
+                args: ['style.top']
+            }], left: [{
+                type: HostBinding,
+                args: ['style.left']
+            }], nodeContentContainer: [{
+                type: ViewChild,
+                args: ['nodeContent', { read: ViewContainerRef, static: true }]
+            }], mousedown: [{
+                type: HostListener,
+                args: ['mousedown', ['$event']]
+            }], dragstart: [{
+                type: HostListener,
+                args: ['dragstart', ['$event']]
+            }], dragend: [{
+                type: HostListener,
+                args: ['dragend', ['$event']]
+            }], click: [{
+                type: HostListener,
+                args: ['click', ['$event']]
+            }], mouseover: [{
+                type: HostListener,
+                args: ['mouseover', ['$event']]
+            }], mouseout: [{
+                type: HostListener,
+                args: ['mouseout', ['$event']]
+            }] } });
+// tslint:disable-next-line:directive-class-suffix
+class FcNodeComponent {
+    constructor() {
+        this.flowchartConstants = FlowchartConstants;
+        this.nodeRectInfo = {
+            top: () => {
+                return this.node.y;
+            },
+            left: () => {
+                return this.node.x;
+            },
+            bottom: () => {
+                return this.node.y + this.height;
+            },
+            right: () => {
+                return this.node.x + this.width;
+            },
+            width: () => {
+                return this.width;
+            },
+            height: () => {
+                return this.height;
+            }
+        };
+    }
+    ngOnInit() {
+    }
+}
+FcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Directive });
+FcNodeComponent.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeComponent, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeComponent, decorators: [{
+            type: Directive
+        }], propDecorators: { callbacks: [{
+                type: Input
+            }], userNodeCallbacks: [{
+                type: Input
+            }], node: [{
+                type: Input
+            }], selected: [{
+                type: Input
+            }], edit: [{
+                type: Input
+            }], underMouse: [{
+                type: Input
+            }], mouseOverConnector: [{
+                type: Input
+            }], modelservice: [{
+                type: Input
+            }], dragging: [{
+                type: Input
+            }] } });
 
 class NgxFlowchartComponent {
     constructor(elementRef, differs, modelValidation, edgeDrawingService, cd, zone) {
@@ -1504,41 +1731,57 @@ class NgxFlowchartComponent {
         this.rectangleSelectService.mouseup(event);
     }
 }
-NgxFlowchartComponent.decorators = [
-    { type: Component, args: [{
-                selector: 'fc-canvas',
-                template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n",
-                changeDetection: ChangeDetectionStrategy.OnPush,
-                styles: [":host{-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;background-color:transparent;background-image:linear-gradient(90deg,rgba(0,0,0,.1) 1px,transparent 0),linear-gradient(180deg,rgba(0,0,0,.1) 1px,transparent 0);background-size:25px 25px;min-height:100%;min-width:100%;user-select:none}:host,:host .fc-canvas-container,:host .fc-canvas-container svg.fc-canvas-svg{display:block;height:100%;position:relative;width:100%}:host .fc-edge{fill:transparent;stroke:grey;stroke-width:4;transition:stroke-width .2s}:host .fc-edge.fc-hover{fill:transparent;stroke:grey;stroke-width:6}:host .fc-edge.fc-selected{fill:transparent;stroke:red;stroke-width:4}:host .fc-edge.fc-active{-webkit-animation:dash 3s linear infinite;animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{fill:grey;stroke:grey}:host .fc-arrow-marker-selected polygon{fill:red;stroke:red}:host .edge-endpoint{fill:grey}:host .fc-noselect{-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{margin:0 auto;opacity:.8;position:absolute;transform-origin:bottom left;transition:transform .2s}:host .fc-edge-label .fc-edge-label-text{font-size:16px;position:absolute;text-align:center;transform:translate(-50%,-50%);white-space:nowrap}:host .fc-edge-label .fc-edge-label-text span{background-color:#fff;border:solid #ff3d00;border-radius:10px;color:#ff3d00;cursor:default;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{right:14px;top:-30px}:host .fc-edge-label .fc-nodedelete{right:-13px;top:-30px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-edit .fc-edge-label-text span,:host .fc-edge-label.fc-selected .fc-edge-label-text span{background-color:red;border:solid red;color:#fff;font-weight:600}:host .fc-select-rectangle{background:rgba(20,125,255,.1);border:2px dashed #5262ff;position:absolute;z-index:2}@-webkit-keyframes dash{0%{stroke-dashoffset:500}}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodedelete,:host ::ng-deep .fc-edit .fc-nodeedit{background:#494949;border:2px solid #eee;border-radius:50%;color:#fff;cursor:pointer;display:block;font-weight:600;height:20px;line-height:20px;padding-top:2px;position:absolute;text-align:center;vertical-align:bottom;width:22px}:host ::ng-deep .fc-edit .fc-nodeedit{right:16px;top:-24px}:host ::ng-deep .fc-edit .fc-nodedelete{right:-13px;top:-24px}"]
-            },] }
-];
-NgxFlowchartComponent.ctorParameters = () => [
-    { type: ElementRef },
-    { type: IterableDiffers },
-    { type: FcModelValidationService },
-    { type: FcEdgeDrawingService },
-    { type: ChangeDetectorRef },
-    { type: NgZone }
-];
-NgxFlowchartComponent.propDecorators = {
-    canvasClass: [{ type: HostBinding, args: ['attr.class',] }],
-    model: [{ type: Input }],
-    selectedObjects: [{ type: Input }],
-    edgeStyle: [{ type: Input }],
-    userCallbacks: [{ type: Input }],
-    automaticResize: [{ type: Input }],
-    dragAnimation: [{ type: Input }],
-    nodeWidth: [{ type: Input }],
-    nodeHeight: [{ type: Input }],
-    dropTargetId: [{ type: Input }],
-    modelChanged: [{ type: Output }],
-    fitModelSizeByDefault: [{ type: Input }],
-    dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
-    drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
-    mousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }],
-    mousemove: [{ type: HostListener, args: ['mousemove', ['$event'],] }],
-    mouseup: [{ type: HostListener, args: ['mouseup', ['$event'],] }]
-};
+NgxFlowchartComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartComponent, deps: [{ token: i0.ElementRef }, { token: i0.IterableDiffers }, { token: FcModelValidationService }, { token: FcEdgeDrawingService }, { token: i0.ChangeDetectorRef }, { token: i0.NgZone }], target: i0.ɵɵFactoryTarget.Component });
+NgxFlowchartComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: NgxFlowchartComponent, selector: "fc-canvas", inputs: { model: "model", selectedObjects: "selectedObjects", edgeStyle: "edgeStyle", userCallbacks: "userCallbacks", automaticResize: "automaticResize", dragAnimation: "dragAnimation", nodeWidth: "nodeWidth", nodeHeight: "nodeHeight", dropTargetId: "dropTargetId", fitModelSizeByDefault: "fitModelSizeByDefault" }, outputs: { modelChanged: "modelChanged" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "mousedown": "mousedown($event)", "mousemove": "mousemove($event)", "mouseup": "mouseup($event)" }, properties: { "attr.class": "this.canvasClass" } }, ngImport: i0, template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n", styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;transition:transform .2s;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-selected .fc-edge-label-text span,:host .fc-edge-label.fc-edit .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodeedit,:host ::ng-deep .fc-edit .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}\n"], components: [{ type: FcNodeContainerComponent, selector: "fc-node", inputs: ["callbacks", "userNodeCallbacks", "node", "selected", "edit", "underMouse", "mouseOverConnector", "modelservice", "dragging"] }], directives: [{ type: i4.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: i4.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { type: i4.NgStyle, selector: "[ngStyle]", inputs: ["ngStyle"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartComponent, decorators: [{
+            type: Component,
+            args: [{
+                    selector: 'fc-canvas',
+                    templateUrl: './ngx-flowchart.component.html',
+                    styleUrls: ['./ngx-flowchart.component.scss'],
+                    changeDetection: ChangeDetectionStrategy.OnPush
+                }]
+        }], ctorParameters: function () { return [{ type: i0.ElementRef }, { type: i0.IterableDiffers }, { type: FcModelValidationService }, { type: FcEdgeDrawingService }, { type: i0.ChangeDetectorRef }, { type: i0.NgZone }]; }, propDecorators: { canvasClass: [{
+                type: HostBinding,
+                args: ['attr.class']
+            }], model: [{
+                type: Input
+            }], selectedObjects: [{
+                type: Input
+            }], edgeStyle: [{
+                type: Input
+            }], userCallbacks: [{
+                type: Input
+            }], automaticResize: [{
+                type: Input
+            }], dragAnimation: [{
+                type: Input
+            }], nodeWidth: [{
+                type: Input
+            }], nodeHeight: [{
+                type: Input
+            }], dropTargetId: [{
+                type: Input
+            }], modelChanged: [{
+                type: Output
+            }], fitModelSizeByDefault: [{
+                type: Input
+            }], dragover: [{
+                type: HostListener,
+                args: ['dragover', ['$event']]
+            }], drop: [{
+                type: HostListener,
+                args: ['drop', ['$event']]
+            }], mousedown: [{
+                type: HostListener,
+                args: ['mousedown', ['$event']]
+            }], mousemove: [{
+                type: HostListener,
+                args: ['mousemove', ['$event']]
+            }], mouseup: [{
+                type: HostListener,
+                args: ['mouseup', ['$event']]
+            }] } });
 
 class FcMagnetDirective {
     constructor(elementRef) {
@@ -1561,23 +1804,31 @@ class FcMagnetDirective {
         this.callbacks.edgeDragend(event);
     }
 }
-FcMagnetDirective.decorators = [
-    { type: Directive, args: [{
-                // tslint:disable-next-line:directive-selector
-                selector: '[fc-magnet]'
-            },] }
-];
-FcMagnetDirective.ctorParameters = () => [
-    { type: ElementRef }
-];
-FcMagnetDirective.propDecorators = {
-    callbacks: [{ type: Input }],
-    connector: [{ type: Input }],
-    dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
-    dragleave: [{ type: HostListener, args: ['dragleave', ['$event'],] }],
-    drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
-    dragend: [{ type: HostListener, args: ['dragend', ['$event'],] }]
-};
+FcMagnetDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcMagnetDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
+FcMagnetDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcMagnetDirective, selector: "[fc-magnet]", inputs: { callbacks: "callbacks", connector: "connector" }, host: { listeners: { "dragover": "dragover($event)", "dragleave": "dragleave($event)", "drop": "drop($event)", "dragend": "dragend($event)" } }, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcMagnetDirective, decorators: [{
+            type: Directive,
+            args: [{
+                    // tslint:disable-next-line:directive-selector
+                    selector: '[fc-magnet]'
+                }]
+        }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{
+                type: Input
+            }], connector: [{
+                type: Input
+            }], dragover: [{
+                type: HostListener,
+                args: ['dragover', ['$event']]
+            }], dragleave: [{
+                type: HostListener,
+                args: ['dragleave', ['$event']]
+            }], drop: [{
+                type: HostListener,
+                args: ['drop', ['$event']]
+            }], dragend: [{
+                type: HostListener,
+                args: ['dragend', ['$event']]
+            }] } });
 
 class FcConnectorDirective {
     constructor(elementRef) {
@@ -1653,263 +1904,113 @@ class FcConnectorDirective {
         }
     }
 }
-FcConnectorDirective.decorators = [
-    { type: Directive, args: [{
-                // tslint:disable-next-line:directive-selector
-                selector: '[fc-connector]'
-            },] }
-];
-FcConnectorDirective.ctorParameters = () => [
-    { type: ElementRef }
-];
-FcConnectorDirective.propDecorators = {
-    callbacks: [{ type: Input }],
-    modelservice: [{ type: Input }],
-    connector: [{ type: Input }],
-    nodeRectInfo: [{ type: Input }],
-    mouseOverConnector: [{ type: Input }],
-    dragover: [{ type: HostListener, args: ['dragover', ['$event'],] }],
-    drop: [{ type: HostListener, args: ['drop', ['$event'],] }],
-    dragend: [{ type: HostListener, args: ['dragend', ['$event'],] }],
-    dragstart: [{ type: HostListener, args: ['dragstart', ['$event'],] }],
-    mouseenter: [{ type: HostListener, args: ['mouseenter', ['$event'],] }],
-    mouseleave: [{ type: HostListener, args: ['mouseleave', ['$event'],] }]
-};
-
-class FcNodeContainerComponent {
-    constructor(nodeComponentConfig, elementRef, componentFactoryResolver) {
-        this.nodeComponentConfig = nodeComponentConfig;
-        this.elementRef = elementRef;
-        this.componentFactoryResolver = componentFactoryResolver;
-    }
-    get nodeId() {
-        return this.node.id;
-    }
-    get top() {
-        return this.node.y + 'px';
-    }
-    get left() {
-        return this.node.x + 'px';
-    }
-    ngOnInit() {
-        if (!this.userNodeCallbacks) {
-            this.userNodeCallbacks = {};
-        }
-        this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (() => { });
-        this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (() => { });
-        this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (() => { });
-        this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (() => { });
-        this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (() => { });
-        const element = $(this.elementRef.nativeElement);
-        element.addClass(FlowchartConstants.nodeClass);
-        if (!this.node.readonly) {
-            element.attr('draggable', 'true');
-        }
-        this.updateNodeClass();
-        this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
-        this.nodeContentContainer.clear();
-        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
-        const componentRef = this.nodeContentContainer.createComponent(componentFactory);
-        this.nodeComponent = componentRef.instance;
-        this.nodeComponent.callbacks = this.callbacks;
-        this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
-        this.nodeComponent.node = this.node;
-        this.nodeComponent.modelservice = this.modelservice;
-        this.updateNodeComponent();
-        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-    }
-    ngAfterViewInit() {
-        this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-        this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-    }
-    ngOnChanges(changes) {
-        let updateNode = false;
-        for (const propName of Object.keys(changes)) {
-            const change = changes[propName];
-            if (!change.firstChange && change.currentValue !== change.previousValue) {
-                if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
-                    updateNode = true;
-                }
-            }
-        }
-        if (updateNode) {
-            this.updateNodeClass();
-            this.updateNodeComponent();
-        }
-    }
-    updateNodeClass() {
-        const element = $(this.elementRef.nativeElement);
-        this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
-        this.toggleClass(element, FlowchartConstants.editClass, this.edit);
-        this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
-        this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
-    }
-    updateNodeComponent() {
-        this.nodeComponent.selected = this.selected;
-        this.nodeComponent.edit = this.edit;
-        this.nodeComponent.underMouse = this.underMouse;
-        this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
-        this.nodeComponent.dragging = this.dragging;
-    }
-    toggleClass(element, clazz, set) {
-        if (set) {
-            element.addClass(clazz);
-        }
-        else {
-            element.removeClass(clazz);
-        }
-    }
-    mousedown(event) {
-        event.stopPropagation();
-    }
-    dragstart(event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeDragstart(event, this.node);
-        }
-    }
-    dragend(event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeDragend(event);
-        }
-    }
-    click(event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeClicked(event, this.node);
-        }
-    }
-    mouseover(event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeMouseOver(event, this.node);
-        }
-    }
-    mouseout(event) {
-        if (!this.node.readonly) {
-            this.callbacks.nodeMouseOut(event, this.node);
-        }
-    }
-}
-FcNodeContainerComponent.decorators = [
-    { type: Component, args: [{
-                selector: 'fc-node',
-                template: '<ng-template #nodeContent></ng-template>',
-                styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{display:flex;flex-direction:column;height:100%;position:absolute;top:0;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;background-color:#f7a789;border:10px solid transparent;border-radius:50% 50%;color:#fff;height:18px;pointer-events:all;width:18px}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}"]
-            },] }
-];
-FcNodeContainerComponent.ctorParameters = () => [
-    { type: undefined, decorators: [{ type: Inject, args: [FC_NODE_COMPONENT_CONFIG,] }] },
-    { type: ElementRef },
-    { type: ComponentFactoryResolver }
-];
-FcNodeContainerComponent.propDecorators = {
-    callbacks: [{ type: Input }],
-    userNodeCallbacks: [{ type: Input }],
-    node: [{ type: Input }],
-    selected: [{ type: Input }],
-    edit: [{ type: Input }],
-    underMouse: [{ type: Input }],
-    mouseOverConnector: [{ type: Input }],
-    modelservice: [{ type: Input }],
-    dragging: [{ type: Input }],
-    nodeId: [{ type: HostBinding, args: ['attr.id',] }],
-    top: [{ type: HostBinding, args: ['style.top',] }],
-    left: [{ type: HostBinding, args: ['style.left',] }],
-    nodeContentContainer: [{ type: ViewChild, args: ['nodeContent', { read: ViewContainerRef, static: true },] }],
-    mousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }],
-    dragstart: [{ type: HostListener, args: ['dragstart', ['$event'],] }],
-    dragend: [{ type: HostListener, args: ['dragend', ['$event'],] }],
-    click: [{ type: HostListener, args: ['click', ['$event'],] }],
-    mouseover: [{ type: HostListener, args: ['mouseover', ['$event'],] }],
-    mouseout: [{ type: HostListener, args: ['mouseout', ['$event'],] }]
-};
-class FcNodeComponent {
-    constructor() {
-        this.flowchartConstants = FlowchartConstants;
-        this.nodeRectInfo = {
-            top: () => {
-                return this.node.y;
-            },
-            left: () => {
-                return this.node.x;
-            },
-            bottom: () => {
-                return this.node.y + this.height;
-            },
-            right: () => {
-                return this.node.x + this.width;
-            },
-            width: () => {
-                return this.width;
-            },
-            height: () => {
-                return this.height;
-            }
-        };
-    }
-    ngOnInit() {
-    }
-}
-FcNodeComponent.decorators = [
-    { type: Directive }
-];
-FcNodeComponent.propDecorators = {
-    callbacks: [{ type: Input }],
-    userNodeCallbacks: [{ type: Input }],
-    node: [{ type: Input }],
-    selected: [{ type: Input }],
-    edit: [{ type: Input }],
-    underMouse: [{ type: Input }],
-    mouseOverConnector: [{ type: Input }],
-    modelservice: [{ type: Input }],
-    dragging: [{ type: Input }]
-};
+FcConnectorDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcConnectorDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
+FcConnectorDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcConnectorDirective, selector: "[fc-connector]", inputs: { callbacks: "callbacks", modelservice: "modelservice", connector: "connector", nodeRectInfo: "nodeRectInfo", mouseOverConnector: "mouseOverConnector" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "dragend": "dragend($event)", "dragstart": "dragstart($event)", "mouseenter": "mouseenter($event)", "mouseleave": "mouseleave($event)" } }, usesOnChanges: true, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcConnectorDirective, decorators: [{
+            type: Directive,
+            args: [{
+                    // tslint:disable-next-line:directive-selector
+                    selector: '[fc-connector]'
+                }]
+        }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{
+                type: Input
+            }], modelservice: [{
+                type: Input
+            }], connector: [{
+                type: Input
+            }], nodeRectInfo: [{
+                type: Input
+            }], mouseOverConnector: [{
+                type: Input
+            }], dragover: [{
+                type: HostListener,
+                args: ['dragover', ['$event']]
+            }], drop: [{
+                type: HostListener,
+                args: ['drop', ['$event']]
+            }], dragend: [{
+                type: HostListener,
+                args: ['dragend', ['$event']]
+            }], dragstart: [{
+                type: HostListener,
+                args: ['dragstart', ['$event']]
+            }], mouseenter: [{
+                type: HostListener,
+                args: ['mouseenter', ['$event']]
+            }], mouseleave: [{
+                type: HostListener,
+                args: ['mouseleave', ['$event']]
+            }] } });
 
 class DefaultFcNodeComponent extends FcNodeComponent {
     constructor() {
         super();
     }
 }
-DefaultFcNodeComponent.decorators = [
-    { type: Component, args: [{
-                selector: 'fc-default-node',
-                template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n",
-                styles: [":host .fc-node-overlay{background-color:#000;bottom:0;left:0;opacity:0;pointer-events:none;position:absolute;right:0;top:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{align-items:center;background-color:#f15b26;border-radius:5px;color:#fff;display:flex;font-size:16px;justify-content:center;min-width:100px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}"]
-            },] }
-];
-DefaultFcNodeComponent.ctorParameters = () => [];
+DefaultFcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: DefaultFcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Component });
+DefaultFcNodeComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: DefaultFcNodeComponent, selector: "fc-default-node", usesInheritance: true, ngImport: i0, template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"], directives: [{ type: i4.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: FcMagnetDirective, selector: "[fc-magnet]", inputs: ["callbacks", "connector"] }, { type: FcConnectorDirective, selector: "[fc-connector]", inputs: ["callbacks", "modelservice", "connector", "nodeRectInfo", "mouseOverConnector"] }, { type: i4.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: DefaultFcNodeComponent, decorators: [{
+            type: Component,
+            args: [{
+                    selector: 'fc-default-node',
+                    templateUrl: './default-node.component.html',
+                    styleUrls: ['./default-node.component.scss']
+                }]
+        }], ctorParameters: function () { return []; } });
 
-const ɵ0$1 = {
-    nodeComponentType: DefaultFcNodeComponent
-};
 class NgxFlowchartModule {
 }
-NgxFlowchartModule.decorators = [
-    { type: NgModule, args: [{
-                entryComponents: [
-                    DefaultFcNodeComponent
-                ],
-                declarations: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    FcNodeContainerComponent,
-                    DefaultFcNodeComponent],
-                providers: [
-                    FcModelValidationService,
-                    FcEdgeDrawingService,
-                    {
-                        provide: FC_NODE_COMPONENT_CONFIG,
-                        useValue: ɵ0$1
-                    }
-                ],
-                imports: [
-                    CommonModule
-                ],
-                exports: [NgxFlowchartComponent,
-                    FcMagnetDirective,
-                    FcConnectorDirective,
-                    DefaultFcNodeComponent]
-            },] }
-];
+NgxFlowchartModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
+NgxFlowchartModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, declarations: [NgxFlowchartComponent,
+        FcMagnetDirective,
+        FcConnectorDirective,
+        FcNodeContainerComponent,
+        DefaultFcNodeComponent], imports: [CommonModule], exports: [NgxFlowchartComponent,
+        FcMagnetDirective,
+        FcConnectorDirective,
+        DefaultFcNodeComponent] });
+NgxFlowchartModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, providers: [
+        FcModelValidationService,
+        FcEdgeDrawingService,
+        {
+            provide: FC_NODE_COMPONENT_CONFIG,
+            useValue: {
+                nodeComponentType: DefaultFcNodeComponent
+            }
+        }
+    ], imports: [[
+            CommonModule
+        ]] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, decorators: [{
+            type: NgModule,
+            args: [{
+                    entryComponents: [
+                        DefaultFcNodeComponent
+                    ],
+                    declarations: [NgxFlowchartComponent,
+                        FcMagnetDirective,
+                        FcConnectorDirective,
+                        FcNodeContainerComponent,
+                        DefaultFcNodeComponent],
+                    providers: [
+                        FcModelValidationService,
+                        FcEdgeDrawingService,
+                        {
+                            provide: FC_NODE_COMPONENT_CONFIG,
+                            useValue: {
+                                nodeComponentType: DefaultFcNodeComponent
+                            }
+                        }
+                    ],
+                    imports: [
+                        CommonModule
+                    ],
+                    exports: [NgxFlowchartComponent,
+                        FcMagnetDirective,
+                        FcConnectorDirective,
+                        DefaultFcNodeComponent]
+                }]
+        }] });
 
 /*
  * Public API Surface of ngx-flowchart
@@ -1919,5 +2020,5 @@ NgxFlowchartModule.decorators = [
  * Generated bundle index. Do not edit.
  */
 
-export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort, ɵ0$1 as ɵ0, FcNodeContainerComponent as ɵa, FcModelValidationService as ɵb, FcEdgeDrawingService as ɵc };
+export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort };
 //# sourceMappingURL=ngx-flowchart.js.map

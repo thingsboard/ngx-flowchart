@@ -1,19 +1,17 @@
 import {
-  DoCheck,
-  IterableDiffer,
-  OnInit
-} from '@angular/core';
-import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DoCheck,
   ElementRef,
   EventEmitter,
   HostBinding,
   HostListener,
   Input,
+  IterableDiffer,
   IterableDiffers,
   NgZone,
+  OnInit,
   Output
 } from '@angular/core';
 import { FcCallbacks, FcEdge, FcModel, FcNode, FlowchartConstants, UserCallbacks, UserNodeCallbacks } from './ngx-flowchart.models';

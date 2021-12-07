@@ -1,5 +1,4 @@
-import { DoCheck, OnInit } from '@angular/core';
-import { ChangeDetectorRef, ElementRef, EventEmitter, IterableDiffers, NgZone } from '@angular/core';
+import { ChangeDetectorRef, DoCheck, ElementRef, EventEmitter, IterableDiffers, NgZone, OnInit } from '@angular/core';
 import { FcCallbacks, FcEdge, FcModel, UserCallbacks, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 import { FcModelValidationService } from './modelvalidation.service';
@@ -8,6 +7,7 @@ import { FcEdgeDrawingService } from './edge-drawing.service';
 import { FcEdgeDraggingService } from './edge-dragging.service';
 import { FcMouseOverService } from './mouseover.service';
 import { FcRectangleSelectService } from './rectangleselect.service';
+import * as i0 from "@angular/core";
 export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     private elementRef;
     private differs;
@@ -85,4 +85,6 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     mousedown(event: MouseEvent): void;
     mousemove(event: MouseEvent): void;
     mouseup(event: MouseEvent): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<NgxFlowchartComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<NgxFlowchartComponent, "fc-canvas", never, { "model": "model"; "selectedObjects": "selectedObjects"; "edgeStyle": "edgeStyle"; "userCallbacks": "userCallbacks"; "automaticResize": "automaticResize"; "dragAnimation": "dragAnimation"; "nodeWidth": "nodeWidth"; "nodeHeight": "nodeHeight"; "dropTargetId": "dropTargetId"; "fitModelSizeByDefault": "fitModelSizeByDefault"; }, { "modelChanged": "modelChanged"; }, never, never>;
 }

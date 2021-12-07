@@ -2,23 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/lib",
-    "target": "es2015",
-    "module": "es2015",
-    "moduleResolution": "node",
     "declaration": true,
+    "declarationMap": true,
     "inlineSources": true,
-    "types": ["jquery"],
-    "lib": [
-      "dom",
-      "es2018"
-    ]
-  },
-  "angularCompilerOptions": {
-    "skipTemplateCodegen": true,
-    "strictMetadataEmit": true,
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true,
-    "enableResourceInlining": true
+    "types": ["jquery"]
   },
   "exclude": [
     "src/test.ts",

@@ -1,8 +1,29 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs'), require('rxjs/operators'), require('@angular/cdk/coercion'), require('@angular/common')) :
     typeof define === 'function' && define.amd ? define('ngx-flowchart', ['exports', '@angular/core', 'rxjs', 'rxjs/operators', '@angular/cdk/coercion', '@angular/common'], factory) :
-    (global = global || self, factory(global['ngx-flowchart'] = {}, global.ng.core, global.rxjs, global.rxjs.operators, global.ng.cdk.coercion, global.ng.common));
-}(this, (function (exports, core, rxjs, operators, coercion, common) { 'use strict';
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["ngx-flowchart"] = {}, global.ng.core, global.rxjs, global.rxjs.operators, global.ng.cdk.coercion, global.ng.common));
+})(this, (function (exports, i0, rxjs, operators, coercion, i4) { 'use strict';
+
+    function _interopNamespace(e) {
+        if (e && e.__esModule) return e;
+        var n = Object.create(null);
+        if (e) {
+            Object.keys(e).forEach(function (k) {
+                if (k !== 'default') {
+                    var d = Object.getOwnPropertyDescriptor(e, k);
+                    Object.defineProperty(n, k, d.get ? d : {
+                        enumerable: true,
+                        get: function () { return e[k]; }
+                    });
+                }
+            });
+        }
+        n["default"] = e;
+        return Object.freeze(n);
+    }
+
+    var i0__namespace = /*#__PURE__*/_interopNamespace(i0);
+    var i4__namespace = /*#__PURE__*/_interopNamespace(i4);
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -23,11 +44,13 @@
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b)
-                if (b.hasOwnProperty(p))
+                if (Object.prototype.hasOwnProperty.call(b, p))
                     d[p] = b[p]; };
         return extendStatics(d, b);
     };
     function __extends(d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -161,15 +184,19 @@
             return { value: op[0] ? op[1] : void 0, done: true };
         }
     }
-    function __createBinding(o, m, k, k2) {
+    var __createBinding = Object.create ? (function (o, m, k, k2) {
+        if (k2 === undefined)
+            k2 = k;
+        Object.defineProperty(o, k2, { enumerable: true, get: function () { return m[k]; } });
+    }) : (function (o, m, k, k2) {
         if (k2 === undefined)
             k2 = k;
         o[k2] = m[k];
-    }
-    function __exportStar(m, exports) {
+    });
+    function __exportStar(m, o) {
         for (var p in m)
-            if (p !== "default" && !exports.hasOwnProperty(p))
-                exports[p] = m[p];
+            if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p))
+                __createBinding(o, m, p);
     }
     function __values(o) {
         var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -209,11 +236,13 @@
         }
         return ar;
     }
+    /** @deprecated */
     function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
+    /** @deprecated */
     function __spreadArrays() {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++)
             s += arguments[i].length;
@@ -222,7 +251,17 @@
                 r[k] = a[j];
         return r;
     }
-    ;
+    function __spreadArray(to, from, pack) {
+        if (pack || arguments.length === 2)
+            for (var i = 0, l = from.length, ar; i < l; i++) {
+                if (ar || !(i in from)) {
+                    if (!ar)
+                        ar = Array.prototype.slice.call(from, 0, i);
+                    ar[i] = from[i];
+                }
+            }
+        return to.concat(ar || Array.prototype.slice.call(from));
+    }
     function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
@@ -268,35 +307,43 @@
         return cooked;
     }
     ;
+    var __setModuleDefault = Object.create ? (function (o, v) {
+        Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function (o, v) {
+        o["default"] = v;
+    };
     function __importStar(mod) {
         if (mod && mod.__esModule)
             return mod;
         var result = {};
         if (mod != null)
             for (var k in mod)
-                if (Object.hasOwnProperty.call(mod, k))
-                    result[k] = mod[k];
-        result.default = mod;
+                if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+                    __createBinding(result, mod, k);
+        __setModuleDefault(result, mod);
         return result;
     }
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
     }
-    function __classPrivateFieldGet(receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    function __classPrivateFieldGet(receiver, state, kind, f) {
+        if (kind === "a" && !f)
+            throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+            throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     }
-    function __classPrivateFieldSet(receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    function __classPrivateFieldSet(receiver, state, value, kind, f) {
+        if (kind === "m")
+            throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+            throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+            throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     }
 
-    var FC_NODE_COMPONENT_CONFIG = new core.InjectionToken('fc-node.component.config');
+    var FC_NODE_COMPONENT_CONFIG = new i0.InjectionToken('fc-node.component.config');
     var htmlPrefix = 'fc';
     var leftConnectorType = 'leftConnector';
     var rightConnectorType = 'rightConnector';
@@ -873,124 +920,6 @@
         return EdgesModel;
     }(AbstractFcModel));
 
-    var FcModelValidationService = /** @class */ (function () {
-        function FcModelValidationService() {
-        }
-        FcModelValidationService.prototype.validateModel = function (model) {
-            this.validateNodes(model.nodes);
-            this._validateEdges(model.edges, model.nodes);
-            return model;
-        };
-        FcModelValidationService.prototype.validateNodes = function (nodes) {
-            var _this = this;
-            var ids = [];
-            nodes.forEach(function (node) {
-                _this.validateNode(node);
-                if (ids.indexOf(node.id) !== -1) {
-                    throw new ModelvalidationError('Id not unique.');
-                }
-                ids.push(node.id);
-            });
-            var connectorIds = [];
-            nodes.forEach(function (node) {
-                node.connectors.forEach(function (connector) {
-                    if (connectorIds.indexOf(connector.id) !== -1) {
-                        throw new ModelvalidationError('Id not unique.');
-                    }
-                    connectorIds.push(connector.id);
-                });
-            });
-            return nodes;
-        };
-        FcModelValidationService.prototype.validateNode = function (node) {
-            var _this = this;
-            if (node.id === undefined) {
-                throw new ModelvalidationError('Id not valid.');
-            }
-            if (typeof node.name !== 'string') {
-                throw new ModelvalidationError('Name not valid.');
-            }
-            if (typeof node.x !== 'number' || node.x < 0 || Math.round(node.x) !== node.x) {
-                throw new ModelvalidationError('Coordinates not valid.');
-            }
-            if (typeof node.y !== 'number' || node.y < 0 || Math.round(node.y) !== node.y) {
-                throw new ModelvalidationError('Coordinates not valid.');
-            }
-            if (!Array.isArray(node.connectors)) {
-                throw new ModelvalidationError('Connectors not valid.');
-            }
-            node.connectors.forEach(function (connector) {
-                _this.validateConnector(connector);
-            });
-            return node;
-        };
-        FcModelValidationService.prototype._validateEdges = function (edges, nodes) {
-            var _this = this;
-            edges.forEach(function (edge) {
-                _this._validateEdge(edge, nodes);
-            });
-            edges.forEach(function (edge1, index1) {
-                edges.forEach(function (edge2, index2) {
-                    if (index1 !== index2) {
-                        if ((edge1.source === edge2.source && edge1.destination === edge2.destination) ||
-                            (edge1.source === edge2.destination && edge1.destination === edge2.source)) {
-                            throw new ModelvalidationError('Duplicated edge.');
-                        }
-                    }
-                });
-            });
-            if (fcTopSort({ nodes: nodes, edges: edges }) === null) {
-                throw new ModelvalidationError('Graph has a circle.');
-            }
-            return edges;
-        };
-        FcModelValidationService.prototype.validateEdges = function (edges, nodes) {
-            this.validateNodes(nodes);
-            return this._validateEdges(edges, nodes);
-        };
-        FcModelValidationService.prototype._validateEdge = function (edge, nodes) {
-            if (edge.source === undefined) {
-                throw new ModelvalidationError('Source not valid.');
-            }
-            if (edge.destination === undefined) {
-                throw new ModelvalidationError('Destination not valid.');
-            }
-            if (edge.source === edge.destination) {
-                throw new ModelvalidationError('Edge with same source and destination connectors.');
-            }
-            var sourceNode = nodes.filter(function (node) { return node.connectors.some(function (connector) { return connector.id === edge.source; }); })[0];
-            if (sourceNode === undefined) {
-                throw new ModelvalidationError('Source not valid.');
-            }
-            var destinationNode = nodes.filter(function (node) { return node.connectors.some(function (connector) { return connector.id === edge.destination; }); })[0];
-            if (destinationNode === undefined) {
-                throw new ModelvalidationError('Destination not valid.');
-            }
-            if (sourceNode === destinationNode) {
-                throw new ModelvalidationError('Edge with same source and destination nodes.');
-            }
-            return edge;
-        };
-        FcModelValidationService.prototype.validateEdge = function (edge, nodes) {
-            this.validateNodes(nodes);
-            return this._validateEdge(edge, nodes);
-        };
-        FcModelValidationService.prototype.validateConnector = function (connector) {
-            if (connector.id === undefined) {
-                throw new ModelvalidationError('Id not valid.');
-            }
-            if (connector.type === undefined || connector.type === null || typeof connector.type !== 'string') {
-                throw new ModelvalidationError('Type not valid.');
-            }
-            return connector;
-        };
-        return FcModelValidationService;
-    }());
-    FcModelValidationService.decorators = [
-        { type: core.Injectable }
-    ];
-    FcModelValidationService.ctorParameters = function () { return []; };
-
     var nodeDropScope = {
         dropElement: null
     };
@@ -1308,49 +1237,6 @@
         return FcNodeDraggingService;
     }());
 
-    var FcEdgeDrawingService = /** @class */ (function () {
-        function FcEdgeDrawingService() {
-        }
-        FcEdgeDrawingService.prototype.getEdgeDAttribute = function (pt1, pt2, style) {
-            var dAddribute = "M " + pt1.x + ", " + pt1.y + " ";
-            if (style === FlowchartConstants.curvedStyle) {
-                var sourceTangent = this.computeEdgeSourceTangent(pt1, pt2);
-                var destinationTangent = this.computeEdgeDestinationTangent(pt1, pt2);
-                dAddribute += "C " + sourceTangent.x + ", " + sourceTangent.y + " " + (destinationTangent.x - 50) + ", " + destinationTangent.y + " " + pt2.x + ", " + pt2.y;
-            }
-            else {
-                dAddribute += "L " + pt2.x + ", " + pt2.y;
-            }
-            return dAddribute;
-        };
-        FcEdgeDrawingService.prototype.getEdgeCenter = function (pt1, pt2) {
-            return {
-                x: (pt1.x + pt2.x) / 2,
-                y: (pt1.y + pt2.y) / 2
-            };
-        };
-        FcEdgeDrawingService.prototype.computeEdgeTangentOffset = function (pt1, pt2) {
-            return (pt2.y - pt1.y) / 2;
-        };
-        FcEdgeDrawingService.prototype.computeEdgeSourceTangent = function (pt1, pt2) {
-            return {
-                x: pt1.x,
-                y: pt1.y + this.computeEdgeTangentOffset(pt1, pt2)
-            };
-        };
-        FcEdgeDrawingService.prototype.computeEdgeDestinationTangent = function (pt1, pt2) {
-            return {
-                x: pt2.x,
-                y: pt2.y - this.computeEdgeTangentOffset(pt1, pt2)
-            };
-        };
-        return FcEdgeDrawingService;
-    }());
-    FcEdgeDrawingService.decorators = [
-        { type: core.Injectable }
-    ];
-    FcEdgeDrawingService.ctorParameters = function () { return []; };
-
     var FcEdgeDraggingService = /** @class */ (function () {
         function FcEdgeDraggingService(modelValidation, edgeDrawingService, modelService, model, isValidEdgeCallback, applyFunction, dragAnimation, edgeStyle) {
             this.edgeDragging = {
@@ -1646,17 +1532,14 @@
 
     var regex = /(auto|scroll)/;
     var style = function (node, prop) { return getComputedStyle(node, null).getPropertyValue(prop); };
-    var ɵ0 = style;
     var scroll = function (node) { return regex.test(style(node, 'overflow') +
         style(node, 'overflow-y') +
         style(node, 'overflow-x')); };
-    var ɵ1 = scroll;
     var scrollparent = function (node) { return !node || node === document.body
         ? document.body
         : scroll(node)
             ? node
             : scrollparent(node.parentNode); };
-    var ɵ2 = scrollparent;
 
     var FcRectangleSelectService = /** @class */ (function () {
         function FcRectangleSelectService(modelService, selectElement, applyFunction) {
@@ -1748,6 +1631,423 @@
         return FcRectangleSelectService;
     }());
 
+    var FcModelValidationService = /** @class */ (function () {
+        function FcModelValidationService() {
+        }
+        FcModelValidationService.prototype.validateModel = function (model) {
+            this.validateNodes(model.nodes);
+            this._validateEdges(model.edges, model.nodes);
+            return model;
+        };
+        FcModelValidationService.prototype.validateNodes = function (nodes) {
+            var _this = this;
+            var ids = [];
+            nodes.forEach(function (node) {
+                _this.validateNode(node);
+                if (ids.indexOf(node.id) !== -1) {
+                    throw new ModelvalidationError('Id not unique.');
+                }
+                ids.push(node.id);
+            });
+            var connectorIds = [];
+            nodes.forEach(function (node) {
+                node.connectors.forEach(function (connector) {
+                    if (connectorIds.indexOf(connector.id) !== -1) {
+                        throw new ModelvalidationError('Id not unique.');
+                    }
+                    connectorIds.push(connector.id);
+                });
+            });
+            return nodes;
+        };
+        FcModelValidationService.prototype.validateNode = function (node) {
+            var _this = this;
+            if (node.id === undefined) {
+                throw new ModelvalidationError('Id not valid.');
+            }
+            if (typeof node.name !== 'string') {
+                throw new ModelvalidationError('Name not valid.');
+            }
+            if (typeof node.x !== 'number' || node.x < 0 || Math.round(node.x) !== node.x) {
+                throw new ModelvalidationError('Coordinates not valid.');
+            }
+            if (typeof node.y !== 'number' || node.y < 0 || Math.round(node.y) !== node.y) {
+                throw new ModelvalidationError('Coordinates not valid.');
+            }
+            if (!Array.isArray(node.connectors)) {
+                throw new ModelvalidationError('Connectors not valid.');
+            }
+            node.connectors.forEach(function (connector) {
+                _this.validateConnector(connector);
+            });
+            return node;
+        };
+        FcModelValidationService.prototype._validateEdges = function (edges, nodes) {
+            var _this = this;
+            edges.forEach(function (edge) {
+                _this._validateEdge(edge, nodes);
+            });
+            edges.forEach(function (edge1, index1) {
+                edges.forEach(function (edge2, index2) {
+                    if (index1 !== index2) {
+                        if ((edge1.source === edge2.source && edge1.destination === edge2.destination) ||
+                            (edge1.source === edge2.destination && edge1.destination === edge2.source)) {
+                            throw new ModelvalidationError('Duplicated edge.');
+                        }
+                    }
+                });
+            });
+            if (fcTopSort({ nodes: nodes, edges: edges }) === null) {
+                throw new ModelvalidationError('Graph has a circle.');
+            }
+            return edges;
+        };
+        FcModelValidationService.prototype.validateEdges = function (edges, nodes) {
+            this.validateNodes(nodes);
+            return this._validateEdges(edges, nodes);
+        };
+        FcModelValidationService.prototype._validateEdge = function (edge, nodes) {
+            if (edge.source === undefined) {
+                throw new ModelvalidationError('Source not valid.');
+            }
+            if (edge.destination === undefined) {
+                throw new ModelvalidationError('Destination not valid.');
+            }
+            if (edge.source === edge.destination) {
+                throw new ModelvalidationError('Edge with same source and destination connectors.');
+            }
+            var sourceNode = nodes.filter(function (node) { return node.connectors.some(function (connector) { return connector.id === edge.source; }); })[0];
+            if (sourceNode === undefined) {
+                throw new ModelvalidationError('Source not valid.');
+            }
+            var destinationNode = nodes.filter(function (node) { return node.connectors.some(function (connector) { return connector.id === edge.destination; }); })[0];
+            if (destinationNode === undefined) {
+                throw new ModelvalidationError('Destination not valid.');
+            }
+            if (sourceNode === destinationNode) {
+                throw new ModelvalidationError('Edge with same source and destination nodes.');
+            }
+            return edge;
+        };
+        FcModelValidationService.prototype.validateEdge = function (edge, nodes) {
+            this.validateNodes(nodes);
+            return this._validateEdge(edge, nodes);
+        };
+        FcModelValidationService.prototype.validateConnector = function (connector) {
+            if (connector.id === undefined) {
+                throw new ModelvalidationError('Id not valid.');
+            }
+            if (connector.type === undefined || connector.type === null || typeof connector.type !== 'string') {
+                throw new ModelvalidationError('Type not valid.');
+            }
+            return connector;
+        };
+        return FcModelValidationService;
+    }());
+    FcModelValidationService.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcModelValidationService, deps: [], target: i0__namespace.ɵɵFactoryTarget.Injectable });
+    FcModelValidationService.ɵprov = i0__namespace.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcModelValidationService });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcModelValidationService, decorators: [{
+                type: i0.Injectable
+            }], ctorParameters: function () { return []; } });
+
+    var FcEdgeDrawingService = /** @class */ (function () {
+        function FcEdgeDrawingService() {
+        }
+        FcEdgeDrawingService.prototype.getEdgeDAttribute = function (pt1, pt2, style) {
+            var dAddribute = "M " + pt1.x + ", " + pt1.y + " ";
+            if (style === FlowchartConstants.curvedStyle) {
+                var sourceTangent = this.computeEdgeSourceTangent(pt1, pt2);
+                var destinationTangent = this.computeEdgeDestinationTangent(pt1, pt2);
+                dAddribute += "C " + sourceTangent.x + ", " + sourceTangent.y + " " + (destinationTangent.x - 50) + ", " + destinationTangent.y + " " + pt2.x + ", " + pt2.y;
+            }
+            else {
+                dAddribute += "L " + pt2.x + ", " + pt2.y;
+            }
+            return dAddribute;
+        };
+        FcEdgeDrawingService.prototype.getEdgeCenter = function (pt1, pt2) {
+            return {
+                x: (pt1.x + pt2.x) / 2,
+                y: (pt1.y + pt2.y) / 2
+            };
+        };
+        FcEdgeDrawingService.prototype.computeEdgeTangentOffset = function (pt1, pt2) {
+            return (pt2.y - pt1.y) / 2;
+        };
+        FcEdgeDrawingService.prototype.computeEdgeSourceTangent = function (pt1, pt2) {
+            return {
+                x: pt1.x,
+                y: pt1.y + this.computeEdgeTangentOffset(pt1, pt2)
+            };
+        };
+        FcEdgeDrawingService.prototype.computeEdgeDestinationTangent = function (pt1, pt2) {
+            return {
+                x: pt2.x,
+                y: pt2.y - this.computeEdgeTangentOffset(pt1, pt2)
+            };
+        };
+        return FcEdgeDrawingService;
+    }());
+    FcEdgeDrawingService.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcEdgeDrawingService, deps: [], target: i0__namespace.ɵɵFactoryTarget.Injectable });
+    FcEdgeDrawingService.ɵprov = i0__namespace.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcEdgeDrawingService });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcEdgeDrawingService, decorators: [{
+                type: i0.Injectable
+            }], ctorParameters: function () { return []; } });
+
+    var FcNodeContainerComponent = /** @class */ (function () {
+        function FcNodeContainerComponent(nodeComponentConfig, elementRef, componentFactoryResolver) {
+            this.nodeComponentConfig = nodeComponentConfig;
+            this.elementRef = elementRef;
+            this.componentFactoryResolver = componentFactoryResolver;
+        }
+        Object.defineProperty(FcNodeContainerComponent.prototype, "nodeId", {
+            get: function () {
+                return this.node.id;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(FcNodeContainerComponent.prototype, "top", {
+            get: function () {
+                return this.node.y + 'px';
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(FcNodeContainerComponent.prototype, "left", {
+            get: function () {
+                return this.node.x + 'px';
+            },
+            enumerable: false,
+            configurable: true
+        });
+        FcNodeContainerComponent.prototype.ngOnInit = function () {
+            if (!this.userNodeCallbacks) {
+                this.userNodeCallbacks = {};
+            }
+            this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (function () { });
+            this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (function () { });
+            this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (function () { });
+            this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (function () { });
+            this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (function () { });
+            var element = $(this.elementRef.nativeElement);
+            element.addClass(FlowchartConstants.nodeClass);
+            if (!this.node.readonly) {
+                element.attr('draggable', 'true');
+            }
+            this.updateNodeClass();
+            this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
+            this.nodeContentContainer.clear();
+            var componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
+            var componentRef = this.nodeContentContainer.createComponent(componentFactory);
+            this.nodeComponent = componentRef.instance;
+            this.nodeComponent.callbacks = this.callbacks;
+            this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
+            this.nodeComponent.node = this.node;
+            this.nodeComponent.modelservice = this.modelservice;
+            this.updateNodeComponent();
+            this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+            this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+        };
+        FcNodeContainerComponent.prototype.ngAfterViewInit = function () {
+            this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
+            this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
+        };
+        FcNodeContainerComponent.prototype.ngOnChanges = function (changes) {
+            var e_1, _a;
+            var updateNode = false;
+            try {
+                for (var _b = __values(Object.keys(changes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var propName = _c.value;
+                    var change = changes[propName];
+                    if (!change.firstChange && change.currentValue !== change.previousValue) {
+                        if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
+                            updateNode = true;
+                        }
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            if (updateNode) {
+                this.updateNodeClass();
+                this.updateNodeComponent();
+            }
+        };
+        FcNodeContainerComponent.prototype.updateNodeClass = function () {
+            var element = $(this.elementRef.nativeElement);
+            this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
+            this.toggleClass(element, FlowchartConstants.editClass, this.edit);
+            this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
+            this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
+        };
+        FcNodeContainerComponent.prototype.updateNodeComponent = function () {
+            this.nodeComponent.selected = this.selected;
+            this.nodeComponent.edit = this.edit;
+            this.nodeComponent.underMouse = this.underMouse;
+            this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
+            this.nodeComponent.dragging = this.dragging;
+        };
+        FcNodeContainerComponent.prototype.toggleClass = function (element, clazz, set) {
+            if (set) {
+                element.addClass(clazz);
+            }
+            else {
+                element.removeClass(clazz);
+            }
+        };
+        FcNodeContainerComponent.prototype.mousedown = function (event) {
+            event.stopPropagation();
+        };
+        FcNodeContainerComponent.prototype.dragstart = function (event) {
+            if (!this.node.readonly) {
+                this.callbacks.nodeDragstart(event, this.node);
+            }
+        };
+        FcNodeContainerComponent.prototype.dragend = function (event) {
+            if (!this.node.readonly) {
+                this.callbacks.nodeDragend(event);
+            }
+        };
+        FcNodeContainerComponent.prototype.click = function (event) {
+            if (!this.node.readonly) {
+                this.callbacks.nodeClicked(event, this.node);
+            }
+        };
+        FcNodeContainerComponent.prototype.mouseover = function (event) {
+            if (!this.node.readonly) {
+                this.callbacks.nodeMouseOver(event, this.node);
+            }
+        };
+        FcNodeContainerComponent.prototype.mouseout = function (event) {
+            if (!this.node.readonly) {
+                this.callbacks.nodeMouseOut(event, this.node);
+            }
+        };
+        return FcNodeContainerComponent;
+    }());
+    FcNodeContainerComponent.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcNodeContainerComponent, deps: [{ token: FC_NODE_COMPONENT_CONFIG }, { token: i0__namespace.ElementRef }, { token: i0__namespace.ComponentFactoryResolver }], target: i0__namespace.ɵɵFactoryTarget.Component });
+    FcNodeContainerComponent.ɵcmp = i0__namespace.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeContainerComponent, selector: "fc-node", inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, host: { listeners: { "mousedown": "mousedown($event)", "dragstart": "dragstart($event)", "dragend": "dragend($event)", "click": "click($event)", "mouseover": "mouseover($event)", "mouseout": "mouseout($event)" }, properties: { "attr.id": "this.nodeId", "style.top": "this.top", "style.left": "this.left" } }, viewQueries: [{ propertyName: "nodeContentContainer", first: true, predicate: ["nodeContent"], descendants: true, read: i0.ViewContainerRef, static: true }], usesOnChanges: true, ngImport: i0__namespace, template: '<ng-template #nodeContent></ng-template>', isInline: true, styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:flex;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}\n"] });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcNodeContainerComponent, decorators: [{
+                type: i0.Component,
+                args: [{
+                        selector: 'fc-node',
+                        template: '<ng-template #nodeContent></ng-template>',
+                        styleUrls: ['./node.component.scss']
+                    }]
+            }], ctorParameters: function () {
+            return [{ type: undefined, decorators: [{
+                            type: i0.Inject,
+                            args: [FC_NODE_COMPONENT_CONFIG]
+                        }] }, { type: i0__namespace.ElementRef }, { type: i0__namespace.ComponentFactoryResolver }];
+        }, propDecorators: { callbacks: [{
+                    type: i0.Input
+                }], userNodeCallbacks: [{
+                    type: i0.Input
+                }], node: [{
+                    type: i0.Input
+                }], selected: [{
+                    type: i0.Input
+                }], edit: [{
+                    type: i0.Input
+                }], underMouse: [{
+                    type: i0.Input
+                }], mouseOverConnector: [{
+                    type: i0.Input
+                }], modelservice: [{
+                    type: i0.Input
+                }], dragging: [{
+                    type: i0.Input
+                }], nodeId: [{
+                    type: i0.HostBinding,
+                    args: ['attr.id']
+                }], top: [{
+                    type: i0.HostBinding,
+                    args: ['style.top']
+                }], left: [{
+                    type: i0.HostBinding,
+                    args: ['style.left']
+                }], nodeContentContainer: [{
+                    type: i0.ViewChild,
+                    args: ['nodeContent', { read: i0.ViewContainerRef, static: true }]
+                }], mousedown: [{
+                    type: i0.HostListener,
+                    args: ['mousedown', ['$event']]
+                }], dragstart: [{
+                    type: i0.HostListener,
+                    args: ['dragstart', ['$event']]
+                }], dragend: [{
+                    type: i0.HostListener,
+                    args: ['dragend', ['$event']]
+                }], click: [{
+                    type: i0.HostListener,
+                    args: ['click', ['$event']]
+                }], mouseover: [{
+                    type: i0.HostListener,
+                    args: ['mouseover', ['$event']]
+                }], mouseout: [{
+                    type: i0.HostListener,
+                    args: ['mouseout', ['$event']]
+                }] } });
+    // tslint:disable-next-line:directive-class-suffix
+    var FcNodeComponent = /** @class */ (function () {
+        function FcNodeComponent() {
+            var _this = this;
+            this.flowchartConstants = FlowchartConstants;
+            this.nodeRectInfo = {
+                top: function () {
+                    return _this.node.y;
+                },
+                left: function () {
+                    return _this.node.x;
+                },
+                bottom: function () {
+                    return _this.node.y + _this.height;
+                },
+                right: function () {
+                    return _this.node.x + _this.width;
+                },
+                width: function () {
+                    return _this.width;
+                },
+                height: function () {
+                    return _this.height;
+                }
+            };
+        }
+        FcNodeComponent.prototype.ngOnInit = function () {
+        };
+        return FcNodeComponent;
+    }());
+    FcNodeComponent.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcNodeComponent, deps: [], target: i0__namespace.ɵɵFactoryTarget.Directive });
+    FcNodeComponent.ɵdir = i0__namespace.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeComponent, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, ngImport: i0__namespace });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcNodeComponent, decorators: [{
+                type: i0.Directive
+            }], propDecorators: { callbacks: [{
+                    type: i0.Input
+                }], userNodeCallbacks: [{
+                    type: i0.Input
+                }], node: [{
+                    type: i0.Input
+                }], selected: [{
+                    type: i0.Input
+                }], edit: [{
+                    type: i0.Input
+                }], underMouse: [{
+                    type: i0.Input
+                }], mouseOverConnector: [{
+                    type: i0.Input
+                }], modelservice: [{
+                    type: i0.Input
+                }], dragging: [{
+                    type: i0.Input
+                }] } });
+
     var NgxFlowchartComponent = /** @class */ (function () {
         function NgxFlowchartComponent(elementRef, differs, modelValidation, edgeDrawingService, cd, zone) {
             var _this = this;
@@ -1757,7 +2057,7 @@
             this.edgeDrawingService = edgeDrawingService;
             this.cd = cd;
             this.zone = zone;
-            this.modelChanged = new core.EventEmitter();
+            this.modelChanged = new i0.EventEmitter();
             this.fitModelSizeByDefaultValue = true;
             this.flowchartConstants = FlowchartConstants;
             this.nodesDiffer = this.differs.find([]).create(function (index, item) {
@@ -1963,41 +2263,57 @@
         };
         return NgxFlowchartComponent;
     }());
-    NgxFlowchartComponent.decorators = [
-        { type: core.Component, args: [{
-                    selector: 'fc-canvas',
-                    template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n",
-                    changeDetection: core.ChangeDetectionStrategy.OnPush,
-                    styles: [":host{-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;background-color:transparent;background-image:linear-gradient(90deg,rgba(0,0,0,.1) 1px,transparent 0),linear-gradient(180deg,rgba(0,0,0,.1) 1px,transparent 0);background-size:25px 25px;min-height:100%;min-width:100%;user-select:none}:host,:host .fc-canvas-container,:host .fc-canvas-container svg.fc-canvas-svg{display:block;height:100%;position:relative;width:100%}:host .fc-edge{fill:transparent;stroke:grey;stroke-width:4;transition:stroke-width .2s}:host .fc-edge.fc-hover{fill:transparent;stroke:grey;stroke-width:6}:host .fc-edge.fc-selected{fill:transparent;stroke:red;stroke-width:4}:host .fc-edge.fc-active{-webkit-animation:dash 3s linear infinite;animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{fill:grey;stroke:grey}:host .fc-arrow-marker-selected polygon{fill:red;stroke:red}:host .edge-endpoint{fill:grey}:host .fc-noselect{-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{margin:0 auto;opacity:.8;position:absolute;transform-origin:bottom left;transition:transform .2s}:host .fc-edge-label .fc-edge-label-text{font-size:16px;position:absolute;text-align:center;transform:translate(-50%,-50%);white-space:nowrap}:host .fc-edge-label .fc-edge-label-text span{background-color:#fff;border:solid #ff3d00;border-radius:10px;color:#ff3d00;cursor:default;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{right:14px;top:-30px}:host .fc-edge-label .fc-nodedelete{right:-13px;top:-30px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-edit .fc-edge-label-text span,:host .fc-edge-label.fc-selected .fc-edge-label-text span{background-color:red;border:solid red;color:#fff;font-weight:600}:host .fc-select-rectangle{background:rgba(20,125,255,.1);border:2px dashed #5262ff;position:absolute;z-index:2}@-webkit-keyframes dash{0%{stroke-dashoffset:500}}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodedelete,:host ::ng-deep .fc-edit .fc-nodeedit{background:#494949;border:2px solid #eee;border-radius:50%;color:#fff;cursor:pointer;display:block;font-weight:600;height:20px;line-height:20px;padding-top:2px;position:absolute;text-align:center;vertical-align:bottom;width:22px}:host ::ng-deep .fc-edit .fc-nodeedit{right:16px;top:-24px}:host ::ng-deep .fc-edit .fc-nodedelete{right:-13px;top:-24px}"]
-                },] }
-    ];
-    NgxFlowchartComponent.ctorParameters = function () { return [
-        { type: core.ElementRef },
-        { type: core.IterableDiffers },
-        { type: FcModelValidationService },
-        { type: FcEdgeDrawingService },
-        { type: core.ChangeDetectorRef },
-        { type: core.NgZone }
-    ]; };
-    NgxFlowchartComponent.propDecorators = {
-        canvasClass: [{ type: core.HostBinding, args: ['attr.class',] }],
-        model: [{ type: core.Input }],
-        selectedObjects: [{ type: core.Input }],
-        edgeStyle: [{ type: core.Input }],
-        userCallbacks: [{ type: core.Input }],
-        automaticResize: [{ type: core.Input }],
-        dragAnimation: [{ type: core.Input }],
-        nodeWidth: [{ type: core.Input }],
-        nodeHeight: [{ type: core.Input }],
-        dropTargetId: [{ type: core.Input }],
-        modelChanged: [{ type: core.Output }],
-        fitModelSizeByDefault: [{ type: core.Input }],
-        dragover: [{ type: core.HostListener, args: ['dragover', ['$event'],] }],
-        drop: [{ type: core.HostListener, args: ['drop', ['$event'],] }],
-        mousedown: [{ type: core.HostListener, args: ['mousedown', ['$event'],] }],
-        mousemove: [{ type: core.HostListener, args: ['mousemove', ['$event'],] }],
-        mouseup: [{ type: core.HostListener, args: ['mouseup', ['$event'],] }]
-    };
+    NgxFlowchartComponent.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartComponent, deps: [{ token: i0__namespace.ElementRef }, { token: i0__namespace.IterableDiffers }, { token: FcModelValidationService }, { token: FcEdgeDrawingService }, { token: i0__namespace.ChangeDetectorRef }, { token: i0__namespace.NgZone }], target: i0__namespace.ɵɵFactoryTarget.Component });
+    NgxFlowchartComponent.ɵcmp = i0__namespace.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: NgxFlowchartComponent, selector: "fc-canvas", inputs: { model: "model", selectedObjects: "selectedObjects", edgeStyle: "edgeStyle", userCallbacks: "userCallbacks", automaticResize: "automaticResize", dragAnimation: "dragAnimation", nodeWidth: "nodeWidth", nodeHeight: "nodeHeight", dropTargetId: "dropTargetId", fitModelSizeByDefault: "fitModelSizeByDefault" }, outputs: { modelChanged: "modelChanged" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "mousedown": "mousedown($event)", "mousemove": "mousemove($event)", "mouseup": "mouseup($event)" }, properties: { "attr.class": "this.canvasClass" } }, ngImport: i0__namespace, template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n", styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;transition:transform .2s;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-selected .fc-edge-label-text span,:host .fc-edge-label.fc-edit .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodeedit,:host ::ng-deep .fc-edit .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}\n"], components: [{ type: FcNodeContainerComponent, selector: "fc-node", inputs: ["callbacks", "userNodeCallbacks", "node", "selected", "edit", "underMouse", "mouseOverConnector", "modelservice", "dragging"] }], directives: [{ type: i4__namespace.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: i4__namespace.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { type: i4__namespace.NgStyle, selector: "[ngStyle]", inputs: ["ngStyle"] }], changeDetection: i0__namespace.ChangeDetectionStrategy.OnPush });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartComponent, decorators: [{
+                type: i0.Component,
+                args: [{
+                        selector: 'fc-canvas',
+                        templateUrl: './ngx-flowchart.component.html',
+                        styleUrls: ['./ngx-flowchart.component.scss'],
+                        changeDetection: i0.ChangeDetectionStrategy.OnPush
+                    }]
+            }], ctorParameters: function () { return [{ type: i0__namespace.ElementRef }, { type: i0__namespace.IterableDiffers }, { type: FcModelValidationService }, { type: FcEdgeDrawingService }, { type: i0__namespace.ChangeDetectorRef }, { type: i0__namespace.NgZone }]; }, propDecorators: { canvasClass: [{
+                    type: i0.HostBinding,
+                    args: ['attr.class']
+                }], model: [{
+                    type: i0.Input
+                }], selectedObjects: [{
+                    type: i0.Input
+                }], edgeStyle: [{
+                    type: i0.Input
+                }], userCallbacks: [{
+                    type: i0.Input
+                }], automaticResize: [{
+                    type: i0.Input
+                }], dragAnimation: [{
+                    type: i0.Input
+                }], nodeWidth: [{
+                    type: i0.Input
+                }], nodeHeight: [{
+                    type: i0.Input
+                }], dropTargetId: [{
+                    type: i0.Input
+                }], modelChanged: [{
+                    type: i0.Output
+                }], fitModelSizeByDefault: [{
+                    type: i0.Input
+                }], dragover: [{
+                    type: i0.HostListener,
+                    args: ['dragover', ['$event']]
+                }], drop: [{
+                    type: i0.HostListener,
+                    args: ['drop', ['$event']]
+                }], mousedown: [{
+                    type: i0.HostListener,
+                    args: ['mousedown', ['$event']]
+                }], mousemove: [{
+                    type: i0.HostListener,
+                    args: ['mousemove', ['$event']]
+                }], mouseup: [{
+                    type: i0.HostListener,
+                    args: ['mouseup', ['$event']]
+                }] } });
 
     var FcMagnetDirective = /** @class */ (function () {
         function FcMagnetDirective(elementRef) {
@@ -2021,23 +2337,31 @@
         };
         return FcMagnetDirective;
     }());
-    FcMagnetDirective.decorators = [
-        { type: core.Directive, args: [{
-                    // tslint:disable-next-line:directive-selector
-                    selector: '[fc-magnet]'
-                },] }
-    ];
-    FcMagnetDirective.ctorParameters = function () { return [
-        { type: core.ElementRef }
-    ]; };
-    FcMagnetDirective.propDecorators = {
-        callbacks: [{ type: core.Input }],
-        connector: [{ type: core.Input }],
-        dragover: [{ type: core.HostListener, args: ['dragover', ['$event'],] }],
-        dragleave: [{ type: core.HostListener, args: ['dragleave', ['$event'],] }],
-        drop: [{ type: core.HostListener, args: ['drop', ['$event'],] }],
-        dragend: [{ type: core.HostListener, args: ['dragend', ['$event'],] }]
-    };
+    FcMagnetDirective.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcMagnetDirective, deps: [{ token: i0__namespace.ElementRef }], target: i0__namespace.ɵɵFactoryTarget.Directive });
+    FcMagnetDirective.ɵdir = i0__namespace.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcMagnetDirective, selector: "[fc-magnet]", inputs: { callbacks: "callbacks", connector: "connector" }, host: { listeners: { "dragover": "dragover($event)", "dragleave": "dragleave($event)", "drop": "drop($event)", "dragend": "dragend($event)" } }, ngImport: i0__namespace });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcMagnetDirective, decorators: [{
+                type: i0.Directive,
+                args: [{
+                        // tslint:disable-next-line:directive-selector
+                        selector: '[fc-magnet]'
+                    }]
+            }], ctorParameters: function () { return [{ type: i0__namespace.ElementRef }]; }, propDecorators: { callbacks: [{
+                    type: i0.Input
+                }], connector: [{
+                    type: i0.Input
+                }], dragover: [{
+                    type: i0.HostListener,
+                    args: ['dragover', ['$event']]
+                }], dragleave: [{
+                    type: i0.HostListener,
+                    args: ['dragleave', ['$event']]
+                }], drop: [{
+                    type: i0.HostListener,
+                    args: ['drop', ['$event']]
+                }], dragend: [{
+                    type: i0.HostListener,
+                    args: ['dragend', ['$event']]
+                }] } });
 
     var FcConnectorDirective = /** @class */ (function () {
         function FcConnectorDirective(elementRef) {
@@ -2125,242 +2449,43 @@
         };
         return FcConnectorDirective;
     }());
-    FcConnectorDirective.decorators = [
-        { type: core.Directive, args: [{
-                    // tslint:disable-next-line:directive-selector
-                    selector: '[fc-connector]'
-                },] }
-    ];
-    FcConnectorDirective.ctorParameters = function () { return [
-        { type: core.ElementRef }
-    ]; };
-    FcConnectorDirective.propDecorators = {
-        callbacks: [{ type: core.Input }],
-        modelservice: [{ type: core.Input }],
-        connector: [{ type: core.Input }],
-        nodeRectInfo: [{ type: core.Input }],
-        mouseOverConnector: [{ type: core.Input }],
-        dragover: [{ type: core.HostListener, args: ['dragover', ['$event'],] }],
-        drop: [{ type: core.HostListener, args: ['drop', ['$event'],] }],
-        dragend: [{ type: core.HostListener, args: ['dragend', ['$event'],] }],
-        dragstart: [{ type: core.HostListener, args: ['dragstart', ['$event'],] }],
-        mouseenter: [{ type: core.HostListener, args: ['mouseenter', ['$event'],] }],
-        mouseleave: [{ type: core.HostListener, args: ['mouseleave', ['$event'],] }]
-    };
-
-    var FcNodeContainerComponent = /** @class */ (function () {
-        function FcNodeContainerComponent(nodeComponentConfig, elementRef, componentFactoryResolver) {
-            this.nodeComponentConfig = nodeComponentConfig;
-            this.elementRef = elementRef;
-            this.componentFactoryResolver = componentFactoryResolver;
-        }
-        Object.defineProperty(FcNodeContainerComponent.prototype, "nodeId", {
-            get: function () {
-                return this.node.id;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(FcNodeContainerComponent.prototype, "top", {
-            get: function () {
-                return this.node.y + 'px';
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(FcNodeContainerComponent.prototype, "left", {
-            get: function () {
-                return this.node.x + 'px';
-            },
-            enumerable: false,
-            configurable: true
-        });
-        FcNodeContainerComponent.prototype.ngOnInit = function () {
-            if (!this.userNodeCallbacks) {
-                this.userNodeCallbacks = {};
-            }
-            this.userNodeCallbacks.nodeEdit = this.userNodeCallbacks.nodeEdit || (function () { });
-            this.userNodeCallbacks.doubleClick = this.userNodeCallbacks.doubleClick || (function () { });
-            this.userNodeCallbacks.mouseDown = this.userNodeCallbacks.mouseDown || (function () { });
-            this.userNodeCallbacks.mouseEnter = this.userNodeCallbacks.mouseEnter || (function () { });
-            this.userNodeCallbacks.mouseLeave = this.userNodeCallbacks.mouseLeave || (function () { });
-            var element = $(this.elementRef.nativeElement);
-            element.addClass(FlowchartConstants.nodeClass);
-            if (!this.node.readonly) {
-                element.attr('draggable', 'true');
-            }
-            this.updateNodeClass();
-            this.modelservice.nodes.setHtmlElement(this.node.id, element[0]);
-            this.nodeContentContainer.clear();
-            var componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.nodeComponentConfig.nodeComponentType);
-            var componentRef = this.nodeContentContainer.createComponent(componentFactory);
-            this.nodeComponent = componentRef.instance;
-            this.nodeComponent.callbacks = this.callbacks;
-            this.nodeComponent.userNodeCallbacks = this.userNodeCallbacks;
-            this.nodeComponent.node = this.node;
-            this.nodeComponent.modelservice = this.modelservice;
-            this.updateNodeComponent();
-            this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-            this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-        };
-        FcNodeContainerComponent.prototype.ngAfterViewInit = function () {
-            this.nodeComponent.width = this.elementRef.nativeElement.offsetWidth;
-            this.nodeComponent.height = this.elementRef.nativeElement.offsetHeight;
-        };
-        FcNodeContainerComponent.prototype.ngOnChanges = function (changes) {
-            var e_1, _a;
-            var updateNode = false;
-            try {
-                for (var _b = __values(Object.keys(changes)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var propName = _c.value;
-                    var change = changes[propName];
-                    if (!change.firstChange && change.currentValue !== change.previousValue) {
-                        if (['selected', 'edit', 'underMouse', 'mouseOverConnector', 'dragging'].includes(propName)) {
-                            updateNode = true;
-                        }
-                    }
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            if (updateNode) {
-                this.updateNodeClass();
-                this.updateNodeComponent();
-            }
-        };
-        FcNodeContainerComponent.prototype.updateNodeClass = function () {
-            var element = $(this.elementRef.nativeElement);
-            this.toggleClass(element, FlowchartConstants.selectedClass, this.selected);
-            this.toggleClass(element, FlowchartConstants.editClass, this.edit);
-            this.toggleClass(element, FlowchartConstants.hoverClass, this.underMouse);
-            this.toggleClass(element, FlowchartConstants.draggingClass, this.dragging);
-        };
-        FcNodeContainerComponent.prototype.updateNodeComponent = function () {
-            this.nodeComponent.selected = this.selected;
-            this.nodeComponent.edit = this.edit;
-            this.nodeComponent.underMouse = this.underMouse;
-            this.nodeComponent.mouseOverConnector = this.mouseOverConnector;
-            this.nodeComponent.dragging = this.dragging;
-        };
-        FcNodeContainerComponent.prototype.toggleClass = function (element, clazz, set) {
-            if (set) {
-                element.addClass(clazz);
-            }
-            else {
-                element.removeClass(clazz);
-            }
-        };
-        FcNodeContainerComponent.prototype.mousedown = function (event) {
-            event.stopPropagation();
-        };
-        FcNodeContainerComponent.prototype.dragstart = function (event) {
-            if (!this.node.readonly) {
-                this.callbacks.nodeDragstart(event, this.node);
-            }
-        };
-        FcNodeContainerComponent.prototype.dragend = function (event) {
-            if (!this.node.readonly) {
-                this.callbacks.nodeDragend(event);
-            }
-        };
-        FcNodeContainerComponent.prototype.click = function (event) {
-            if (!this.node.readonly) {
-                this.callbacks.nodeClicked(event, this.node);
-            }
-        };
-        FcNodeContainerComponent.prototype.mouseover = function (event) {
-            if (!this.node.readonly) {
-                this.callbacks.nodeMouseOver(event, this.node);
-            }
-        };
-        FcNodeContainerComponent.prototype.mouseout = function (event) {
-            if (!this.node.readonly) {
-                this.callbacks.nodeMouseOut(event, this.node);
-            }
-        };
-        return FcNodeContainerComponent;
-    }());
-    FcNodeContainerComponent.decorators = [
-        { type: core.Component, args: [{
-                    selector: 'fc-node',
-                    template: '<ng-template #nodeContent></ng-template>',
-                    styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{display:flex;flex-direction:column;height:100%;position:absolute;top:0;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;background-color:#f7a789;border:10px solid transparent;border-radius:50% 50%;color:#fff;height:18px;pointer-events:all;width:18px}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}"]
-                },] }
-    ];
-    FcNodeContainerComponent.ctorParameters = function () { return [
-        { type: undefined, decorators: [{ type: core.Inject, args: [FC_NODE_COMPONENT_CONFIG,] }] },
-        { type: core.ElementRef },
-        { type: core.ComponentFactoryResolver }
-    ]; };
-    FcNodeContainerComponent.propDecorators = {
-        callbacks: [{ type: core.Input }],
-        userNodeCallbacks: [{ type: core.Input }],
-        node: [{ type: core.Input }],
-        selected: [{ type: core.Input }],
-        edit: [{ type: core.Input }],
-        underMouse: [{ type: core.Input }],
-        mouseOverConnector: [{ type: core.Input }],
-        modelservice: [{ type: core.Input }],
-        dragging: [{ type: core.Input }],
-        nodeId: [{ type: core.HostBinding, args: ['attr.id',] }],
-        top: [{ type: core.HostBinding, args: ['style.top',] }],
-        left: [{ type: core.HostBinding, args: ['style.left',] }],
-        nodeContentContainer: [{ type: core.ViewChild, args: ['nodeContent', { read: core.ViewContainerRef, static: true },] }],
-        mousedown: [{ type: core.HostListener, args: ['mousedown', ['$event'],] }],
-        dragstart: [{ type: core.HostListener, args: ['dragstart', ['$event'],] }],
-        dragend: [{ type: core.HostListener, args: ['dragend', ['$event'],] }],
-        click: [{ type: core.HostListener, args: ['click', ['$event'],] }],
-        mouseover: [{ type: core.HostListener, args: ['mouseover', ['$event'],] }],
-        mouseout: [{ type: core.HostListener, args: ['mouseout', ['$event'],] }]
-    };
-    var FcNodeComponent = /** @class */ (function () {
-        function FcNodeComponent() {
-            var _this = this;
-            this.flowchartConstants = FlowchartConstants;
-            this.nodeRectInfo = {
-                top: function () {
-                    return _this.node.y;
-                },
-                left: function () {
-                    return _this.node.x;
-                },
-                bottom: function () {
-                    return _this.node.y + _this.height;
-                },
-                right: function () {
-                    return _this.node.x + _this.width;
-                },
-                width: function () {
-                    return _this.width;
-                },
-                height: function () {
-                    return _this.height;
-                }
-            };
-        }
-        FcNodeComponent.prototype.ngOnInit = function () {
-        };
-        return FcNodeComponent;
-    }());
-    FcNodeComponent.decorators = [
-        { type: core.Directive }
-    ];
-    FcNodeComponent.propDecorators = {
-        callbacks: [{ type: core.Input }],
-        userNodeCallbacks: [{ type: core.Input }],
-        node: [{ type: core.Input }],
-        selected: [{ type: core.Input }],
-        edit: [{ type: core.Input }],
-        underMouse: [{ type: core.Input }],
-        mouseOverConnector: [{ type: core.Input }],
-        modelservice: [{ type: core.Input }],
-        dragging: [{ type: core.Input }]
-    };
+    FcConnectorDirective.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcConnectorDirective, deps: [{ token: i0__namespace.ElementRef }], target: i0__namespace.ɵɵFactoryTarget.Directive });
+    FcConnectorDirective.ɵdir = i0__namespace.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcConnectorDirective, selector: "[fc-connector]", inputs: { callbacks: "callbacks", modelservice: "modelservice", connector: "connector", nodeRectInfo: "nodeRectInfo", mouseOverConnector: "mouseOverConnector" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "dragend": "dragend($event)", "dragstart": "dragstart($event)", "mouseenter": "mouseenter($event)", "mouseleave": "mouseleave($event)" } }, usesOnChanges: true, ngImport: i0__namespace });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: FcConnectorDirective, decorators: [{
+                type: i0.Directive,
+                args: [{
+                        // tslint:disable-next-line:directive-selector
+                        selector: '[fc-connector]'
+                    }]
+            }], ctorParameters: function () { return [{ type: i0__namespace.ElementRef }]; }, propDecorators: { callbacks: [{
+                    type: i0.Input
+                }], modelservice: [{
+                    type: i0.Input
+                }], connector: [{
+                    type: i0.Input
+                }], nodeRectInfo: [{
+                    type: i0.Input
+                }], mouseOverConnector: [{
+                    type: i0.Input
+                }], dragover: [{
+                    type: i0.HostListener,
+                    args: ['dragover', ['$event']]
+                }], drop: [{
+                    type: i0.HostListener,
+                    args: ['drop', ['$event']]
+                }], dragend: [{
+                    type: i0.HostListener,
+                    args: ['dragend', ['$event']]
+                }], dragstart: [{
+                    type: i0.HostListener,
+                    args: ['dragstart', ['$event']]
+                }], mouseenter: [{
+                    type: i0.HostListener,
+                    args: ['mouseenter', ['$event']]
+                }], mouseleave: [{
+                    type: i0.HostListener,
+                    args: ['mouseleave', ['$event']]
+                }] } });
 
     var DefaultFcNodeComponent = /** @class */ (function (_super) {
         __extends(DefaultFcNodeComponent, _super);
@@ -2369,50 +2494,73 @@
         }
         return DefaultFcNodeComponent;
     }(FcNodeComponent));
-    DefaultFcNodeComponent.decorators = [
-        { type: core.Component, args: [{
-                    selector: 'fc-default-node',
-                    template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n",
-                    styles: [":host .fc-node-overlay{background-color:#000;bottom:0;left:0;opacity:0;pointer-events:none;position:absolute;right:0;top:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{align-items:center;background-color:#f15b26;border-radius:5px;color:#fff;display:flex;font-size:16px;justify-content:center;min-width:100px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}"]
-                },] }
-    ];
-    DefaultFcNodeComponent.ctorParameters = function () { return []; };
+    DefaultFcNodeComponent.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: DefaultFcNodeComponent, deps: [], target: i0__namespace.ɵɵFactoryTarget.Component });
+    DefaultFcNodeComponent.ɵcmp = i0__namespace.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: DefaultFcNodeComponent, selector: "fc-default-node", usesInheritance: true, ngImport: i0__namespace, template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"], directives: [{ type: i4__namespace.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: FcMagnetDirective, selector: "[fc-magnet]", inputs: ["callbacks", "connector"] }, { type: FcConnectorDirective, selector: "[fc-connector]", inputs: ["callbacks", "modelservice", "connector", "nodeRectInfo", "mouseOverConnector"] }, { type: i4__namespace.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }] });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: DefaultFcNodeComponent, decorators: [{
+                type: i0.Component,
+                args: [{
+                        selector: 'fc-default-node',
+                        templateUrl: './default-node.component.html',
+                        styleUrls: ['./default-node.component.scss']
+                    }]
+            }], ctorParameters: function () { return []; } });
 
-    var ɵ0$1 = {
-        nodeComponentType: DefaultFcNodeComponent
-    };
     var NgxFlowchartModule = /** @class */ (function () {
         function NgxFlowchartModule() {
         }
         return NgxFlowchartModule;
     }());
-    NgxFlowchartModule.decorators = [
-        { type: core.NgModule, args: [{
-                    entryComponents: [
-                        DefaultFcNodeComponent
-                    ],
-                    declarations: [NgxFlowchartComponent,
-                        FcMagnetDirective,
-                        FcConnectorDirective,
-                        FcNodeContainerComponent,
-                        DefaultFcNodeComponent],
-                    providers: [
-                        FcModelValidationService,
-                        FcEdgeDrawingService,
-                        {
-                            provide: FC_NODE_COMPONENT_CONFIG,
-                            useValue: ɵ0$1
-                        }
-                    ],
-                    imports: [
-                        common.CommonModule
-                    ],
-                    exports: [NgxFlowchartComponent,
-                        FcMagnetDirective,
-                        FcConnectorDirective,
-                        DefaultFcNodeComponent]
-                },] }
-    ];
+    NgxFlowchartModule.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartModule, deps: [], target: i0__namespace.ɵɵFactoryTarget.NgModule });
+    NgxFlowchartModule.ɵmod = i0__namespace.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartModule, declarations: [NgxFlowchartComponent,
+            FcMagnetDirective,
+            FcConnectorDirective,
+            FcNodeContainerComponent,
+            DefaultFcNodeComponent], imports: [i4.CommonModule], exports: [NgxFlowchartComponent,
+            FcMagnetDirective,
+            FcConnectorDirective,
+            DefaultFcNodeComponent] });
+    NgxFlowchartModule.ɵinj = i0__namespace.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartModule, providers: [
+            FcModelValidationService,
+            FcEdgeDrawingService,
+            {
+                provide: FC_NODE_COMPONENT_CONFIG,
+                useValue: {
+                    nodeComponentType: DefaultFcNodeComponent
+                }
+            }
+        ], imports: [[
+                i4.CommonModule
+            ]] });
+    i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0__namespace, type: NgxFlowchartModule, decorators: [{
+                type: i0.NgModule,
+                args: [{
+                        entryComponents: [
+                            DefaultFcNodeComponent
+                        ],
+                        declarations: [NgxFlowchartComponent,
+                            FcMagnetDirective,
+                            FcConnectorDirective,
+                            FcNodeContainerComponent,
+                            DefaultFcNodeComponent],
+                        providers: [
+                            FcModelValidationService,
+                            FcEdgeDrawingService,
+                            {
+                                provide: FC_NODE_COMPONENT_CONFIG,
+                                useValue: {
+                                    nodeComponentType: DefaultFcNodeComponent
+                                }
+                            }
+                        ],
+                        imports: [
+                            i4.CommonModule
+                        ],
+                        exports: [NgxFlowchartComponent,
+                            FcMagnetDirective,
+                            FcConnectorDirective,
+                            DefaultFcNodeComponent]
+                    }]
+            }] });
 
     /*
      * Public API Surface of ngx-flowchart
@@ -2432,12 +2580,8 @@
     exports.NgxFlowchartComponent = NgxFlowchartComponent;
     exports.NgxFlowchartModule = NgxFlowchartModule;
     exports.fcTopSort = fcTopSort;
-    exports.ɵ0 = ɵ0$1;
-    exports.ɵa = FcNodeContainerComponent;
-    exports.ɵb = FcModelValidationService;
-    exports.ɵc = FcEdgeDrawingService;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=ngx-flowchart.umd.js.map

@@ -1,7 +1,7 @@
-import { AfterViewInit, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ComponentFactoryResolver, ElementRef, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ComponentFactoryResolver, ElementRef, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
 import { FcCallbacks, FcConnector, FcNode, FcNodeComponentConfig, FcNodeRectInfo, UserNodeCallbacks } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
+import * as i0 from "@angular/core";
 export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
     private nodeComponentConfig;
     private elementRef;
@@ -33,6 +33,8 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     click(event: MouseEvent): void;
     mouseover(event: MouseEvent): void;
     mouseout(event: MouseEvent): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeContainerComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<FcNodeContainerComponent, "fc-node", never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never>;
 }
 export declare abstract class FcNodeComponent implements OnInit {
     callbacks: FcCallbacks;
@@ -73,4 +75,6 @@ export declare abstract class FcNodeComponent implements OnInit {
     height: number;
     nodeRectInfo: FcNodeRectInfo;
     ngOnInit(): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeComponent, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never>;
 }

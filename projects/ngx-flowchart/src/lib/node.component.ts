@@ -1,5 +1,5 @@
-import { AfterViewInit, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
+  AfterViewInit,
   Component,
   ComponentFactoryResolver,
   Directive,
@@ -8,6 +8,9 @@ import {
   HostListener,
   Inject,
   Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
@@ -199,6 +202,7 @@ export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChange
 }
 
 @Directive()
+// tslint:disable-next-line:directive-class-suffix
 export abstract class FcNodeComponent implements OnInit {
 
   @Input()
