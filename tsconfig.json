@@ -10,7 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2020",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -27,6 +27,9 @@
       ],
       "ngx-flowchart-dev": [
         "projects/ngx-flowchart/src/public-api"
+      ],
+      "ngx-flowchart1": [
+        "dist/ngx-flowchart1"
       ]
     }
   },

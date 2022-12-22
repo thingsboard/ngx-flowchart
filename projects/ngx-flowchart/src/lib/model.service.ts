@@ -80,12 +80,12 @@ export class FcModelService {
   }
 
   public notifyModelChanged() {
-    this.debouncer.next();
+    this.debouncer.next(null);
   }
 
   public detectChanges() {
     setTimeout(() => {
-      this.detectChangesSubject.next();
+      this.detectChangesSubject.next(null);
     }, 0);
   }
 

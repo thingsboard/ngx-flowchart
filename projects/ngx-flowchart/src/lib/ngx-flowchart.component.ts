@@ -208,7 +208,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         this.adjustCanvasSize(this.fitModelSizeByDefault);
       }
       if (nodesChanged || edgesChanged) {
-        this.detectChangesSubject.next();
+        this.detectChangesSubject.next(null);
       }
     }
   }

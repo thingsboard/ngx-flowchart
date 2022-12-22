@@ -44,9 +44,9 @@ export class AppComponent implements AfterViewInit {
     edgeMouseOver: event => {
       console.log('mouserover');
     },
-    isValidEdge: (source, destination) => {
-      return source.type === FlowchartConstants.rightConnectorType && destination.type === FlowchartConstants.leftConnectorType;
-    },
+    isValidEdge: (source, destination) =>
+      source.type === FlowchartConstants.rightConnectorType && destination.type === FlowchartConstants.leftConnectorType
+    ,
     createEdge: (event, edge) => {
       if (!edge.label) {
         const label = prompt('Enter a link label:', 'New label');

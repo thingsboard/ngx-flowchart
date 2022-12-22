@@ -112,6 +112,15 @@
               "devServerTarget": "ngx-flowchart-demo:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -148,8 +157,22 @@
             "tsConfig": "projects/ngx-flowchart/tsconfig.spec.json",
             "karmaConfig": "projects/ngx-flowchart/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ngx-flowchart/**/*.ts",
+              "projects/ngx-flowchart/**/*.html"
+            ]
+          }
         }
       }
-    }},
-  "defaultProject": "ngx-flowchart-demo"
+    }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  }
 }
