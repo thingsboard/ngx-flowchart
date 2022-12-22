@@ -16,7 +16,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "^13.3.10",
     "@angular/animations": "^13.3.12",
-    "@angular/cdk": "^12.2.13",
+    "@angular/cdk": "^13.3.9",
     "@angular/cli": "^13.3.10",
     "@angular/common": "^13.3.12",
     "@angular/compiler": "^13.3.12",
