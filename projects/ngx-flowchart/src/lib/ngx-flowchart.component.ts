@@ -27,6 +27,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'fc-canvas',
   templateUrl: './ngx-flowchart.component.html',
   styleUrls: ['./ngx-flowchart.component.scss'],
@@ -93,13 +94,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
   flowchartConstants = FlowchartConstants;
 
-  private nodesDiffer: IterableDiffer<FcNode> = this.differs.find([]).create<FcNode>((index, item) => {
-    return item;
-  });
+  private nodesDiffer: IterableDiffer<FcNode> = this.differs.find([]).create<FcNode>((index, item) => item);
 
-  private edgesDiffer: IterableDiffer<FcEdge> = this.differs.find([]).create<FcEdge>((index, item) => {
-    return item;
-  });
+  private edgesDiffer: IterableDiffer<FcEdge> = this.differs.find([]).create<FcEdge>((index, item) => item);
 
   private readonly detectChangesSubject = new Subject<any>();
 

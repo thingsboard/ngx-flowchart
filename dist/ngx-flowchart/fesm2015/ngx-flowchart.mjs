@@ -10,6 +10,7 @@ const FC_NODE_COMPONENT_CONFIG = new InjectionToken('fc-node.component.config');
 const htmlPrefix = 'fc';
 const leftConnectorType = 'leftConnector';
 const rightConnectorType = 'rightConnector';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const FlowchartConstants = {
     htmlPrefix,
     leftConnectorType,
@@ -47,22 +48,14 @@ class ModelvalidationError extends BaseError {
         this.message = message;
     }
 }
-function fcTopSort(graph) {
+const fcTopSort = (graph) => {
     const adjacentList = {};
     graph.nodes.forEach((node) => {
         adjacentList[node.id] = { incoming: 0, outgoing: [] };
     });
     graph.edges.forEach((edge) => {
-        const sourceNode = graph.nodes.filter((node) => {
-            return node.connectors.some((connector) => {
-                return connector.id === edge.source;
-            });
-        })[0];
-        const destinationNode = graph.nodes.filter((node) => {
-            return node.connectors.some((connector) => {
-                return connector.id === edge.destination;
-            });
-        })[0];
+        const sourceNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.source))[0];
+        const destinationNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.destination))[0];
         adjacentList[sourceNode.id].outgoing.push(destinationNode.id);
         adjacentList[destinationNode.id].incoming++;
     });
@@ -100,8 +93,217 @@ function fcTopSort(graph) {
     else {
         return orderedNodes;
     }
-}
+};
 
+class AbstractFcModel {
+    constructor(modelService) {
+        this.modelService = modelService;
+    }
+    select(object) {
+        this.modelService.selectObject(object);
+    }
+    deselect(object) {
+        this.modelService.deselectObject(object);
+    }
+    toggleSelected(object) {
+        this.modelService.toggleSelectedObject(object);
+    }
+    isSelected(object) {
+        return this.modelService.isSelectedObject(object);
+    }
+    isEdit(object) {
+        return this.modelService.isEditObject(object);
+    }
+}
+class ConnectorsModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    getConnector(connectorId) {
+        const model = this.modelService.model;
+        for (const node of model.nodes) {
+            for (const connector of node.connectors) {
+                if (connector.id === connectorId) {
+                    return connector;
+                }
+            }
+        }
+    }
+    getConnectorRectInfo(connectorId) {
+        return this.modelService.connectorsRectInfos[connectorId];
+    }
+    setConnectorRectInfo(connectorId, connectorRectInfo) {
+        this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
+        this.modelService.detectChanges();
+    }
+    _getCoords(connectorId, centered) {
+        const connectorRectInfo = this.getConnectorRectInfo(connectorId);
+        const canvas = this.modelService.canvasHtmlElement;
+        if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
+            return { x: 0, y: 0 };
+        }
+        let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
+            connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
+        let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
+        if (!centered) {
+            x -= connectorRectInfo.width / 2;
+            y -= connectorRectInfo.height / 2;
+        }
+        return {
+            x: Math.round(x),
+            y: Math.round(y)
+        };
+    }
+    getCoords(connectorId) {
+        return this._getCoords(connectorId, false);
+    }
+    getCenteredCoord(connectorId) {
+        return this._getCoords(connectorId, true);
+    }
+}
+class NodesModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    getConnectorsByType(node, type) {
+        return node.connectors.filter((connector) => connector.type === type);
+    }
+    _addConnector(node, connector) {
+        node.connectors.push(connector);
+        try {
+            this.modelService.modelValidation.validateNode(node);
+        }
+        catch (error) {
+            node.connectors.splice(node.connectors.indexOf(connector), 1);
+            throw error;
+        }
+    }
+    delete(node) {
+        if (this.isSelected(node)) {
+            this.deselect(node);
+        }
+        const model = this.modelService.model;
+        const index = model.nodes.indexOf(node);
+        if (index === -1) {
+            if (node === undefined) {
+                throw new Error('Passed undefined');
+            }
+            throw new Error('Tried to delete not existing node');
+        }
+        const connectorIds = this.getConnectorIds(node);
+        for (let i = 0; i < model.edges.length; i++) {
+            const edge = model.edges[i];
+            if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
+                this.modelService.edges.delete(edge);
+                i--;
+            }
+        }
+        model.nodes.splice(index, 1);
+        this.modelService.notifyModelChanged();
+        this.modelService.nodeRemovedCallback(node);
+    }
+    getSelectedNodes() {
+        const model = this.modelService.model;
+        return model.nodes.filter((node) => this.modelService.nodes.isSelected(node));
+    }
+    handleClicked(node, ctrlKey) {
+        if (ctrlKey) {
+            this.modelService.nodes.toggleSelected(node);
+        }
+        else {
+            this.modelService.deselectAll();
+            this.modelService.nodes.select(node);
+        }
+    }
+    _addNode(node) {
+        const model = this.modelService.model;
+        try {
+            model.nodes.push(node);
+            this.modelService.modelValidation.validateNodes(model.nodes);
+        }
+        catch (error) {
+            model.nodes.splice(model.nodes.indexOf(node), 1);
+            throw error;
+        }
+    }
+    getConnectorIds(node) {
+        return node.connectors.map((connector) => connector.id);
+    }
+    getNodeByConnectorId(connectorId) {
+        const model = this.modelService.model;
+        for (const node of model.nodes) {
+            const connectorIds = this.getConnectorIds(node);
+            if (connectorIds.indexOf(connectorId) > -1) {
+                return node;
+            }
+        }
+        return null;
+    }
+    getHtmlElement(nodeId) {
+        return this.modelService.nodesHtmlElements[nodeId];
+    }
+    setHtmlElement(nodeId, element) {
+        this.modelService.nodesHtmlElements[nodeId] = element;
+        this.modelService.detectChanges();
+    }
+}
+class EdgesModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    sourceCoord(edge) {
+        return this.modelService.connectors.getCenteredCoord(edge.source);
+    }
+    destCoord(edge) {
+        return this.modelService.connectors.getCenteredCoord(edge.destination);
+    }
+    delete(edge) {
+        const model = this.modelService.model;
+        const index = model.edges.indexOf(edge);
+        if (index === -1) {
+            throw new Error('Tried to delete not existing edge');
+        }
+        if (this.isSelected(edge)) {
+            this.deselect(edge);
+        }
+        model.edges.splice(index, 1);
+        this.modelService.notifyModelChanged();
+        this.modelService.edgeRemovedCallback(edge);
+    }
+    getSelectedEdges() {
+        const model = this.modelService.model;
+        return model.edges.filter((edge) => this.modelService.edges.isSelected(edge));
+    }
+    handleEdgeMouseClick(edge, ctrlKey) {
+        if (ctrlKey) {
+            this.modelService.edges.toggleSelected(edge);
+        }
+        else {
+            this.modelService.deselectAll();
+            this.modelService.edges.select(edge);
+        }
+    }
+    putEdge(edge) {
+        const model = this.modelService.model;
+        model.edges.push(edge);
+        this.modelService.notifyModelChanged();
+    }
+    _addEdge(event, sourceConnector, destConnector, label) {
+        this.modelService.modelValidation.validateConnector(sourceConnector);
+        this.modelService.modelValidation.validateConnector(destConnector);
+        const edge = {};
+        edge.source = sourceConnector.id;
+        edge.destination = destConnector.id;
+        edge.label = label;
+        const model = this.modelService.model;
+        this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
+        this.modelService.createEdge(event, edge).subscribe((created) => {
+            model.edges.push(created);
+            this.modelService.notifyModelChanged();
+            this.modelService.edgeAddedCallback(created);
+        });
+    }
+}
 class FcModelService {
     constructor(modelValidation, model, modelChanged, detectChangesSubject, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
         this.connectorsRectInfos = {};
@@ -278,224 +480,6 @@ class FcModelService {
             this.dragImage.style.visibility = 'hidden';
         }
         return this.dragImage;
-    }
-}
-class AbstractFcModel {
-    constructor(modelService) {
-        this.modelService = modelService;
-    }
-    select(object) {
-        this.modelService.selectObject(object);
-    }
-    deselect(object) {
-        this.modelService.deselectObject(object);
-    }
-    toggleSelected(object) {
-        this.modelService.toggleSelectedObject(object);
-    }
-    isSelected(object) {
-        return this.modelService.isSelectedObject(object);
-    }
-    isEdit(object) {
-        return this.modelService.isEditObject(object);
-    }
-}
-class ConnectorsModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    getConnector(connectorId) {
-        const model = this.modelService.model;
-        for (const node of model.nodes) {
-            for (const connector of node.connectors) {
-                if (connector.id === connectorId) {
-                    return connector;
-                }
-            }
-        }
-    }
-    getConnectorRectInfo(connectorId) {
-        return this.modelService.connectorsRectInfos[connectorId];
-    }
-    setConnectorRectInfo(connectorId, connectorRectInfo) {
-        this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
-        this.modelService.detectChanges();
-    }
-    _getCoords(connectorId, centered) {
-        const connectorRectInfo = this.getConnectorRectInfo(connectorId);
-        const canvas = this.modelService.canvasHtmlElement;
-        if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
-            return { x: 0, y: 0 };
-        }
-        let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
-            connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
-        let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
-        if (!centered) {
-            x -= connectorRectInfo.width / 2;
-            y -= connectorRectInfo.height / 2;
-        }
-        const coords = {
-            x: Math.round(x),
-            y: Math.round(y)
-        };
-        return coords;
-    }
-    getCoords(connectorId) {
-        return this._getCoords(connectorId, false);
-    }
-    getCenteredCoord(connectorId) {
-        return this._getCoords(connectorId, true);
-    }
-}
-class NodesModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    getConnectorsByType(node, type) {
-        return node.connectors.filter((connector) => {
-            return connector.type === type;
-        });
-    }
-    _addConnector(node, connector) {
-        node.connectors.push(connector);
-        try {
-            this.modelService.modelValidation.validateNode(node);
-        }
-        catch (error) {
-            node.connectors.splice(node.connectors.indexOf(connector), 1);
-            throw error;
-        }
-    }
-    delete(node) {
-        if (this.isSelected(node)) {
-            this.deselect(node);
-        }
-        const model = this.modelService.model;
-        const index = model.nodes.indexOf(node);
-        if (index === -1) {
-            if (node === undefined) {
-                throw new Error('Passed undefined');
-            }
-            throw new Error('Tried to delete not existing node');
-        }
-        const connectorIds = this.getConnectorIds(node);
-        for (let i = 0; i < model.edges.length; i++) {
-            const edge = model.edges[i];
-            if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
-                this.modelService.edges.delete(edge);
-                i--;
-            }
-        }
-        model.nodes.splice(index, 1);
-        this.modelService.notifyModelChanged();
-        this.modelService.nodeRemovedCallback(node);
-    }
-    getSelectedNodes() {
-        const model = this.modelService.model;
-        return model.nodes.filter((node) => {
-            return this.modelService.nodes.isSelected(node);
-        });
-    }
-    handleClicked(node, ctrlKey) {
-        if (ctrlKey) {
-            this.modelService.nodes.toggleSelected(node);
-        }
-        else {
-            this.modelService.deselectAll();
-            this.modelService.nodes.select(node);
-        }
-    }
-    _addNode(node) {
-        const model = this.modelService.model;
-        try {
-            model.nodes.push(node);
-            this.modelService.modelValidation.validateNodes(model.nodes);
-        }
-        catch (error) {
-            model.nodes.splice(model.nodes.indexOf(node), 1);
-            throw error;
-        }
-    }
-    getConnectorIds(node) {
-        return node.connectors.map((connector) => {
-            return connector.id;
-        });
-    }
-    getNodeByConnectorId(connectorId) {
-        const model = this.modelService.model;
-        for (const node of model.nodes) {
-            const connectorIds = this.getConnectorIds(node);
-            if (connectorIds.indexOf(connectorId) > -1) {
-                return node;
-            }
-        }
-        return null;
-    }
-    getHtmlElement(nodeId) {
-        return this.modelService.nodesHtmlElements[nodeId];
-    }
-    setHtmlElement(nodeId, element) {
-        this.modelService.nodesHtmlElements[nodeId] = element;
-        this.modelService.detectChanges();
-    }
-}
-class EdgesModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    sourceCoord(edge) {
-        return this.modelService.connectors.getCenteredCoord(edge.source);
-    }
-    destCoord(edge) {
-        return this.modelService.connectors.getCenteredCoord(edge.destination);
-    }
-    delete(edge) {
-        const model = this.modelService.model;
-        const index = model.edges.indexOf(edge);
-        if (index === -1) {
-            throw new Error('Tried to delete not existing edge');
-        }
-        if (this.isSelected(edge)) {
-            this.deselect(edge);
-        }
-        model.edges.splice(index, 1);
-        this.modelService.notifyModelChanged();
-        this.modelService.edgeRemovedCallback(edge);
-    }
-    getSelectedEdges() {
-        const model = this.modelService.model;
-        return model.edges.filter((edge) => {
-            return this.modelService.edges.isSelected(edge);
-        });
-    }
-    handleEdgeMouseClick(edge, ctrlKey) {
-        if (ctrlKey) {
-            this.modelService.edges.toggleSelected(edge);
-        }
-        else {
-            this.modelService.deselectAll();
-            this.modelService.edges.select(edge);
-        }
-    }
-    putEdge(edge) {
-        const model = this.modelService.model;
-        model.edges.push(edge);
-        this.modelService.notifyModelChanged();
-    }
-    _addEdge(event, sourceConnector, destConnector, label) {
-        this.modelService.modelValidation.validateConnector(sourceConnector);
-        this.modelService.modelValidation.validateConnector(destConnector);
-        const edge = {};
-        edge.source = sourceConnector.id;
-        edge.destination = destConnector.id;
-        edge.label = label;
-        const model = this.modelService.model;
-        this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
-        this.modelService.createEdge(event, edge).subscribe((created) => {
-            model.edges.push(created);
-            this.modelService.notifyModelChanged();
-            this.modelService.edgeAddedCallback(created);
-        });
     }
 }
 
@@ -1490,24 +1474,12 @@ class FcNodeComponent {
     constructor() {
         this.flowchartConstants = FlowchartConstants;
         this.nodeRectInfo = {
-            top: () => {
-                return this.node.y;
-            },
-            left: () => {
-                return this.node.x;
-            },
-            bottom: () => {
-                return this.node.y + this.height;
-            },
-            right: () => {
-                return this.node.x + this.width;
-            },
-            width: () => {
-                return this.width;
-            },
-            height: () => {
-                return this.height;
-            }
+            top: () => this.node.y,
+            left: () => this.node.x,
+            bottom: () => this.node.y + this.height,
+            right: () => this.node.x + this.width,
+            width: () => this.width,
+            height: () => this.height
         };
     }
     ngOnInit() {
@@ -1548,12 +1520,8 @@ class NgxFlowchartComponent {
         this.modelChanged = new EventEmitter();
         this.fitModelSizeByDefaultValue = true;
         this.flowchartConstants = FlowchartConstants;
-        this.nodesDiffer = this.differs.find([]).create((index, item) => {
-            return item;
-        });
-        this.edgesDiffer = this.differs.find([]).create((index, item) => {
-            return item;
-        });
+        this.nodesDiffer = this.differs.find([]).create((index, item) => item);
+        this.edgesDiffer = this.differs.find([]).create((index, item) => item);
         this.detectChangesSubject = new Subject();
         this.arrowDefId = 'arrow-' + Math.random();
         this.arrowDefIdSelected = this.arrowDefId + '-selected';
@@ -1802,7 +1770,7 @@ FcMagnetDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", vers
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcMagnetDirective, decorators: [{
             type: Directive,
             args: [{
-                    // tslint:disable-next-line:directive-selector
+                    // eslint-disable-next-line @angular-eslint/directive-selector
                     selector: '[fc-magnet]'
                 }]
         }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{
@@ -1902,7 +1870,7 @@ FcConnectorDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", v
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcConnectorDirective, decorators: [{
             type: Directive,
             args: [{
-                    // tslint:disable-next-line:directive-selector
+                    // eslint-disable-next-line @angular-eslint/directive-selector
                     selector: '[fc-connector]'
                 }]
         }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{

@@ -14,6 +14,255 @@ import { Observable, of, Subject } from 'rxjs';
 import { EventEmitter } from '@angular/core';
 import { debounceTime } from 'rxjs/operators';
 
+interface HtmlElementMap { [id: string]: HTMLElement }
+
+interface ConnectorRectInfoMap { [id: string]: FcConnectorRectInfo }
+
+abstract class AbstractFcModel<T> {
+
+  modelService: FcModelService;
+
+  protected constructor(modelService: FcModelService) {
+    this.modelService = modelService;
+  }
+
+  public select(object: T) {
+    this.modelService.selectObject(object);
+  }
+
+  public deselect(object: T) {
+    this.modelService.deselectObject(object);
+  }
+
+  public toggleSelected(object: T) {
+    this.modelService.toggleSelectedObject(object);
+  }
+
+  public isSelected(object: T): boolean {
+    return this.modelService.isSelectedObject(object);
+  }
+
+  public isEdit(object: T): boolean {
+    return this.modelService.isEditObject(object);
+  }
+}
+
+class ConnectorsModel extends AbstractFcModel<FcConnector> {
+
+  constructor(modelService: FcModelService) {
+    super(modelService);
+  }
+
+  public getConnector(connectorId: string): FcConnector {
+    const model = this.modelService.model;
+    for (const node of model.nodes) {
+      for (const connector of node.connectors) {
+        if (connector.id === connectorId) {
+          return connector;
+        }
+      }
+    }
+  }
+
+  public getConnectorRectInfo(connectorId: string): FcConnectorRectInfo {
+    return this.modelService.connectorsRectInfos[connectorId];
+  }
+
+  public setConnectorRectInfo(connectorId: string, connectorRectInfo: FcConnectorRectInfo) {
+    this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
+    this.modelService.detectChanges();
+  }
+
+  private _getCoords(connectorId: string, centered?: boolean): FcCoords {
+    const connectorRectInfo = this.getConnectorRectInfo(connectorId);
+    const canvas = this.modelService.canvasHtmlElement;
+    if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
+      return {x: 0, y: 0};
+    }
+    let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
+      connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
+    let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
+    if (!centered) {
+      x -= connectorRectInfo.width / 2;
+      y -= connectorRectInfo.height / 2;
+    }
+    return {
+      x: Math.round(x),
+      y: Math.round(y)
+    };
+  }
+
+  public getCoords(connectorId: string): FcCoords {
+    return this._getCoords(connectorId, false);
+  }
+
+  public getCenteredCoord(connectorId: string): FcCoords {
+    return this._getCoords(connectorId, true);
+  }
+}
+
+class NodesModel extends AbstractFcModel<FcNode> {
+
+  constructor(modelService: FcModelService) {
+    super(modelService);
+  }
+
+  public getConnectorsByType(node: FcNode, type: string): Array<FcConnector> {
+    return node.connectors.filter((connector) => connector.type === type);
+  }
+
+  private _addConnector(node: FcNode, connector: FcConnector) {
+    node.connectors.push(connector);
+    try {
+      this.modelService.modelValidation.validateNode(node);
+    } catch (error) {
+      node.connectors.splice(node.connectors.indexOf(connector), 1);
+      throw error;
+    }
+  }
+
+  public delete(node: FcNode) {
+    if (this.isSelected(node)) {
+      this.deselect(node);
+    }
+    const model = this.modelService.model;
+    const index = model.nodes.indexOf(node);
+    if (index === -1) {
+      if (node === undefined) {
+        throw new Error('Passed undefined');
+      }
+      throw new Error('Tried to delete not existing node');
+    }
+    const connectorIds = this.getConnectorIds(node);
+    for (let i = 0; i < model.edges.length; i++) {
+      const edge = model.edges[i];
+      if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
+        this.modelService.edges.delete(edge);
+        i--;
+      }
+    }
+    model.nodes.splice(index, 1);
+    this.modelService.notifyModelChanged();
+    this.modelService.nodeRemovedCallback(node);
+  }
+
+  public getSelectedNodes(): Array<FcNode> {
+    const model = this.modelService.model;
+    return model.nodes.filter((node) => this.modelService.nodes.isSelected(node));
+  }
+
+  public handleClicked(node: FcNode, ctrlKey?: boolean) {
+    if (ctrlKey) {
+      this.modelService.nodes.toggleSelected(node);
+    } else {
+      this.modelService.deselectAll();
+      this.modelService.nodes.select(node);
+    }
+  }
+
+  private _addNode(node: FcNode) {
+    const model = this.modelService.model;
+    try {
+      model.nodes.push(node);
+      this.modelService.modelValidation.validateNodes(model.nodes);
+    } catch (error) {
+      model.nodes.splice(model.nodes.indexOf(node), 1);
+      throw error;
+    }
+  }
+
+  public getConnectorIds(node: FcNode): Array<string> {
+    return node.connectors.map((connector) => connector.id);
+  }
+
+  public getNodeByConnectorId(connectorId: string): FcNode {
+    const model = this.modelService.model;
+    for (const node of model.nodes) {
+      const connectorIds = this.getConnectorIds(node);
+      if (connectorIds.indexOf(connectorId) > -1) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  public getHtmlElement(nodeId: string): HTMLElement {
+    return this.modelService.nodesHtmlElements[nodeId];
+  }
+
+  public setHtmlElement(nodeId: string, element: HTMLElement) {
+    this.modelService.nodesHtmlElements[nodeId] = element;
+    this.modelService.detectChanges();
+  }
+
+}
+
+class EdgesModel extends AbstractFcModel<FcEdge> {
+
+  constructor(modelService: FcModelService) {
+    super(modelService);
+  }
+
+  public sourceCoord(edge: FcEdge): FcCoords {
+    return this.modelService.connectors.getCenteredCoord(edge.source);
+  }
+
+  public destCoord(edge: FcEdge): FcCoords {
+    return this.modelService.connectors.getCenteredCoord(edge.destination);
+  }
+
+  public delete(edge: FcEdge) {
+    const model = this.modelService.model;
+    const index = model.edges.indexOf(edge);
+    if (index === -1) {
+      throw new Error('Tried to delete not existing edge');
+    }
+    if (this.isSelected(edge)) {
+      this.deselect(edge);
+    }
+    model.edges.splice(index, 1);
+    this.modelService.notifyModelChanged();
+    this.modelService.edgeRemovedCallback(edge);
+  }
+
+  public getSelectedEdges(): Array<FcEdge> {
+    const model = this.modelService.model;
+    return model.edges.filter((edge) => this.modelService.edges.isSelected(edge));
+  }
+
+  public handleEdgeMouseClick(edge: FcEdge, ctrlKey?: boolean) {
+    if (ctrlKey) {
+      this.modelService.edges.toggleSelected(edge);
+    } else {
+      this.modelService.deselectAll();
+      this.modelService.edges.select(edge);
+    }
+  }
+
+  public putEdge(edge: FcEdge) {
+    const model = this.modelService.model;
+    model.edges.push(edge);
+    this.modelService.notifyModelChanged();
+  }
+
+  public _addEdge(event: Event, sourceConnector: FcConnector, destConnector: FcConnector, label: string) {
+    this.modelService.modelValidation.validateConnector(sourceConnector);
+    this.modelService.modelValidation.validateConnector(destConnector);
+    const edge: FcEdge = {};
+    edge.source = sourceConnector.id;
+    edge.destination = destConnector.id;
+    edge.label = label;
+    const model = this.modelService.model;
+    this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
+    this.modelService.createEdge(event, edge).subscribe(
+      (created) => {
+        model.edges.push(created);
+        this.modelService.notifyModelChanged();
+        this.modelService.edgeAddedCallback(created);
+      }
+    );
+  }
+}
 export class FcModelService {
 
   modelValidation: FcModelValidationService;
@@ -240,264 +489,5 @@ export class FcModelService {
       this.dragImage.style.visibility = 'hidden';
     }
     return this.dragImage;
-  }
-}
-
-interface HtmlElementMap { [id: string]: HTMLElement; }
-
-interface ConnectorRectInfoMap { [id: string]: FcConnectorRectInfo; }
-
-abstract class AbstractFcModel<T> {
-
-  modelService: FcModelService;
-
-  protected constructor(modelService: FcModelService) {
-    this.modelService = modelService;
-  }
-
-  public select(object: T) {
-    this.modelService.selectObject(object);
-  }
-
-  public deselect(object: T) {
-    this.modelService.deselectObject(object);
-  }
-
-  public toggleSelected(object: T) {
-    this.modelService.toggleSelectedObject(object);
-  }
-
-  public isSelected(object: T): boolean {
-    return this.modelService.isSelectedObject(object);
-  }
-
-  public isEdit(object: T): boolean {
-    return this.modelService.isEditObject(object);
-  }
-}
-
-class ConnectorsModel extends AbstractFcModel<FcConnector> {
-
-  constructor(modelService: FcModelService) {
-    super(modelService);
-  }
-
-  public getConnector(connectorId: string): FcConnector {
-    const model = this.modelService.model;
-    for (const node of model.nodes) {
-      for (const connector of node.connectors) {
-        if (connector.id === connectorId) {
-          return connector;
-        }
-      }
-    }
-  }
-
-  public getConnectorRectInfo(connectorId: string): FcConnectorRectInfo {
-    return this.modelService.connectorsRectInfos[connectorId];
-  }
-
-  public setConnectorRectInfo(connectorId: string, connectorRectInfo: FcConnectorRectInfo) {
-    this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
-    this.modelService.detectChanges();
-  }
-
-  private _getCoords(connectorId: string, centered?: boolean): FcCoords {
-    const connectorRectInfo = this.getConnectorRectInfo(connectorId);
-    const canvas = this.modelService.canvasHtmlElement;
-    if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
-      return {x: 0, y: 0};
-    }
-    let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
-      connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
-    let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
-    if (!centered) {
-      x -= connectorRectInfo.width / 2;
-      y -= connectorRectInfo.height / 2;
-    }
-    const coords: FcCoords = {
-      x: Math.round(x),
-      y: Math.round(y)
-    };
-    return coords;
-  }
-
-  public getCoords(connectorId: string): FcCoords {
-    return this._getCoords(connectorId, false);
-  }
-
-  public getCenteredCoord(connectorId: string): FcCoords {
-    return this._getCoords(connectorId, true);
-  }
-}
-
-class NodesModel extends AbstractFcModel<FcNode> {
-
-  constructor(modelService: FcModelService) {
-    super(modelService);
-  }
-
-  public getConnectorsByType(node: FcNode, type: string): Array<FcConnector> {
-    return node.connectors.filter((connector) => {
-      return connector.type === type;
-    });
-  }
-
-  private _addConnector(node: FcNode, connector: FcConnector) {
-    node.connectors.push(connector);
-    try {
-      this.modelService.modelValidation.validateNode(node);
-    } catch (error) {
-      node.connectors.splice(node.connectors.indexOf(connector), 1);
-      throw error;
-    }
-  }
-
-  public delete(node: FcNode) {
-    if (this.isSelected(node)) {
-      this.deselect(node);
-    }
-    const model = this.modelService.model;
-    const index = model.nodes.indexOf(node);
-    if (index === -1) {
-      if (node === undefined) {
-        throw new Error('Passed undefined');
-      }
-      throw new Error('Tried to delete not existing node');
-    }
-    const connectorIds = this.getConnectorIds(node);
-    for (let i = 0; i < model.edges.length; i++) {
-      const edge = model.edges[i];
-      if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
-        this.modelService.edges.delete(edge);
-        i--;
-      }
-    }
-    model.nodes.splice(index, 1);
-    this.modelService.notifyModelChanged();
-    this.modelService.nodeRemovedCallback(node);
-  }
-
-  public getSelectedNodes(): Array<FcNode> {
-    const model = this.modelService.model;
-    return model.nodes.filter((node) => {
-      return this.modelService.nodes.isSelected(node);
-    });
-  }
-
-  public handleClicked(node: FcNode, ctrlKey?: boolean) {
-    if (ctrlKey) {
-      this.modelService.nodes.toggleSelected(node);
-    } else {
-      this.modelService.deselectAll();
-      this.modelService.nodes.select(node);
-    }
-  }
-
-  private _addNode(node: FcNode) {
-    const model = this.modelService.model;
-    try {
-      model.nodes.push(node);
-      this.modelService.modelValidation.validateNodes(model.nodes);
-    } catch (error) {
-      model.nodes.splice(model.nodes.indexOf(node), 1);
-      throw error;
-    }
-  }
-
-  public getConnectorIds(node: FcNode): Array<string> {
-    return node.connectors.map((connector) => {
-      return connector.id;
-    });
-  }
-
-  public getNodeByConnectorId(connectorId: string): FcNode {
-    const model = this.modelService.model;
-    for (const node of model.nodes) {
-      const connectorIds = this.getConnectorIds(node);
-      if (connectorIds.indexOf(connectorId) > -1) {
-        return node;
-      }
-    }
-    return null;
-  }
-
-  public getHtmlElement(nodeId: string): HTMLElement {
-    return this.modelService.nodesHtmlElements[nodeId];
-  }
-
-  public setHtmlElement(nodeId: string, element: HTMLElement) {
-    this.modelService.nodesHtmlElements[nodeId] = element;
-    this.modelService.detectChanges();
-  }
-
-}
-
-class EdgesModel extends AbstractFcModel<FcEdge> {
-
-  constructor(modelService: FcModelService) {
-    super(modelService);
-  }
-
-  public sourceCoord(edge: FcEdge): FcCoords {
-    return this.modelService.connectors.getCenteredCoord(edge.source);
-  }
-
-  public destCoord(edge: FcEdge): FcCoords {
-    return this.modelService.connectors.getCenteredCoord(edge.destination);
-  }
-
-  public delete(edge: FcEdge) {
-    const model = this.modelService.model;
-    const index = model.edges.indexOf(edge);
-    if (index === -1) {
-      throw new Error('Tried to delete not existing edge');
-    }
-    if (this.isSelected(edge)) {
-      this.deselect(edge);
-    }
-    model.edges.splice(index, 1);
-    this.modelService.notifyModelChanged();
-    this.modelService.edgeRemovedCallback(edge);
-  }
-
-  public getSelectedEdges(): Array<FcEdge> {
-    const model = this.modelService.model;
-    return model.edges.filter((edge) => {
-      return this.modelService.edges.isSelected(edge);
-    });
-  }
-
-  public handleEdgeMouseClick(edge: FcEdge, ctrlKey?: boolean) {
-    if (ctrlKey) {
-      this.modelService.edges.toggleSelected(edge);
-    } else {
-      this.modelService.deselectAll();
-      this.modelService.edges.select(edge);
-    }
-  }
-
-  public putEdge(edge: FcEdge) {
-    const model = this.modelService.model;
-    model.edges.push(edge);
-    this.modelService.notifyModelChanged();
-  }
-
-  public _addEdge(event: Event, sourceConnector: FcConnector, destConnector: FcConnector, label: string) {
-    this.modelService.modelValidation.validateConnector(sourceConnector);
-    this.modelService.modelValidation.validateConnector(destConnector);
-    const edge: FcEdge = {};
-    edge.source = sourceConnector.id;
-    edge.destination = destConnector.id;
-    edge.label = label;
-    const model = this.modelService.model;
-    this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
-    this.modelService.createEdge(event, edge).subscribe(
-      (created) => {
-        model.edges.push(created);
-        this.modelService.notifyModelChanged();
-        this.modelService.edgeAddedCallback(created);
-      }
-    );
   }
 }

@@ -27,6 +27,7 @@ import {
 import { FcModelService } from './model.service';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'fc-node',
   template: '<ng-template #nodeContent></ng-template>',
   styleUrls: ['./node.component.scss']
@@ -239,29 +240,17 @@ export abstract class FcNodeComponent implements OnInit {
   height: number;
 
   nodeRectInfo: FcNodeRectInfo = {
-    top: () => {
-      return this.node.y;
-    },
+    top: () => this.node.y,
 
-    left: () => {
-      return this.node.x;
-    },
+    left: () => this.node.x,
 
-    bottom: () => {
-      return this.node.y + this.height;
-    },
+    bottom: () => this.node.y + this.height,
 
-    right: () => {
-      return this.node.x + this.width;
-    },
+    right: () => this.node.x + this.width,
 
-    width: () => {
-      return this.width;
-    },
+    width: () => this.width,
 
-    height: () => {
-      return this.height;
-    }
+    height: () => this.height
   };
 
   ngOnInit(): void {

@@ -10,8 +10,8 @@
       ],
       "parserOptions": {
         "project": [
-          "projects/ngx-flowchart1/tsconfig.lib.json",
-          "projects/ngx-flowchart1/tsconfig.spec.json"
+          "projects/ngx-flowchart/tsconfig.lib.json",
+          "projects/ngx-flowchart/tsconfig.spec.json"
         ],
         "createDefaultProgram": true
       },
@@ -31,7 +31,8 @@
             "prefix": "lib",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "no-underscore-dangle": "off"
       }
     },
     {
