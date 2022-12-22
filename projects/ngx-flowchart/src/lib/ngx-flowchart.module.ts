@@ -10,30 +10,27 @@ import { FC_NODE_COMPONENT_CONFIG } from './ngx-flowchart.models';
 import { DefaultFcNodeComponent } from './default-node.component';
 
 @NgModule({
-  entryComponents: [
-    DefaultFcNodeComponent
-  ],
-  declarations: [NgxFlowchartComponent,
-    FcMagnetDirective,
-    FcConnectorDirective,
-    FcNodeContainerComponent,
-    DefaultFcNodeComponent],
-  providers: [
-    FcModelValidationService,
-    FcEdgeDrawingService,
-    {
-      provide: FC_NODE_COMPONENT_CONFIG,
-      useValue: {
-        nodeComponentType: DefaultFcNodeComponent
-      }
-    }
-  ],
-  imports: [
-    CommonModule
-  ],
-  exports: [NgxFlowchartComponent,
-    FcMagnetDirective,
-    FcConnectorDirective,
-    DefaultFcNodeComponent]
+    declarations: [NgxFlowchartComponent,
+        FcMagnetDirective,
+        FcConnectorDirective,
+        FcNodeContainerComponent,
+        DefaultFcNodeComponent],
+    providers: [
+        FcModelValidationService,
+        FcEdgeDrawingService,
+        {
+            provide: FC_NODE_COMPONENT_CONFIG,
+            useValue: {
+                nodeComponentType: DefaultFcNodeComponent
+            }
+        }
+    ],
+    imports: [
+        CommonModule
+    ],
+    exports: [NgxFlowchartComponent,
+        FcMagnetDirective,
+        FcConnectorDirective,
+        DefaultFcNodeComponent]
 })
 export class NgxFlowchartModule { }
