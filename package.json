@@ -27,7 +27,6 @@
     "@angular/compiler-cli": "^14.2.12",
     "@angular/core": "^14.2.12",
     "@angular/forms": "^14.2.12",
-    "@angular/language-service": "^14.2.12",
     "@angular/platform-browser": "^14.2.12",
     "@angular/platform-browser-dynamic": "^14.2.12",
     "@angular/router": "^14.2.12",
