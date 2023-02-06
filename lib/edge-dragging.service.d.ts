@@ -1,4 +1,5 @@
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 import { FcModelService } from './model.service';
 import { FcConnector, FcCoords, FcEdge, FcModel } from './ngx-flowchart.models';
 import { FcEdgeDrawingService } from './edge-drawing.service';

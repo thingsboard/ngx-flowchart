@@ -3,13 +3,14 @@ import { InjectionToken, Injectable, ViewContainerRef, Component, Inject, Input,
 import { Subject, of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import * as i4 from '@angular/common';
+import * as i3 from '@angular/common';
 import { CommonModule } from '@angular/common';
 
 const FC_NODE_COMPONENT_CONFIG = new InjectionToken('fc-node.component.config');
 const htmlPrefix = 'fc';
 const leftConnectorType = 'leftConnector';
 const rightConnectorType = 'rightConnector';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const FlowchartConstants = {
     htmlPrefix,
     leftConnectorType,
@@ -47,22 +48,14 @@ class ModelvalidationError extends BaseError {
         this.message = message;
     }
 }
-function fcTopSort(graph) {
+const fcTopSort = (graph) => {
     const adjacentList = {};
     graph.nodes.forEach((node) => {
         adjacentList[node.id] = { incoming: 0, outgoing: [] };
     });
     graph.edges.forEach((edge) => {
-        const sourceNode = graph.nodes.filter((node) => {
-            return node.connectors.some((connector) => {
-                return connector.id === edge.source;
-            });
-        })[0];
-        const destinationNode = graph.nodes.filter((node) => {
-            return node.connectors.some((connector) => {
-                return connector.id === edge.destination;
-            });
-        })[0];
+        const sourceNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.source))[0];
+        const destinationNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.destination))[0];
         adjacentList[sourceNode.id].outgoing.push(destinationNode.id);
         adjacentList[destinationNode.id].incoming++;
     });
@@ -100,8 +93,217 @@ function fcTopSort(graph) {
     else {
         return orderedNodes;
     }
-}
+};
 
+class AbstractFcModel {
+    constructor(modelService) {
+        this.modelService = modelService;
+    }
+    select(object) {
+        this.modelService.selectObject(object);
+    }
+    deselect(object) {
+        this.modelService.deselectObject(object);
+    }
+    toggleSelected(object) {
+        this.modelService.toggleSelectedObject(object);
+    }
+    isSelected(object) {
+        return this.modelService.isSelectedObject(object);
+    }
+    isEdit(object) {
+        return this.modelService.isEditObject(object);
+    }
+}
+class ConnectorsModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    getConnector(connectorId) {
+        const model = this.modelService.model;
+        for (const node of model.nodes) {
+            for (const connector of node.connectors) {
+                if (connector.id === connectorId) {
+                    return connector;
+                }
+            }
+        }
+    }
+    getConnectorRectInfo(connectorId) {
+        return this.modelService.connectorsRectInfos[connectorId];
+    }
+    setConnectorRectInfo(connectorId, connectorRectInfo) {
+        this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
+        this.modelService.detectChanges();
+    }
+    _getCoords(connectorId, centered) {
+        const connectorRectInfo = this.getConnectorRectInfo(connectorId);
+        const canvas = this.modelService.canvasHtmlElement;
+        if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
+            return { x: 0, y: 0 };
+        }
+        let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
+            connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
+        let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
+        if (!centered) {
+            x -= connectorRectInfo.width / 2;
+            y -= connectorRectInfo.height / 2;
+        }
+        return {
+            x: Math.round(x),
+            y: Math.round(y)
+        };
+    }
+    getCoords(connectorId) {
+        return this._getCoords(connectorId, false);
+    }
+    getCenteredCoord(connectorId) {
+        return this._getCoords(connectorId, true);
+    }
+}
+class NodesModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    getConnectorsByType(node, type) {
+        return node.connectors.filter((connector) => connector.type === type);
+    }
+    _addConnector(node, connector) {
+        node.connectors.push(connector);
+        try {
+            this.modelService.modelValidation.validateNode(node);
+        }
+        catch (error) {
+            node.connectors.splice(node.connectors.indexOf(connector), 1);
+            throw error;
+        }
+    }
+    delete(node) {
+        if (this.isSelected(node)) {
+            this.deselect(node);
+        }
+        const model = this.modelService.model;
+        const index = model.nodes.indexOf(node);
+        if (index === -1) {
+            if (node === undefined) {
+                throw new Error('Passed undefined');
+            }
+            throw new Error('Tried to delete not existing node');
+        }
+        const connectorIds = this.getConnectorIds(node);
+        for (let i = 0; i < model.edges.length; i++) {
+            const edge = model.edges[i];
+            if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
+                this.modelService.edges.delete(edge);
+                i--;
+            }
+        }
+        model.nodes.splice(index, 1);
+        this.modelService.notifyModelChanged();
+        this.modelService.nodeRemovedCallback(node);
+    }
+    getSelectedNodes() {
+        const model = this.modelService.model;
+        return model.nodes.filter((node) => this.modelService.nodes.isSelected(node));
+    }
+    handleClicked(node, ctrlKey) {
+        if (ctrlKey) {
+            this.modelService.nodes.toggleSelected(node);
+        }
+        else {
+            this.modelService.deselectAll();
+            this.modelService.nodes.select(node);
+        }
+    }
+    _addNode(node) {
+        const model = this.modelService.model;
+        try {
+            model.nodes.push(node);
+            this.modelService.modelValidation.validateNodes(model.nodes);
+        }
+        catch (error) {
+            model.nodes.splice(model.nodes.indexOf(node), 1);
+            throw error;
+        }
+    }
+    getConnectorIds(node) {
+        return node.connectors.map((connector) => connector.id);
+    }
+    getNodeByConnectorId(connectorId) {
+        const model = this.modelService.model;
+        for (const node of model.nodes) {
+            const connectorIds = this.getConnectorIds(node);
+            if (connectorIds.indexOf(connectorId) > -1) {
+                return node;
+            }
+        }
+        return null;
+    }
+    getHtmlElement(nodeId) {
+        return this.modelService.nodesHtmlElements[nodeId];
+    }
+    setHtmlElement(nodeId, element) {
+        this.modelService.nodesHtmlElements[nodeId] = element;
+        this.modelService.detectChanges();
+    }
+}
+class EdgesModel extends AbstractFcModel {
+    constructor(modelService) {
+        super(modelService);
+    }
+    sourceCoord(edge) {
+        return this.modelService.connectors.getCenteredCoord(edge.source);
+    }
+    destCoord(edge) {
+        return this.modelService.connectors.getCenteredCoord(edge.destination);
+    }
+    delete(edge) {
+        const model = this.modelService.model;
+        const index = model.edges.indexOf(edge);
+        if (index === -1) {
+            throw new Error('Tried to delete not existing edge');
+        }
+        if (this.isSelected(edge)) {
+            this.deselect(edge);
+        }
+        model.edges.splice(index, 1);
+        this.modelService.notifyModelChanged();
+        this.modelService.edgeRemovedCallback(edge);
+    }
+    getSelectedEdges() {
+        const model = this.modelService.model;
+        return model.edges.filter((edge) => this.modelService.edges.isSelected(edge));
+    }
+    handleEdgeMouseClick(edge, ctrlKey) {
+        if (ctrlKey) {
+            this.modelService.edges.toggleSelected(edge);
+        }
+        else {
+            this.modelService.deselectAll();
+            this.modelService.edges.select(edge);
+        }
+    }
+    putEdge(edge) {
+        const model = this.modelService.model;
+        model.edges.push(edge);
+        this.modelService.notifyModelChanged();
+    }
+    _addEdge(event, sourceConnector, destConnector, label) {
+        this.modelService.modelValidation.validateConnector(sourceConnector);
+        this.modelService.modelValidation.validateConnector(destConnector);
+        const edge = {};
+        edge.source = sourceConnector.id;
+        edge.destination = destConnector.id;
+        edge.label = label;
+        const model = this.modelService.model;
+        this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
+        this.modelService.createEdge(event, edge).subscribe((created) => {
+            model.edges.push(created);
+            this.modelService.notifyModelChanged();
+            this.modelService.edgeAddedCallback(created);
+        });
+    }
+}
 class FcModelService {
     constructor(modelValidation, model, modelChanged, detectChangesSubject, selectedObjects, dropNode, createEdge, edgeAddedCallback, nodeRemovedCallback, edgeRemovedCallback, canvasHtmlElement, svgHtmlElement) {
         this.connectorsRectInfos = {};
@@ -131,11 +333,11 @@ class FcModelService {
             .subscribe(() => this.modelChanged.emit());
     }
     notifyModelChanged() {
-        this.debouncer.next();
+        this.debouncer.next(null);
     }
     detectChanges() {
         setTimeout(() => {
-            this.detectChangesSubject.next();
+            this.detectChangesSubject.next(null);
         }, 0);
     }
     selectObject(object) {
@@ -280,338 +482,6 @@ class FcModelService {
         return this.dragImage;
     }
 }
-class AbstractFcModel {
-    constructor(modelService) {
-        this.modelService = modelService;
-    }
-    select(object) {
-        this.modelService.selectObject(object);
-    }
-    deselect(object) {
-        this.modelService.deselectObject(object);
-    }
-    toggleSelected(object) {
-        this.modelService.toggleSelectedObject(object);
-    }
-    isSelected(object) {
-        return this.modelService.isSelectedObject(object);
-    }
-    isEdit(object) {
-        return this.modelService.isEditObject(object);
-    }
-}
-class ConnectorsModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    getConnector(connectorId) {
-        const model = this.modelService.model;
-        for (const node of model.nodes) {
-            for (const connector of node.connectors) {
-                if (connector.id === connectorId) {
-                    return connector;
-                }
-            }
-        }
-    }
-    getConnectorRectInfo(connectorId) {
-        return this.modelService.connectorsRectInfos[connectorId];
-    }
-    setConnectorRectInfo(connectorId, connectorRectInfo) {
-        this.modelService.connectorsRectInfos[connectorId] = connectorRectInfo;
-        this.modelService.detectChanges();
-    }
-    _getCoords(connectorId, centered) {
-        const connectorRectInfo = this.getConnectorRectInfo(connectorId);
-        const canvas = this.modelService.canvasHtmlElement;
-        if (connectorRectInfo === null || connectorRectInfo === undefined || canvas === null) {
-            return { x: 0, y: 0 };
-        }
-        let x = connectorRectInfo.type === FlowchartConstants.leftConnectorType ?
-            connectorRectInfo.nodeRectInfo.left() : connectorRectInfo.nodeRectInfo.right();
-        let y = connectorRectInfo.nodeRectInfo.top() + connectorRectInfo.nodeRectInfo.height() / 2;
-        if (!centered) {
-            x -= connectorRectInfo.width / 2;
-            y -= connectorRectInfo.height / 2;
-        }
-        const coords = {
-            x: Math.round(x),
-            y: Math.round(y)
-        };
-        return coords;
-    }
-    getCoords(connectorId) {
-        return this._getCoords(connectorId, false);
-    }
-    getCenteredCoord(connectorId) {
-        return this._getCoords(connectorId, true);
-    }
-}
-class NodesModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    getConnectorsByType(node, type) {
-        return node.connectors.filter((connector) => {
-            return connector.type === type;
-        });
-    }
-    _addConnector(node, connector) {
-        node.connectors.push(connector);
-        try {
-            this.modelService.modelValidation.validateNode(node);
-        }
-        catch (error) {
-            node.connectors.splice(node.connectors.indexOf(connector), 1);
-            throw error;
-        }
-    }
-    delete(node) {
-        if (this.isSelected(node)) {
-            this.deselect(node);
-        }
-        const model = this.modelService.model;
-        const index = model.nodes.indexOf(node);
-        if (index === -1) {
-            if (node === undefined) {
-                throw new Error('Passed undefined');
-            }
-            throw new Error('Tried to delete not existing node');
-        }
-        const connectorIds = this.getConnectorIds(node);
-        for (let i = 0; i < model.edges.length; i++) {
-            const edge = model.edges[i];
-            if (connectorIds.indexOf(edge.source) !== -1 || connectorIds.indexOf(edge.destination) !== -1) {
-                this.modelService.edges.delete(edge);
-                i--;
-            }
-        }
-        model.nodes.splice(index, 1);
-        this.modelService.notifyModelChanged();
-        this.modelService.nodeRemovedCallback(node);
-    }
-    getSelectedNodes() {
-        const model = this.modelService.model;
-        return model.nodes.filter((node) => {
-            return this.modelService.nodes.isSelected(node);
-        });
-    }
-    handleClicked(node, ctrlKey) {
-        if (ctrlKey) {
-            this.modelService.nodes.toggleSelected(node);
-        }
-        else {
-            this.modelService.deselectAll();
-            this.modelService.nodes.select(node);
-        }
-    }
-    _addNode(node) {
-        const model = this.modelService.model;
-        try {
-            model.nodes.push(node);
-            this.modelService.modelValidation.validateNodes(model.nodes);
-        }
-        catch (error) {
-            model.nodes.splice(model.nodes.indexOf(node), 1);
-            throw error;
-        }
-    }
-    getConnectorIds(node) {
-        return node.connectors.map((connector) => {
-            return connector.id;
-        });
-    }
-    getNodeByConnectorId(connectorId) {
-        const model = this.modelService.model;
-        for (const node of model.nodes) {
-            const connectorIds = this.getConnectorIds(node);
-            if (connectorIds.indexOf(connectorId) > -1) {
-                return node;
-            }
-        }
-        return null;
-    }
-    getHtmlElement(nodeId) {
-        return this.modelService.nodesHtmlElements[nodeId];
-    }
-    setHtmlElement(nodeId, element) {
-        this.modelService.nodesHtmlElements[nodeId] = element;
-        this.modelService.detectChanges();
-    }
-}
-class EdgesModel extends AbstractFcModel {
-    constructor(modelService) {
-        super(modelService);
-    }
-    sourceCoord(edge) {
-        return this.modelService.connectors.getCenteredCoord(edge.source);
-    }
-    destCoord(edge) {
-        return this.modelService.connectors.getCenteredCoord(edge.destination);
-    }
-    delete(edge) {
-        const model = this.modelService.model;
-        const index = model.edges.indexOf(edge);
-        if (index === -1) {
-            throw new Error('Tried to delete not existing edge');
-        }
-        if (this.isSelected(edge)) {
-            this.deselect(edge);
-        }
-        model.edges.splice(index, 1);
-        this.modelService.notifyModelChanged();
-        this.modelService.edgeRemovedCallback(edge);
-    }
-    getSelectedEdges() {
-        const model = this.modelService.model;
-        return model.edges.filter((edge) => {
-            return this.modelService.edges.isSelected(edge);
-        });
-    }
-    handleEdgeMouseClick(edge, ctrlKey) {
-        if (ctrlKey) {
-            this.modelService.edges.toggleSelected(edge);
-        }
-        else {
-            this.modelService.deselectAll();
-            this.modelService.edges.select(edge);
-        }
-    }
-    putEdge(edge) {
-        const model = this.modelService.model;
-        model.edges.push(edge);
-        this.modelService.notifyModelChanged();
-    }
-    _addEdge(event, sourceConnector, destConnector, label) {
-        this.modelService.modelValidation.validateConnector(sourceConnector);
-        this.modelService.modelValidation.validateConnector(destConnector);
-        const edge = {};
-        edge.source = sourceConnector.id;
-        edge.destination = destConnector.id;
-        edge.label = label;
-        const model = this.modelService.model;
-        this.modelService.modelValidation.validateEdges(model.edges.concat([edge]), model.nodes);
-        this.modelService.createEdge(event, edge).subscribe((created) => {
-            model.edges.push(created);
-            this.modelService.notifyModelChanged();
-            this.modelService.edgeAddedCallback(created);
-        });
-    }
-}
-
-class FcModelValidationService {
-    constructor() { }
-    validateModel(model) {
-        this.validateNodes(model.nodes);
-        this._validateEdges(model.edges, model.nodes);
-        return model;
-    }
-    validateNodes(nodes) {
-        const ids = [];
-        nodes.forEach((node) => {
-            this.validateNode(node);
-            if (ids.indexOf(node.id) !== -1) {
-                throw new ModelvalidationError('Id not unique.');
-            }
-            ids.push(node.id);
-        });
-        const connectorIds = [];
-        nodes.forEach((node) => {
-            node.connectors.forEach((connector) => {
-                if (connectorIds.indexOf(connector.id) !== -1) {
-                    throw new ModelvalidationError('Id not unique.');
-                }
-                connectorIds.push(connector.id);
-            });
-        });
-        return nodes;
-    }
-    validateNode(node) {
-        if (node.id === undefined) {
-            throw new ModelvalidationError('Id not valid.');
-        }
-        if (typeof node.name !== 'string') {
-            throw new ModelvalidationError('Name not valid.');
-        }
-        if (typeof node.x !== 'number' || node.x < 0 || Math.round(node.x) !== node.x) {
-            throw new ModelvalidationError('Coordinates not valid.');
-        }
-        if (typeof node.y !== 'number' || node.y < 0 || Math.round(node.y) !== node.y) {
-            throw new ModelvalidationError('Coordinates not valid.');
-        }
-        if (!Array.isArray(node.connectors)) {
-            throw new ModelvalidationError('Connectors not valid.');
-        }
-        node.connectors.forEach((connector) => {
-            this.validateConnector(connector);
-        });
-        return node;
-    }
-    _validateEdges(edges, nodes) {
-        edges.forEach((edge) => {
-            this._validateEdge(edge, nodes);
-        });
-        edges.forEach((edge1, index1) => {
-            edges.forEach((edge2, index2) => {
-                if (index1 !== index2) {
-                    if ((edge1.source === edge2.source && edge1.destination === edge2.destination) ||
-                        (edge1.source === edge2.destination && edge1.destination === edge2.source)) {
-                        throw new ModelvalidationError('Duplicated edge.');
-                    }
-                }
-            });
-        });
-        if (fcTopSort({ nodes, edges }) === null) {
-            throw new ModelvalidationError('Graph has a circle.');
-        }
-        return edges;
-    }
-    validateEdges(edges, nodes) {
-        this.validateNodes(nodes);
-        return this._validateEdges(edges, nodes);
-    }
-    _validateEdge(edge, nodes) {
-        if (edge.source === undefined) {
-            throw new ModelvalidationError('Source not valid.');
-        }
-        if (edge.destination === undefined) {
-            throw new ModelvalidationError('Destination not valid.');
-        }
-        if (edge.source === edge.destination) {
-            throw new ModelvalidationError('Edge with same source and destination connectors.');
-        }
-        const sourceNode = nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.source))[0];
-        if (sourceNode === undefined) {
-            throw new ModelvalidationError('Source not valid.');
-        }
-        const destinationNode = nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.destination))[0];
-        if (destinationNode === undefined) {
-            throw new ModelvalidationError('Destination not valid.');
-        }
-        if (sourceNode === destinationNode) {
-            throw new ModelvalidationError('Edge with same source and destination nodes.');
-        }
-        return edge;
-    }
-    validateEdge(edge, nodes) {
-        this.validateNodes(nodes);
-        return this._validateEdge(edge, nodes);
-    }
-    validateConnector(connector) {
-        if (connector.id === undefined) {
-            throw new ModelvalidationError('Id not valid.');
-        }
-        if (connector.type === undefined || connector.type === null || typeof connector.type !== 'string') {
-            throw new ModelvalidationError('Type not valid.');
-        }
-        return connector;
-    }
-}
-FcModelValidationService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
-FcModelValidationService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcModelValidationService, decorators: [{
-            type: Injectable
-        }], ctorParameters: function () { return []; } });
 
 const nodeDropScope = {
     dropElement: null
@@ -904,49 +774,6 @@ class FcNodeDraggingService {
         });
     }
 }
-
-class FcEdgeDrawingService {
-    constructor() {
-    }
-    getEdgeDAttribute(pt1, pt2, style) {
-        let dAddribute = `M ${pt1.x}, ${pt1.y} `;
-        if (style === FlowchartConstants.curvedStyle) {
-            const sourceTangent = this.computeEdgeSourceTangent(pt1, pt2);
-            const destinationTangent = this.computeEdgeDestinationTangent(pt1, pt2);
-            dAddribute += `C ${sourceTangent.x}, ${sourceTangent.y} ${(destinationTangent.x - 50)}, ${destinationTangent.y} ${pt2.x}, ${pt2.y}`;
-        }
-        else {
-            dAddribute += `L ${pt2.x}, ${pt2.y}`;
-        }
-        return dAddribute;
-    }
-    getEdgeCenter(pt1, pt2) {
-        return {
-            x: (pt1.x + pt2.x) / 2,
-            y: (pt1.y + pt2.y) / 2
-        };
-    }
-    computeEdgeTangentOffset(pt1, pt2) {
-        return (pt2.y - pt1.y) / 2;
-    }
-    computeEdgeSourceTangent(pt1, pt2) {
-        return {
-            x: pt1.x,
-            y: pt1.y + this.computeEdgeTangentOffset(pt1, pt2)
-        };
-    }
-    computeEdgeDestinationTangent(pt1, pt2) {
-        return {
-            x: pt2.x,
-            y: pt2.y - this.computeEdgeTangentOffset(pt1, pt2)
-        };
-    }
-}
-FcEdgeDrawingService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
-FcEdgeDrawingService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcEdgeDrawingService, decorators: [{
-            type: Injectable
-        }], ctorParameters: function () { return []; } });
 
 class FcEdgeDraggingService {
     constructor(modelValidation, edgeDrawingService, modelService, model, isValidEdgeCallback, applyFunction, dragAnimation, edgeStyle) {
@@ -1313,6 +1140,163 @@ class FcRectangleSelectService {
     }
 }
 
+class FcModelValidationService {
+    constructor() { }
+    validateModel(model) {
+        this.validateNodes(model.nodes);
+        this._validateEdges(model.edges, model.nodes);
+        return model;
+    }
+    validateNodes(nodes) {
+        const ids = [];
+        nodes.forEach((node) => {
+            this.validateNode(node);
+            if (ids.indexOf(node.id) !== -1) {
+                throw new ModelvalidationError('Id not unique.');
+            }
+            ids.push(node.id);
+        });
+        const connectorIds = [];
+        nodes.forEach((node) => {
+            node.connectors.forEach((connector) => {
+                if (connectorIds.indexOf(connector.id) !== -1) {
+                    throw new ModelvalidationError('Id not unique.');
+                }
+                connectorIds.push(connector.id);
+            });
+        });
+        return nodes;
+    }
+    validateNode(node) {
+        if (node.id === undefined) {
+            throw new ModelvalidationError('Id not valid.');
+        }
+        if (typeof node.name !== 'string') {
+            throw new ModelvalidationError('Name not valid.');
+        }
+        if (typeof node.x !== 'number' || node.x < 0 || Math.round(node.x) !== node.x) {
+            throw new ModelvalidationError('Coordinates not valid.');
+        }
+        if (typeof node.y !== 'number' || node.y < 0 || Math.round(node.y) !== node.y) {
+            throw new ModelvalidationError('Coordinates not valid.');
+        }
+        if (!Array.isArray(node.connectors)) {
+            throw new ModelvalidationError('Connectors not valid.');
+        }
+        node.connectors.forEach((connector) => {
+            this.validateConnector(connector);
+        });
+        return node;
+    }
+    _validateEdges(edges, nodes) {
+        edges.forEach((edge) => {
+            this._validateEdge(edge, nodes);
+        });
+        edges.forEach((edge1, index1) => {
+            edges.forEach((edge2, index2) => {
+                if (index1 !== index2) {
+                    if ((edge1.source === edge2.source && edge1.destination === edge2.destination) ||
+                        (edge1.source === edge2.destination && edge1.destination === edge2.source)) {
+                        throw new ModelvalidationError('Duplicated edge.');
+                    }
+                }
+            });
+        });
+        if (fcTopSort({ nodes, edges }) === null) {
+            throw new ModelvalidationError('Graph has a circle.');
+        }
+        return edges;
+    }
+    validateEdges(edges, nodes) {
+        this.validateNodes(nodes);
+        return this._validateEdges(edges, nodes);
+    }
+    _validateEdge(edge, nodes) {
+        if (edge.source === undefined) {
+            throw new ModelvalidationError('Source not valid.');
+        }
+        if (edge.destination === undefined) {
+            throw new ModelvalidationError('Destination not valid.');
+        }
+        if (edge.source === edge.destination) {
+            throw new ModelvalidationError('Edge with same source and destination connectors.');
+        }
+        const sourceNode = nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.source))[0];
+        if (sourceNode === undefined) {
+            throw new ModelvalidationError('Source not valid.');
+        }
+        const destinationNode = nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.destination))[0];
+        if (destinationNode === undefined) {
+            throw new ModelvalidationError('Destination not valid.');
+        }
+        if (sourceNode === destinationNode) {
+            throw new ModelvalidationError('Edge with same source and destination nodes.');
+        }
+        return edge;
+    }
+    validateEdge(edge, nodes) {
+        this.validateNodes(nodes);
+        return this._validateEdge(edge, nodes);
+    }
+    validateConnector(connector) {
+        if (connector.id === undefined) {
+            throw new ModelvalidationError('Id not valid.');
+        }
+        if (connector.type === undefined || connector.type === null || typeof connector.type !== 'string') {
+            throw new ModelvalidationError('Type not valid.');
+        }
+        return connector;
+    }
+}
+FcModelValidationService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcModelValidationService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+FcModelValidationService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcModelValidationService });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcModelValidationService, decorators: [{
+            type: Injectable
+        }], ctorParameters: function () { return []; } });
+
+class FcEdgeDrawingService {
+    constructor() {
+    }
+    getEdgeDAttribute(pt1, pt2, style) {
+        let dAddribute = `M ${pt1.x}, ${pt1.y} `;
+        if (style === FlowchartConstants.curvedStyle) {
+            const sourceTangent = this.computeEdgeSourceTangent(pt1, pt2);
+            const destinationTangent = this.computeEdgeDestinationTangent(pt1, pt2);
+            dAddribute += `C ${sourceTangent.x}, ${sourceTangent.y} ${(destinationTangent.x - 50)}, ${destinationTangent.y} ${pt2.x}, ${pt2.y}`;
+        }
+        else {
+            dAddribute += `L ${pt2.x}, ${pt2.y}`;
+        }
+        return dAddribute;
+    }
+    getEdgeCenter(pt1, pt2) {
+        return {
+            x: (pt1.x + pt2.x) / 2,
+            y: (pt1.y + pt2.y) / 2
+        };
+    }
+    computeEdgeTangentOffset(pt1, pt2) {
+        return (pt2.y - pt1.y) / 2;
+    }
+    computeEdgeSourceTangent(pt1, pt2) {
+        return {
+            x: pt1.x,
+            y: pt1.y + this.computeEdgeTangentOffset(pt1, pt2)
+        };
+    }
+    computeEdgeDestinationTangent(pt1, pt2) {
+        return {
+            x: pt2.x,
+            y: pt2.y - this.computeEdgeTangentOffset(pt1, pt2)
+        };
+    }
+}
+FcEdgeDrawingService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcEdgeDrawingService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+FcEdgeDrawingService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcEdgeDrawingService });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcEdgeDrawingService, decorators: [{
+            type: Injectable
+        }], ctorParameters: function () { return []; } });
+
 class FcNodeContainerComponent {
     constructor(nodeComponentConfig, elementRef, componentFactoryResolver) {
         this.nodeComponentConfig = nodeComponentConfig;
@@ -1426,19 +1410,17 @@ class FcNodeContainerComponent {
         }
     }
 }
-FcNodeContainerComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeContainerComponent, deps: [{ token: FC_NODE_COMPONENT_CONFIG }, { token: i0.ElementRef }, { token: i0.ComponentFactoryResolver }], target: i0.ɵɵFactoryTarget.Component });
-FcNodeContainerComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeContainerComponent, selector: "fc-node", inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, host: { listeners: { "mousedown": "mousedown($event)", "dragstart": "dragstart($event)", "dragend": "dragend($event)", "click": "click($event)", "mouseover": "mouseover($event)", "mouseout": "mouseout($event)" }, properties: { "attr.id": "this.nodeId", "style.top": "this.top", "style.left": "this.left" } }, viewQueries: [{ propertyName: "nodeContentContainer", first: true, predicate: ["nodeContent"], descendants: true, read: ViewContainerRef, static: true }], usesOnChanges: true, ngImport: i0, template: '<ng-template #nodeContent></ng-template>', isInline: true, styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:flex;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}\n"] });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeContainerComponent, decorators: [{
+FcNodeContainerComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcNodeContainerComponent, deps: [{ token: FC_NODE_COMPONENT_CONFIG }, { token: i0.ElementRef }, { token: i0.ComponentFactoryResolver }], target: i0.ɵɵFactoryTarget.Component });
+FcNodeContainerComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "14.2.12", type: FcNodeContainerComponent, selector: "fc-node", inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, host: { listeners: { "mousedown": "mousedown($event)", "dragstart": "dragstart($event)", "dragend": "dragend($event)", "click": "click($event)", "mouseover": "mouseover($event)", "mouseout": "mouseout($event)" }, properties: { "attr.id": "this.nodeId", "style.top": "this.top", "style.left": "this.left" } }, viewQueries: [{ propertyName: "nodeContentContainer", first: true, predicate: ["nodeContent"], descendants: true, read: ViewContainerRef, static: true }], usesOnChanges: true, ngImport: i0, template: '<ng-template #nodeContent></ng-template>', isInline: true, styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:flex;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}\n"] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcNodeContainerComponent, decorators: [{
             type: Component,
-            args: [{
-                    selector: 'fc-node',
-                    template: '<ng-template #nodeContent></ng-template>',
-                    styleUrls: ['./node.component.scss']
-                }]
-        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
-                    type: Inject,
-                    args: [FC_NODE_COMPONENT_CONFIG]
-                }] }, { type: i0.ElementRef }, { type: i0.ComponentFactoryResolver }]; }, propDecorators: { callbacks: [{
+            args: [{ selector: 'fc-node', template: '<ng-template #nodeContent></ng-template>', styles: [":host{position:absolute;z-index:1}:host.fc-dragging{z-index:10}:host ::ng-deep .fc-leftConnectors,:host ::ng-deep .fc-rightConnectors{position:absolute;top:0;height:100%;display:flex;flex-direction:column;z-index:-10}:host ::ng-deep .fc-leftConnectors .fc-magnet,:host ::ng-deep .fc-rightConnectors .fc-magnet{align-items:center}:host ::ng-deep .fc-leftConnectors{left:-20px}:host ::ng-deep .fc-rightConnectors{right:-20px}:host ::ng-deep .fc-magnet{display:flex;flex-grow:1;height:60px;justify-content:center}:host ::ng-deep .fc-connector{width:18px;height:18px;border:10px solid transparent;-moz-background-clip:padding;-webkit-background-clip:padding;background-clip:padding-box;border-radius:50%;background-color:#f7a789;color:#fff;pointer-events:all}:host ::ng-deep .fc-connector.fc-hover{background-color:#000}\n"] }]
+        }], ctorParameters: function () {
+        return [{ type: undefined, decorators: [{
+                        type: Inject,
+                        args: [FC_NODE_COMPONENT_CONFIG]
+                    }] }, { type: i0.ElementRef }, { type: i0.ComponentFactoryResolver }];
+    }, propDecorators: { callbacks: [{
                 type: Input
             }], userNodeCallbacks: [{
                 type: Input
@@ -1492,32 +1474,20 @@ class FcNodeComponent {
     constructor() {
         this.flowchartConstants = FlowchartConstants;
         this.nodeRectInfo = {
-            top: () => {
-                return this.node.y;
-            },
-            left: () => {
-                return this.node.x;
-            },
-            bottom: () => {
-                return this.node.y + this.height;
-            },
-            right: () => {
-                return this.node.x + this.width;
-            },
-            width: () => {
-                return this.width;
-            },
-            height: () => {
-                return this.height;
-            }
+            top: () => this.node.y,
+            left: () => this.node.x,
+            bottom: () => this.node.y + this.height,
+            right: () => this.node.x + this.width,
+            width: () => this.width,
+            height: () => this.height
         };
     }
     ngOnInit() {
     }
 }
-FcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Directive });
-FcNodeComponent.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcNodeComponent, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, ngImport: i0 });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcNodeComponent, decorators: [{
+FcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Directive });
+FcNodeComponent.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "14.2.12", type: FcNodeComponent, inputs: { callbacks: "callbacks", userNodeCallbacks: "userNodeCallbacks", node: "node", selected: "selected", edit: "edit", underMouse: "underMouse", mouseOverConnector: "mouseOverConnector", modelservice: "modelservice", dragging: "dragging" }, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcNodeComponent, decorators: [{
             type: Directive
         }], propDecorators: { callbacks: [{
                 type: Input
@@ -1550,12 +1520,8 @@ class NgxFlowchartComponent {
         this.modelChanged = new EventEmitter();
         this.fitModelSizeByDefaultValue = true;
         this.flowchartConstants = FlowchartConstants;
-        this.nodesDiffer = this.differs.find([]).create((index, item) => {
-            return item;
-        });
-        this.edgesDiffer = this.differs.find([]).create((index, item) => {
-            return item;
-        });
+        this.nodesDiffer = this.differs.find([]).create((index, item) => item);
+        this.edgesDiffer = this.differs.find([]).create((index, item) => item);
         this.detectChangesSubject = new Subject();
         this.arrowDefId = 'arrow-' + Math.random();
         this.arrowDefIdSelected = this.arrowDefId + '-selected';
@@ -1645,7 +1611,7 @@ class NgxFlowchartComponent {
                 this.adjustCanvasSize(this.fitModelSizeByDefault);
             }
             if (nodesChanged || edgesChanged) {
-                this.detectChangesSubject.next();
+                this.detectChangesSubject.next(null);
             }
         }
     }
@@ -1731,16 +1697,11 @@ class NgxFlowchartComponent {
         this.rectangleSelectService.mouseup(event);
     }
 }
-NgxFlowchartComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartComponent, deps: [{ token: i0.ElementRef }, { token: i0.IterableDiffers }, { token: FcModelValidationService }, { token: FcEdgeDrawingService }, { token: i0.ChangeDetectorRef }, { token: i0.NgZone }], target: i0.ɵɵFactoryTarget.Component });
-NgxFlowchartComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: NgxFlowchartComponent, selector: "fc-canvas", inputs: { model: "model", selectedObjects: "selectedObjects", edgeStyle: "edgeStyle", userCallbacks: "userCallbacks", automaticResize: "automaticResize", dragAnimation: "dragAnimation", nodeWidth: "nodeWidth", nodeHeight: "nodeHeight", dropTargetId: "dropTargetId", fitModelSizeByDefault: "fitModelSizeByDefault" }, outputs: { modelChanged: "modelChanged" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "mousedown": "mousedown($event)", "mousemove": "mousemove($event)", "mouseup": "mouseup($event)" }, properties: { "attr.class": "this.canvasClass" } }, ngImport: i0, template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n", styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;transition:transform .2s;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-selected .fc-edge-label-text span,:host .fc-edge-label.fc-edit .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodeedit,:host ::ng-deep .fc-edit .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}\n"], components: [{ type: FcNodeContainerComponent, selector: "fc-node", inputs: ["callbacks", "userNodeCallbacks", "node", "selected", "edit", "underMouse", "mouseOverConnector", "modelservice", "dragging"] }], directives: [{ type: i4.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: i4.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { type: i4.NgStyle, selector: "[ngStyle]", inputs: ["ngStyle"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartComponent, decorators: [{
+NgxFlowchartComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartComponent, deps: [{ token: i0.ElementRef }, { token: i0.IterableDiffers }, { token: FcModelValidationService }, { token: FcEdgeDrawingService }, { token: i0.ChangeDetectorRef }, { token: i0.NgZone }], target: i0.ɵɵFactoryTarget.Component });
+NgxFlowchartComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "14.2.12", type: NgxFlowchartComponent, selector: "fc-canvas", inputs: { model: "model", selectedObjects: "selectedObjects", edgeStyle: "edgeStyle", userCallbacks: "userCallbacks", automaticResize: "automaticResize", dragAnimation: "dragAnimation", nodeWidth: "nodeWidth", nodeHeight: "nodeHeight", dropTargetId: "dropTargetId", fitModelSizeByDefault: "fitModelSizeByDefault" }, outputs: { modelChanged: "modelChanged" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "mousedown": "mousedown($event)", "mousemove": "mousemove($event)", "mouseup": "mouseup($event)" }, properties: { "attr.class": "this.canvasClass" } }, ngImport: i0, template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n", styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;transition:transform .2s;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-selected .fc-edge-label-text span,:host .fc-edge-label.fc-edit .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodeedit,:host ::ng-deep .fc-edit .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}\n"], dependencies: [{ kind: "directive", type: i3.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { kind: "directive", type: i3.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i3.NgStyle, selector: "[ngStyle]", inputs: ["ngStyle"] }, { kind: "component", type: FcNodeContainerComponent, selector: "fc-node", inputs: ["callbacks", "userNodeCallbacks", "node", "selected", "edit", "underMouse", "mouseOverConnector", "modelservice", "dragging"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartComponent, decorators: [{
             type: Component,
-            args: [{
-                    selector: 'fc-canvas',
-                    templateUrl: './ngx-flowchart.component.html',
-                    styleUrls: ['./ngx-flowchart.component.scss'],
-                    changeDetection: ChangeDetectionStrategy.OnPush
-                }]
+            args: [{ selector: 'fc-canvas', changeDetection: ChangeDetectionStrategy.OnPush, template: "<div (click)=\"canvasClick($event)\" class=\"fc-canvas-container\">\n  <svg class=\"fc-canvas-svg\">\n    <defs>\n      <marker class=\"fc-arrow-marker\" [attr.id]=\"arrowDefId\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"gray\" fill=\"gray\" stroke-width=\"1px\"/>\n      </marker>\n      <marker class=\"fc-arrow-marker-selected\" [attr.id]=\"arrowDefIdSelected\" markerWidth=\"5\" markerHeight=\"5\" viewBox=\"-6 -6 12 12\" refX=\"10\" refY=\"0\" markerUnits=\"strokeWidth\" orient=\"auto\">\n        <polygon points=\"-2,0 -5,5 5,0 -5,-5\" stroke=\"red\" fill=\"red\" stroke-width=\"1px\"/>\n      </marker>\n    </defs>\n    <g *ngFor=\"let edge of model.edges; let $index = index\">\n      <path\n        [attr.id]=\"'fc-edge-path-'+$index\"\n        (mousedown)=\"edgeMouseDown($event, edge)\"\n        (click)=\"edgeClick($event, edge)\"\n        (dblclick)=\"edgeDoubleClick($event, edge)\"\n        (mouseover)=\"edgeMouseOver($event, edge)\"\n        (mouseenter)=\"edgeMouseEnter($event, edge)\"\n        (mouseleave)=\"edgeMouseLeave($event, edge)\"\n        [attr.class]=\"(modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeClass ||\n                      flowchartConstants.edgeClass\"\n        [attr.d]=\"getEdgeDAttribute(edge)\"\n        [attr.marker-end]=\"'url(#' + (modelService.edges.isSelected(edge) ? arrowDefIdSelected : arrowDefId) + ')'\">\n      </path>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\">\n      <path [attr.class]=\"flowchartConstants.edgeClass + ' ' + flowchartConstants.draggingClass\"\n            [attr.d]=\"edgeDrawingService.getEdgeDAttribute(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2, edgeStyle)\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"\n              [attr.cx]=\"edgeDraggingService.edgeDragging.dragPoint2.x\"\n              [attr.cy]=\"edgeDraggingService.edgeDragging.dragPoint2.y\">\n      </circle>\n    </g>\n    <g *ngIf=\"dragAnimation === flowchartConstants.dragAnimationShadow\"\n       class=\"shadow-svg-class {{ flowchartConstants.edgeClass }} {{ flowchartConstants.draggingClass }}\"\n       style=\"display:none\">\n      <path d=\"\"></path>\n      <circle class=\"edge-endpoint\" r=\"4\"></circle>\n    </g>\n  </svg>\n  <ng-container *ngFor=\"let node of model.nodes\">\n    <fc-node\n         [selected]=\"modelService.nodes.isSelected(node)\"\n         [edit]=\"modelService.nodes.isEdit(node)\"\n         [underMouse]=\"node === mouseoverService.mouseoverscope.node\"\n         [node]=\"node\"\n         [mouseOverConnector]=\"mouseoverService.mouseoverscope.connector\"\n         [modelservice]=\"modelService\"\n         [dragging]=\"nodeDraggingService.isDraggingNode(node)\"\n         [callbacks]=\"callbacks\"\n         [userNodeCallbacks]=\"userNodeCallbacks\">\n    </fc-node>\n  </ng-container>\n  <div *ngIf=\"dragAnimation === flowchartConstants.dragAnimationRepaint && edgeDraggingService.edgeDragging.isDragging\"\n       [attr.class]=\"'fc-noselect ' + flowchartConstants.edgeLabelClass\"\n       [ngStyle]=\"{\n          top: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).y)+'px',\n          left: (edgeDrawingService.getEdgeCenter(edgeDraggingService.edgeDragging.dragPoint1, edgeDraggingService.edgeDragging.dragPoint2).x)+'px'\n       }\">\n    <div class=\"fc-edge-label-text\">\n      <span [attr.id]=\"'fc-edge-label-dragging'\" *ngIf=\"edgeDraggingService.edgeDragging.dragLabel\">{{edgeDraggingService.edgeDragging.dragLabel}}</span>\n    </div>\n  </div>\n  <div\n    (mousedown)=\"edgeMouseDown($event, edge)\"\n    (click)=\"edgeClick($event, edge)\"\n    (dblclick)=\"edgeDoubleClick($event, edge)\"\n    (mouseover)=\"edgeMouseOver($event, edge)\"\n    (mouseenter)=\"edgeMouseEnter($event, edge)\"\n    (mouseleave)=\"edgeMouseLeave($event, edge)\"\n    [attr.class]=\"'fc-noselect ' + ((modelService.edges.isEdit(edge) && flowchartConstants.editClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      (modelService.edges.isSelected(edge) && flowchartConstants.selectedClass + ' ' + flowchartConstants.edgeLabelClass) ||\n                      edge === mouseoverService.mouseoverscope.edge && flowchartConstants.hoverClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      edge.active && flowchartConstants.activeClass + ' ' + flowchartConstants.edgeLabelClass ||\n                      flowchartConstants.edgeLabelClass)\"\n    [ngStyle]=\"{\n      top: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).y)+'px',\n      left: (edgeDrawingService.getEdgeCenter(modelService.edges.sourceCoord(edge), modelService.edges.destCoord(edge)).x)+'px'\n    }\"\n    *ngFor=\"let edge of model.edges; let $index = index\">\n    <div class=\"fc-edge-label-text\">\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodeedit\" (click)=\"edgeEdit($event, edge)\">\n        <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n      </div>\n      <div *ngIf=\"modelService.isEditable()\" class=\"fc-noselect fc-nodedelete\" (click)=\"edgeRemove($event, edge)\">\n        &times;\n      </div>\n      <span [attr.id]=\"'fc-edge-label-'+$index\" *ngIf=\"edge.label\">{{edge.label}}</span>\n    </div>\n  </div>\n  <div id=\"select-rectangle\" class=\"fc-select-rectangle\" hidden>\n  </div>\n</div>\n", styles: [":host{display:block;position:relative;width:100%;height:100%;background-size:25px 25px;background-image:linear-gradient(to right,rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.1) 1px,transparent 1px);background-color:transparent;min-width:100%;min-height:100%;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-canvas-container{display:block;position:relative;width:100%;height:100%}:host .fc-canvas-container svg.fc-canvas-svg{display:block;position:relative;width:100%;height:100%}:host .fc-edge{stroke:gray;stroke-width:4;transition:stroke-width .2s;fill:transparent}:host .fc-edge.fc-hover{stroke:gray;stroke-width:6;fill:transparent}:host .fc-edge.fc-selected{stroke:red;stroke-width:4;fill:transparent}:host .fc-edge.fc-active{animation:dash 3s linear infinite;stroke-dasharray:20}:host .fc-edge.fc-dragging{pointer-events:none}:host .fc-arrow-marker polygon{stroke:gray;fill:gray}:host .fc-arrow-marker-selected polygon{stroke:red;fill:red}:host .edge-endpoint{fill:gray}:host .fc-noselect{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}:host .fc-edge-label{position:absolute;opacity:.8;transition:transform .2s;transform-origin:bottom left;margin:0 auto}:host .fc-edge-label .fc-edge-label-text{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font-size:16px}:host .fc-edge-label .fc-edge-label-text span{cursor:default;border:solid #ff3d00;border-radius:10px;color:#ff3d00;background-color:#fff;padding:3px 5px}:host .fc-edge-label .fc-nodeedit{top:-30px;right:14px}:host .fc-edge-label .fc-nodedelete{top:-30px;right:-13px}:host .fc-edge-label.fc-hover{transform:scale(1.25)}:host .fc-edge-label.fc-selected .fc-edge-label-text span,:host .fc-edge-label.fc-edit .fc-edge-label-text span{border:solid red;color:#fff;font-weight:600;background-color:red}:host .fc-select-rectangle{border:2px dashed #5262ff;position:absolute;background:rgba(20,125,255,.1);z-index:2}@keyframes dash{0%{stroke-dashoffset:500}}:host ::ng-deep .fc-nodeedit{display:none;font-size:15px}:host ::ng-deep .fc-nodedelete{display:none;font-size:18px}:host ::ng-deep .fc-edit .fc-nodeedit,:host ::ng-deep .fc-edit .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer}:host ::ng-deep .fc-edit .fc-nodeedit{top:-24px;right:16px}:host ::ng-deep .fc-edit .fc-nodedelete{top:-24px;right:-13px}\n"] }]
         }], ctorParameters: function () { return [{ type: i0.ElementRef }, { type: i0.IterableDiffers }, { type: FcModelValidationService }, { type: FcEdgeDrawingService }, { type: i0.ChangeDetectorRef }, { type: i0.NgZone }]; }, propDecorators: { canvasClass: [{
                 type: HostBinding,
                 args: ['attr.class']
@@ -1804,12 +1765,12 @@ class FcMagnetDirective {
         this.callbacks.edgeDragend(event);
     }
 }
-FcMagnetDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcMagnetDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
-FcMagnetDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcMagnetDirective, selector: "[fc-magnet]", inputs: { callbacks: "callbacks", connector: "connector" }, host: { listeners: { "dragover": "dragover($event)", "dragleave": "dragleave($event)", "drop": "drop($event)", "dragend": "dragend($event)" } }, ngImport: i0 });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcMagnetDirective, decorators: [{
+FcMagnetDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcMagnetDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
+FcMagnetDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "14.2.12", type: FcMagnetDirective, selector: "[fc-magnet]", inputs: { callbacks: "callbacks", connector: "connector" }, host: { listeners: { "dragover": "dragover($event)", "dragleave": "dragleave($event)", "drop": "drop($event)", "dragend": "dragend($event)" } }, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcMagnetDirective, decorators: [{
             type: Directive,
             args: [{
-                    // tslint:disable-next-line:directive-selector
+                    // eslint-disable-next-line @angular-eslint/directive-selector
                     selector: '[fc-magnet]'
                 }]
         }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{
@@ -1904,12 +1865,12 @@ class FcConnectorDirective {
         }
     }
 }
-FcConnectorDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcConnectorDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
-FcConnectorDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "12.0.0", version: "12.2.14", type: FcConnectorDirective, selector: "[fc-connector]", inputs: { callbacks: "callbacks", modelservice: "modelservice", connector: "connector", nodeRectInfo: "nodeRectInfo", mouseOverConnector: "mouseOverConnector" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "dragend": "dragend($event)", "dragstart": "dragstart($event)", "mouseenter": "mouseenter($event)", "mouseleave": "mouseleave($event)" } }, usesOnChanges: true, ngImport: i0 });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: FcConnectorDirective, decorators: [{
+FcConnectorDirective.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcConnectorDirective, deps: [{ token: i0.ElementRef }], target: i0.ɵɵFactoryTarget.Directive });
+FcConnectorDirective.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "14.2.12", type: FcConnectorDirective, selector: "[fc-connector]", inputs: { callbacks: "callbacks", modelservice: "modelservice", connector: "connector", nodeRectInfo: "nodeRectInfo", mouseOverConnector: "mouseOverConnector" }, host: { listeners: { "dragover": "dragover($event)", "drop": "drop($event)", "dragend": "dragend($event)", "dragstart": "dragstart($event)", "mouseenter": "mouseenter($event)", "mouseleave": "mouseleave($event)" } }, usesOnChanges: true, ngImport: i0 });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: FcConnectorDirective, decorators: [{
             type: Directive,
             args: [{
-                    // tslint:disable-next-line:directive-selector
+                    // eslint-disable-next-line @angular-eslint/directive-selector
                     selector: '[fc-connector]'
                 }]
         }], ctorParameters: function () { return [{ type: i0.ElementRef }]; }, propDecorators: { callbacks: [{
@@ -1947,21 +1908,17 @@ class DefaultFcNodeComponent extends FcNodeComponent {
         super();
     }
 }
-DefaultFcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: DefaultFcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Component });
-DefaultFcNodeComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.14", type: DefaultFcNodeComponent, selector: "fc-default-node", usesInheritance: true, ngImport: i0, template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;left:0;top:0;right:0;bottom:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"], directives: [{ type: i4.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { type: FcMagnetDirective, selector: "[fc-magnet]", inputs: ["callbacks", "connector"] }, { type: FcConnectorDirective, selector: "[fc-connector]", inputs: ["callbacks", "modelservice", "connector", "nodeRectInfo", "mouseOverConnector"] }, { type: i4.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }] });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: DefaultFcNodeComponent, decorators: [{
+DefaultFcNodeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: DefaultFcNodeComponent, deps: [], target: i0.ɵɵFactoryTarget.Component });
+DefaultFcNodeComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "14.2.12", type: DefaultFcNodeComponent, selector: "fc-default-node", usesInheritance: true, ngImport: i0, template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;inset:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"], dependencies: [{ kind: "directive", type: i3.NgForOf, selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { kind: "directive", type: i3.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: FcMagnetDirective, selector: "[fc-magnet]", inputs: ["callbacks", "connector"] }, { kind: "directive", type: FcConnectorDirective, selector: "[fc-connector]", inputs: ["callbacks", "modelservice", "connector", "nodeRectInfo", "mouseOverConnector"] }] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: DefaultFcNodeComponent, decorators: [{
             type: Component,
-            args: [{
-                    selector: 'fc-default-node',
-                    templateUrl: './default-node.component.html',
-                    styleUrls: ['./default-node.component.scss']
-                }]
+            args: [{ selector: 'fc-default-node', template: "<div\n  (dblclick)=\"userNodeCallbacks.doubleClick($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\"\n           *ngFor=\"let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)\">\n        <div fc-connector [connector]=\"connector\"\n             [nodeRectInfo]=\"nodeRectInfo\"\n             [mouseOverConnector]=\"mouseOverConnector\"\n             [callbacks]=\"callbacks\"\n             [modelservice]=\"modelservice\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div *ngIf=\"modelservice.isEditable() && !node.readonly\" class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n    &times;\n  </div>\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;inset:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"] }]
         }], ctorParameters: function () { return []; } });
 
 class NgxFlowchartModule {
 }
-NgxFlowchartModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
-NgxFlowchartModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, declarations: [NgxFlowchartComponent,
+NgxFlowchartModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
+NgxFlowchartModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartModule, declarations: [NgxFlowchartComponent,
         FcMagnetDirective,
         FcConnectorDirective,
         FcNodeContainerComponent,
@@ -1969,7 +1926,7 @@ NgxFlowchartModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", vers
         FcMagnetDirective,
         FcConnectorDirective,
         DefaultFcNodeComponent] });
-NgxFlowchartModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, providers: [
+NgxFlowchartModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartModule, providers: [
         FcModelValidationService,
         FcEdgeDrawingService,
         {
@@ -1978,15 +1935,10 @@ NgxFlowchartModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", vers
                 nodeComponentType: DefaultFcNodeComponent
             }
         }
-    ], imports: [[
-            CommonModule
-        ]] });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImport: i0, type: NgxFlowchartModule, decorators: [{
+    ], imports: [CommonModule] });
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.2.12", ngImport: i0, type: NgxFlowchartModule, decorators: [{
             type: NgModule,
             args: [{
-                    entryComponents: [
-                        DefaultFcNodeComponent
-                    ],
                     declarations: [NgxFlowchartComponent,
                         FcMagnetDirective,
                         FcConnectorDirective,
@@ -2021,4 +1973,4 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.14", ngImpo
  */
 
 export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort };
-//# sourceMappingURL=ngx-flowchart.js.map
+//# sourceMappingURL=ngx-flowchart.mjs.map

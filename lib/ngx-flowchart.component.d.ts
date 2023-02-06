@@ -86,5 +86,5 @@ export declare class NgxFlowchartComponent implements OnInit, DoCheck {
     mousemove(event: MouseEvent): void;
     mouseup(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<NgxFlowchartComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<NgxFlowchartComponent, "fc-canvas", never, { "model": "model"; "selectedObjects": "selectedObjects"; "edgeStyle": "edgeStyle"; "userCallbacks": "userCallbacks"; "automaticResize": "automaticResize"; "dragAnimation": "dragAnimation"; "nodeWidth": "nodeWidth"; "nodeHeight": "nodeHeight"; "dropTargetId": "dropTargetId"; "fitModelSizeByDefault": "fitModelSizeByDefault"; }, { "modelChanged": "modelChanged"; }, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<NgxFlowchartComponent, "fc-canvas", never, { "model": "model"; "selectedObjects": "selectedObjects"; "edgeStyle": "edgeStyle"; "userCallbacks": "userCallbacks"; "automaticResize": "automaticResize"; "dragAnimation": "dragAnimation"; "nodeWidth": "nodeWidth"; "nodeHeight": "nodeHeight"; "dropTargetId": "dropTargetId"; "fitModelSizeByDefault": "fitModelSizeByDefault"; }, { "modelChanged": "modelChanged"; }, never, never, false>;
 }
