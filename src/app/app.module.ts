@@ -6,25 +6,22 @@ import { FC_NODE_COMPONENT_CONFIG, NgxFlowchartModule } from 'ngx-flowchart-dev'
 import { TestFcNodeComponent } from './test-node.component';
 
 @NgModule({
-  entryComponents: [
-    TestFcNodeComponent
-  ],
-  /*providers: [
-    {
-      provide: FC_NODE_COMPONENT_CONFIG,
-      useValue: {
-        nodeComponentType: TestFcNodeComponent
+    /*providers: [
+      {
+        provide: FC_NODE_COMPONENT_CONFIG,
+        useValue: {
+          nodeComponentType: TestFcNodeComponent
+        }
       }
-    }
-  ],*/
-  declarations: [
-    AppComponent,
-    TestFcNodeComponent
-  ],
-  imports: [
-    BrowserModule,
-    NgxFlowchartModule
-  ],
-  bootstrap: [AppComponent]
+    ],*/
+    declarations: [
+        AppComponent,
+        TestFcNodeComponent
+    ],
+    imports: [
+        BrowserModule,
+        NgxFlowchartModule
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

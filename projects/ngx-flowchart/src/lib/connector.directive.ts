@@ -3,7 +3,7 @@ import { FcCallbacks, FcConnector, FcConnectorRectInfo, FcNodeRectInfo, Flowchar
 import { FcModelService } from './model.service';
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[fc-connector]'
 })
 export class FcConnectorDirective implements OnInit, OnChanges {

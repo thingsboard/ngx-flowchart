@@ -3,6 +3,10 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
     "module": "es2020",
@@ -10,7 +14,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2020",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -27,6 +31,9 @@
       ],
       "ngx-flowchart-dev": [
         "projects/ngx-flowchart/src/public-api"
+      ],
+      "ngx-flowchart1": [
+        "dist/ngx-flowchart1"
       ]
     }
   },

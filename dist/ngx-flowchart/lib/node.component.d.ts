@@ -34,7 +34,7 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     mouseover(event: MouseEvent): void;
     mouseout(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeContainerComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<FcNodeContainerComponent, "fc-node", never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<FcNodeContainerComponent, "fc-node", never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never, false>;
 }
 export declare abstract class FcNodeComponent implements OnInit {
     callbacks: FcCallbacks;
@@ -76,5 +76,5 @@ export declare abstract class FcNodeComponent implements OnInit {
     nodeRectInfo: FcNodeRectInfo;
     ngOnInit(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeComponent, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never, false>;
 }

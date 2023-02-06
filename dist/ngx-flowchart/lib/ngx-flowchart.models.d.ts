@@ -126,5 +126,5 @@ export declare class ModelvalidationError extends BaseError {
     message: string;
     constructor(message: string);
 }
-export declare function fcTopSort(graph: FcModel): Array<string> | null;
+export declare const fcTopSort: (graph: FcModel) => Array<string> | null;
 export {};

@@ -1,20 +1,32 @@
 {
   "name": "ngx-flowchart",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": "^12.2.13",
-    "@angular/core": "^12.2.13",
-    "jquery": "^3.6.0",
-    "typescript": "~4.3.5"
+    "@angular/common": "^14.2.12",
+    "@angular/core": "^14.2.12",
+    "jquery": "^3.6.2"
   },
-  "main": "bundles/ngx-flowchart.umd.js",
-  "module": "fesm2015/ngx-flowchart.js",
-  "es2015": "fesm2015/ngx-flowchart.js",
-  "esm2015": "esm2015/ngx-flowchart.js",
-  "fesm2015": "fesm2015/ngx-flowchart.js",
-  "typings": "ngx-flowchart.d.ts",
+  "module": "fesm2015/ngx-flowchart.mjs",
+  "es2020": "fesm2020/ngx-flowchart.mjs",
+  "esm2020": "esm2020/ngx-flowchart.mjs",
+  "fesm2020": "fesm2020/ngx-flowchart.mjs",
+  "fesm2015": "fesm2015/ngx-flowchart.mjs",
+  "typings": "index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "esm2020": "./esm2020/ngx-flowchart.mjs",
+      "es2020": "./fesm2020/ngx-flowchart.mjs",
+      "es2015": "./fesm2015/ngx-flowchart.mjs",
+      "node": "./fesm2015/ngx-flowchart.mjs",
+      "default": "./fesm2020/ngx-flowchart.mjs"
+    }
+  },
   "sideEffects": false,
   "dependencies": {
-    "tslib": "^2.2.0"
+    "tslib": "^2.3.0"
   }
 }

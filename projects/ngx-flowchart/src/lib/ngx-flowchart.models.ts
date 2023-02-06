@@ -12,6 +12,7 @@ const htmlPrefix = 'fc';
 const leftConnectorType = 'leftConnector';
 const rightConnectorType = 'rightConnector';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FlowchartConstants = {
   htmlPrefix,
   leftConnectorType,
@@ -155,22 +156,14 @@ export class ModelvalidationError extends BaseError {
   }
 }
 
-export function fcTopSort(graph: FcModel): Array<string> | null {
+export const fcTopSort = (graph: FcModel): Array<string> | null => {
   const adjacentList: FcAdjacentList = {};
   graph.nodes.forEach((node) => {
     adjacentList[node.id] = {incoming: 0, outgoing: []};
   });
   graph.edges.forEach((edge) => {
-    const sourceNode = graph.nodes.filter((node) => {
-      return node.connectors.some((connector) => {
-        return connector.id === edge.source;
-      });
-    })[0];
-    const destinationNode = graph.nodes.filter((node) => {
-      return node.connectors.some((connector) => {
-        return connector.id === edge.destination;
-      });
-    })[0];
+    const sourceNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.source))[0];
+    const destinationNode = graph.nodes.filter((node) => node.connectors.some((connector) => connector.id === edge.destination))[0];
     adjacentList[sourceNode.id].outgoing.push(destinationNode.id);
     adjacentList[destinationNode.id].incoming++;
   });
@@ -207,4 +200,4 @@ export function fcTopSort(graph: FcModel): Array<string> | null {
   } else {
     return orderedNodes;
   }
-}
+};
