@@ -12,5 +12,5 @@ export declare class FcMagnetDirective implements OnInit {
     drop(event: Event | any): boolean;
     dragend(event: Event | any): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcMagnetDirective, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<FcMagnetDirective, "[fc-magnet]", never, { "callbacks": "callbacks"; "connector": "connector"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcMagnetDirective, "[fc-magnet]", never, { "callbacks": "callbacks"; "connector": "connector"; }, {}, never, never, false, never>;
 }
