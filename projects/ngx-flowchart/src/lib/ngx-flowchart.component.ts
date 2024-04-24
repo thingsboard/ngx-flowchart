@@ -68,6 +68,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
   @Input()
   dropTargetId: string;
 
+  @Input()
+  zoom: number = 1;
+
   @Output()
   modelChanged = new EventEmitter();
 
@@ -182,6 +185,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
       }
     };
     this.adjustCanvasSize(this.fitModelSizeByDefault);
+    this.setZoom(this.zoom);
   }
 
   ngDoCheck(): void {
@@ -213,6 +217,7 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
         this.detectChangesSubject.next();
       }
     }
+    this.setZoom(this.zoom);
   }
 
   getEdgeDAttribute(edge: FcEdge): string {
@@ -315,6 +320,12 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
   @HostListener('mouseup', ['$event'])
   mouseup(event: MouseEvent) {
     this.rectangleSelectService.mouseup(event);
+  }
+
+  setZoom(zoom: number = this.zoom) {
+    const element = $(this.elementRef.nativeElement);
+    // Add zoom in functionality
+    element.css('zoom', parseFloat(zoom.toString()));
   }
 
 }
