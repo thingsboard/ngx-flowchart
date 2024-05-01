@@ -153,7 +153,7 @@ export class AppComponent implements AfterViewInit {
           id: '3',
           x: 600,
           y: 100,
-          color: '#F15B26',
+          color: '#4287f5',
           connectors: [
             {
               type: FlowchartConstants.leftConnectorType,
@@ -252,7 +252,7 @@ export class AppComponent implements AfterViewInit {
       id: (this.nextNodeID++) + '',
       x: 200,
       y: 100,
-      color: '#F15B26',
+      color: '#4287f5',
       connectors: [
         {
           id: (this.nextConnectorID++) + '',
@@ -276,5 +276,15 @@ export class AppComponent implements AfterViewInit {
 
   public deleteSelected() {
     this.fcCanvas.modelService.deleteSelected();
+  }
+
+  zoom: number = 1;
+  zoomIn () {
+    this.zoom += 0.1;
+    console.log(this.zoom);
+  }
+
+  zoomOut () {
+    this.zoom -= 0.1;
   }
 }

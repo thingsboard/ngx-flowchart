@@ -1,7 +1,7 @@
 <div class="fc-container">
   <div class="fc-left-pane">
     <fc-canvas [model]="nodeTypesModel" [selectedObjects]="nodeTypesFlowchartselected"
-               [automaticResize]="false"
+               [automaticResize]="true"
                [dropTargetId]="'fc-target-canvas'">
     </fc-canvas>
   </div>
@@ -25,7 +25,8 @@
                [edgeStyle]="flowchartConstants.curvedStyle"
                [userCallbacks]="callbacks"
                [automaticResize]="true"
-               [dragAnimation]="flowchartConstants.dragAnimationRepaint">
+               [dragAnimation]="flowchartConstants.dragAnimationRepaint"
+               [zoom]="zoom">
     </fc-canvas>
   </div>
 </div>

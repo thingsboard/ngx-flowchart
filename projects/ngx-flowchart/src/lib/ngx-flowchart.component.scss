@@ -91,9 +91,11 @@
       font-size: 16px;
       span {
         cursor: default;
-        border: solid #ff3d00;
-        border-radius: 10px;
-        color: #ff3d00;
+        // border: none;
+        // color: #ff3d00;
+        box-shadow: 0 0 0 1.5px #fff, 0 0 0 2px #000;
+
+        border-radius: 8px;
         background-color: #fff;
         padding: 3px 5px;
       }
