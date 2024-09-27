@@ -1,6 +1,6 @@
 # NgxFlowchart
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.0.
 
 ## Code scaffolding
 
@@ -14,10 +14,6 @@ Run `ng build ngx-flowchart` to build the project. The build artifacts will be s
 ## Publishing
 
 After building your library with `ng build ngx-flowchart`, go to the dist folder `cd dist/ngx-flowchart` and run `npm publish`.
-
-## Running unit tests
-
-Run `ng test ngx-flowchart` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Further help
 

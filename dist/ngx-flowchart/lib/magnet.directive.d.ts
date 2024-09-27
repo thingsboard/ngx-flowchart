@@ -1,6 +1,6 @@
-import { OnInit } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { ElementRef, OnInit } from '@angular/core';
 import { FcCallbacks, FcConnector } from './ngx-flowchart.models';
+import * as i0 from "@angular/core";
 export declare class FcMagnetDirective implements OnInit {
     elementRef: ElementRef<HTMLElement>;
     callbacks: FcCallbacks;
@@ -11,4 +11,6 @@ export declare class FcMagnetDirective implements OnInit {
     dragleave(event: Event | any): void;
     drop(event: Event | any): boolean;
     dragend(event: Event | any): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<FcMagnetDirective, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcMagnetDirective, "[fc-magnet]", never, { "callbacks": { "alias": "callbacks"; "required": false; }; "connector": { "alias": "connector"; "required": false; }; }, {}, never, never, false, never>;
 }

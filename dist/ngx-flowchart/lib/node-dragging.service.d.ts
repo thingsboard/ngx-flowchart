@@ -1,4 +1,3 @@
-/// <reference types="jquery" />
 import { FcModelService } from './model.service';
 import { FcNode } from './ngx-flowchart.models';
 export declare class FcNodeDraggingService {

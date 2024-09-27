@@ -1,10 +1,9 @@
-import { OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Directive, Input, HostListener, ElementRef } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FcCallbacks, FcConnector, FcConnectorRectInfo, FcNodeRectInfo, FlowchartConstants } from './ngx-flowchart.models';
 import { FcModelService } from './model.service';
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[fc-connector]'
 })
 export class FcConnectorDirective implements OnInit, OnChanges {
