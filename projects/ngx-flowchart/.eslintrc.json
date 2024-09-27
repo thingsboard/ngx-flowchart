@@ -10,8 +10,7 @@
       ],
       "parserOptions": {
         "project": [
-          "projects/ngx-flowchart/tsconfig.lib.json",
-          "projects/ngx-flowchart/tsconfig.spec.json"
+          "projects/ngx-flowchart/tsconfig.lib.json"
         ],
         "createDefaultProgram": true
       },
