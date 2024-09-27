@@ -8,7 +8,6 @@
     "types": ["jquery"]
   },
   "exclude": [
-    "src/test.ts",
     "**/*.spec.ts"
   ]
 }

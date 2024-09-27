@@ -2,11 +2,11 @@
   "name": "ngx-flowchart",
   "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": "^15.1.5",
-    "@angular/core": "^15.1.5",
-    "jquery": "^3.6.2"
+    "@angular/common": "^18.2.6",
+    "@angular/core": "^18.2.6",
+    "jquery": "^3.7.1"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.9"
+    "@types/jquery": "^3.5.31"
   }
 }

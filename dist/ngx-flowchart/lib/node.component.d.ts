@@ -34,7 +34,7 @@ export declare class FcNodeContainerComponent implements OnInit, AfterViewInit, 
     mouseover(event: MouseEvent): void;
     mouseout(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeContainerComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<FcNodeContainerComponent, "fc-node", never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<FcNodeContainerComponent, "fc-node", never, { "callbacks": { "alias": "callbacks"; "required": false; }; "userNodeCallbacks": { "alias": "userNodeCallbacks"; "required": false; }; "node": { "alias": "node"; "required": false; }; "selected": { "alias": "selected"; "required": false; }; "edit": { "alias": "edit"; "required": false; }; "underMouse": { "alias": "underMouse"; "required": false; }; "mouseOverConnector": { "alias": "mouseOverConnector"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "dragging": { "alias": "dragging"; "required": false; }; }, {}, never, never, false, never>;
 }
 export declare abstract class FcNodeComponent implements OnInit {
     callbacks: FcCallbacks;
@@ -76,5 +76,5 @@ export declare abstract class FcNodeComponent implements OnInit {
     nodeRectInfo: FcNodeRectInfo;
     ngOnInit(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcNodeComponent, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": "callbacks"; "userNodeCallbacks": "userNodeCallbacks"; "node": "node"; "selected": "selected"; "edit": "edit"; "underMouse": "underMouse"; "mouseOverConnector": "mouseOverConnector"; "modelservice": "modelservice"; "dragging": "dragging"; }, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": { "alias": "callbacks"; "required": false; }; "userNodeCallbacks": { "alias": "userNodeCallbacks"; "required": false; }; "node": { "alias": "node"; "required": false; }; "selected": { "alias": "selected"; "required": false; }; "edit": { "alias": "edit"; "required": false; }; "underMouse": { "alias": "underMouse"; "required": false; }; "mouseOverConnector": { "alias": "mouseOverConnector"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "dragging": { "alias": "dragging"; "required": false; }; }, {}, never, never, false, never>;
 }
