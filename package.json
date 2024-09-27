@@ -1,16 +1,12 @@
 {
   "name": "ngx-flowchart",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "peerDependencies": {
-    "@angular/common": "^15.1.5",
-    "@angular/core": "^15.1.5",
-    "jquery": "^3.6.2"
+    "@angular/common": "^18.2.6",
+    "@angular/core": "^18.2.6",
+    "jquery": "^3.7.1"
   },
-  "module": "fesm2015/ngx-flowchart.mjs",
-  "es2020": "fesm2020/ngx-flowchart.mjs",
-  "esm2020": "esm2020/ngx-flowchart.mjs",
-  "fesm2020": "fesm2020/ngx-flowchart.mjs",
-  "fesm2015": "fesm2015/ngx-flowchart.mjs",
+  "module": "fesm2022/ngx-flowchart.mjs",
   "typings": "index.d.ts",
   "exports": {
     "./package.json": {
@@ -18,11 +14,9 @@
     },
     ".": {
       "types": "./index.d.ts",
-      "esm2020": "./esm2020/ngx-flowchart.mjs",
-      "es2020": "./fesm2020/ngx-flowchart.mjs",
-      "es2015": "./fesm2015/ngx-flowchart.mjs",
-      "node": "./fesm2015/ngx-flowchart.mjs",
-      "default": "./fesm2020/ngx-flowchart.mjs"
+      "esm2022": "./esm2022/ngx-flowchart.mjs",
+      "esm": "./esm2022/ngx-flowchart.mjs",
+      "default": "./fesm2022/ngx-flowchart.mjs"
     }
   },
   "sideEffects": false,

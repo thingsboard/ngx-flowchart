@@ -20,5 +20,5 @@ export declare class FcConnectorDirective implements OnInit, OnChanges {
     mouseenter(event: MouseEvent): void;
     mouseleave(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<FcConnectorDirective, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<FcConnectorDirective, "[fc-connector]", never, { "callbacks": "callbacks"; "modelservice": "modelservice"; "connector": "connector"; "nodeRectInfo": "nodeRectInfo"; "mouseOverConnector": "mouseOverConnector"; }, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcConnectorDirective, "[fc-connector]", never, { "callbacks": { "alias": "callbacks"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "connector": { "alias": "connector"; "required": false; }; "nodeRectInfo": { "alias": "nodeRectInfo"; "required": false; }; "mouseOverConnector": { "alias": "mouseOverConnector"; "required": false; }; }, {}, never, never, false, never>;
 }
