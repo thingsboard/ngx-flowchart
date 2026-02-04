@@ -27,10 +27,10 @@ import {
 import { FcModelService } from './model.service';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'fc-node',
   template: '<ng-template #nodeContent></ng-template>',
-  styleUrls: ['./node.component.scss']
+  styleUrls: ['./node.component.scss'],
+  standalone: false
 })
 export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
 

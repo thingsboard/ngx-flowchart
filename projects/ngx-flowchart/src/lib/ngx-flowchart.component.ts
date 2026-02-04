@@ -27,11 +27,11 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'fc-canvas',
   templateUrl: './ngx-flowchart.component.html',
   styleUrls: ['./ngx-flowchart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false
 })
 export class NgxFlowchartComponent implements OnInit, DoCheck {
 
