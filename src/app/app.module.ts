@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { FC_NODE_COMPONENT_CONFIG, NgxFlowchartModule } from 'ngx-flowchart-dev';
+import { NgxFlowchartModule } from 'ngx-flowchart-dev';
 import { TestFcNodeComponent } from './test-node.component';
 
 @NgModule({

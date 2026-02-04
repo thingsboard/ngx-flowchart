@@ -14,35 +14,35 @@ export class FcMouseOverService {
     this.applyFunction = applyFunction;
   }
 
-  public nodeMouseOver(event: MouseEvent, node: FcNode) {
+  public nodeMouseOver(_event: MouseEvent, node: FcNode) {
     return this.applyFunction(() => {
       this.mouseoverscope.node = node;
     });
   }
 
-  public nodeMouseOut(event: MouseEvent, node: FcNode) {
+  public nodeMouseOut(_event: MouseEvent, _node: FcNode) {
     return this.applyFunction(() => {
       this.mouseoverscope.node = null;
     });
   }
 
-  public connectorMouseEnter(event: MouseEvent, connector: FcConnector) {
+  public connectorMouseEnter(_event: MouseEvent, connector: FcConnector) {
     return this.applyFunction(() => {
       this.mouseoverscope.connector = connector;
     });
   }
 
-  public connectorMouseLeave(event: MouseEvent, connector: FcConnector) {
+  public connectorMouseLeave(_event: MouseEvent, _connector: FcConnector) {
     return this.applyFunction(() => {
       this.mouseoverscope.connector = null;
     });
   }
 
-  public edgeMouseEnter(event: MouseEvent, edge: FcEdge) {
+  public edgeMouseEnter(_event: MouseEvent, edge: FcEdge) {
     this.mouseoverscope.edge = edge;
   }
 
-  public edgeMouseLeave(event: MouseEvent, edge: FcEdge) {
+  public edgeMouseLeave(_event: MouseEvent, _edge: FcEdge) {
     this.mouseoverscope.edge = null;
   }
 }

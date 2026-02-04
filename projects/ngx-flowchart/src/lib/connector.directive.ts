@@ -67,7 +67,7 @@ export class FcConnectorDirective implements OnInit, OnChanges {
   }
 
   @HostListener('dragover', ['$event'])
-  dragover(event: Event | any) {
+  dragover(_event: Event | any) {
     // Skip - conflict with magnet
     /* if (this.modelservice.isEditable()) {
       return this.callbacks.edgeDragoverConnector(event, this.connector);

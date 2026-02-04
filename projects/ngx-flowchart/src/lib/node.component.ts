@@ -203,7 +203,6 @@ export class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChange
 }
 
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
 export abstract class FcNodeComponent implements OnInit {
 
   @Input()

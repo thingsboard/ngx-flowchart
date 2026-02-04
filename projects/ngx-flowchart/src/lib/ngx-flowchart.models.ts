@@ -12,7 +12,6 @@ const htmlPrefix = 'fc';
 const leftConnectorType = 'leftConnector';
 const rightConnectorType = 'rightConnector';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FlowchartConstants = {
   htmlPrefix,
   leftConnectorType,
@@ -143,8 +142,8 @@ export interface FcAdjacentList {
 }
 
 class BaseError {
-  constructor() {
-    Error.apply(this, arguments);
+  constructor(...args: unknown[]) {
+    Error.apply(this, ...args);
   }
 }
 

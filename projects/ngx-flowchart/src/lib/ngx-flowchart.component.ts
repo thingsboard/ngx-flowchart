@@ -94,9 +94,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
 
   flowchartConstants = FlowchartConstants;
 
-  private nodesDiffer: IterableDiffer<FcNode> = this.differs.find([]).create<FcNode>((index, item) => item);
+  private nodesDiffer: IterableDiffer<FcNode> = this.differs.find([]).create<FcNode>((_index, item) => item);
 
-  private edgesDiffer: IterableDiffer<FcEdge> = this.differs.find([]).create<FcEdge>((index, item) => item);
+  private edgesDiffer: IterableDiffer<FcEdge> = this.differs.find([]).create<FcEdge>((_index, item) => item);
 
   private readonly detectChangesSubject = new Subject<any>();
 
@@ -223,8 +223,8 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
       maxX = Math.max(node.x + this.nodeWidth, maxX);
       maxY = Math.max(node.y + this.nodeHeight, maxY);
     });
-    let width;
-    let height;
+    let width: number;
+    let height: number;
     if (fit) {
       width = maxX;
       height = maxY;
@@ -236,9 +236,9 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
     element.css('height', height + 'px');
   }
 
-  canvasClick(event: MouseEvent) {}
+  canvasClick(_event: MouseEvent) {}
 
-  edgeMouseDown(event: MouseEvent, edge: FcEdge) {
+  edgeMouseDown(event: MouseEvent, _edge: FcEdge) {
     event.stopPropagation();
   }
 
