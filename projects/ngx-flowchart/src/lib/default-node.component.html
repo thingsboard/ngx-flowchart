@@ -5,30 +5,36 @@
     <p>{{ node.name }}</p>
 
     <div class="{{flowchartConstants.leftConnectorClass}}">
-      <div fc-magnet [connector]="connector" [callbacks]="callbacks"
-           *ngFor="let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType)">
-        <div fc-connector [connector]="connector"
-             [nodeRectInfo]="nodeRectInfo"
-             [mouseOverConnector]="mouseOverConnector"
-             [callbacks]="callbacks"
-             [modelservice]="modelservice"></div>
-      </div>
+      @for (connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType); track connector) {
+        <div fc-magnet [connector]="connector" [callbacks]="callbacks">
+          <div fc-connector [connector]="connector"
+            [nodeRectInfo]="nodeRectInfo"
+            [mouseOverConnector]="mouseOverConnector"
+            [callbacks]="callbacks"
+          [modelservice]="modelservice"></div>
+        </div>
+      }
     </div>
     <div class="{{flowchartConstants.rightConnectorClass}}">
-      <div fc-magnet [connector]="connector" [callbacks]="callbacks"
-           *ngFor="let connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType)">
-        <div fc-connector [connector]="connector"
-             [nodeRectInfo]="nodeRectInfo"
-             [mouseOverConnector]="mouseOverConnector"
-             [callbacks]="callbacks"
-             [modelservice]="modelservice"></div>
-      </div>
+      @for (connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType); track connector) {
+        <div fc-magnet [connector]="connector" [callbacks]="callbacks">
+          <div fc-connector [connector]="connector"
+            [nodeRectInfo]="nodeRectInfo"
+            [mouseOverConnector]="mouseOverConnector"
+            [callbacks]="callbacks"
+          [modelservice]="modelservice"></div>
+        </div>
+      }
     </div>
   </div>
-  <div *ngIf="modelservice.isEditable() && !node.readonly" class="fc-nodeedit" (click)="userNodeCallbacks.nodeEdit($event, node)">
-    <i class="fa fa-pencil" aria-hidden="true"></i>
-  </div>
-  <div *ngIf="modelservice.isEditable() && !node.readonly" class="fc-nodedelete" (click)="modelservice.nodes.delete(node)">
-    &times;
-  </div>
+  @if (modelservice.isEditable() && !node.readonly) {
+    <div class="fc-nodeedit" (click)="userNodeCallbacks.nodeEdit($event, node)">
+      <i class="fa fa-pencil" aria-hidden="true"></i>
+    </div>
+  }
+  @if (modelservice.isEditable() && !node.readonly) {
+    <div class="fc-nodedelete" (click)="modelservice.nodes.delete(node)">
+      &times;
+    </div>
+  }
 </div>

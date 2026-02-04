@@ -4,9 +4,6 @@ import { FcCoords, FlowchartConstants } from './ngx-flowchart.models';
 @Injectable()
 export class FcEdgeDrawingService {
 
-  constructor() {
-  }
-
   public getEdgeDAttribute(pt1: FcCoords, pt2: FcCoords, style: string): string {
     let dAddribute = `M ${pt1.x}, ${pt1.y} `;
     if (style === FlowchartConstants.curvedStyle) {

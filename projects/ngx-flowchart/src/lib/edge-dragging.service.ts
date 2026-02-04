@@ -172,7 +172,7 @@ export class FcEdgeDraggingService {
     }
   }
 
-  public dragleaveMagnet(event: Event | any) {
+  public dragleaveMagnet(_event: Event | any) {
     this.edgeDragging.magnetActive = false;
   }
 

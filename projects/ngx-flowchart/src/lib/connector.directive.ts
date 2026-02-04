@@ -3,8 +3,8 @@ import { FcCallbacks, FcConnector, FcConnectorRectInfo, FcNodeRectInfo, Flowchar
 import { FcModelService } from './model.service';
 
 @Directive({
-  // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[fc-connector]'
+  selector: '[fc-connector]',
+  standalone: false
 })
 export class FcConnectorDirective implements OnInit, OnChanges {
 
@@ -67,7 +67,7 @@ export class FcConnectorDirective implements OnInit, OnChanges {
   }
 
   @HostListener('dragover', ['$event'])
-  dragover(event: Event | any) {
+  dragover(_event: Event | any) {
     // Skip - conflict with magnet
     /* if (this.modelservice.isEditable()) {
       return this.callbacks.edgeDragoverConnector(event, this.connector);

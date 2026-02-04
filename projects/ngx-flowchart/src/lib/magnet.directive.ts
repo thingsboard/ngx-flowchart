@@ -2,8 +2,8 @@ import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/cor
 import { FcCallbacks, FcConnector, FlowchartConstants } from './ngx-flowchart.models';
 
 @Directive({
-  // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[fc-magnet]'
+  selector: '[fc-magnet]',
+  standalone: false
 })
 export class FcMagnetDirective implements OnInit {
 

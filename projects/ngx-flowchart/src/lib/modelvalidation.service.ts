@@ -4,8 +4,6 @@ import { FcConnector, FcEdge, FcModel, FcNode, fcTopSort, ModelvalidationError }
 @Injectable()
 export class FcModelValidationService {
 
-  constructor() { }
-
   public validateModel(model: FcModel): FcModel {
     this.validateNodes(model.nodes);
     this._validateEdges(model.edges, model.nodes);

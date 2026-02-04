@@ -6,14 +6,12 @@ import { DELETE } from '@angular/cdk/keycodes';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements AfterViewInit {
 
-  @HostBinding('attr.tabindex')
-  get tabindex(): string {
-    return '0';
-  }
+  @HostBinding('attr.tabindex') tabindex = '0';
 
   flowchartConstants = FlowchartConstants;
 
@@ -32,29 +30,28 @@ export class AppComponent implements AfterViewInit {
   nextConnectorID = 20;
 
   callbacks: UserCallbacks = {
-    edgeDoubleClick: (event, edge) => {
+    edgeDoubleClick: (_event, _edge) => {
       console.log('Edge double clicked.');
     },
-    edgeEdit: (event, edge) => {
+    edgeEdit: (_event, edge) => {
       const label = prompt('Enter a link label:', edge.label);
       if (label) {
         edge.label = label;
       }
     },
-    edgeMouseOver: event => {
+    edgeMouseOver: _event => {
       console.log('mouserover');
     },
     isValidEdge: (source, destination) =>
       source.type === FlowchartConstants.rightConnectorType && destination.type === FlowchartConstants.leftConnectorType
     ,
-    createEdge: (event, edge) => {
+    createEdge: (_event, edge) => {
       if (!edge.label) {
-        const label = prompt('Enter a link label:', 'New label');
-        edge.label = label;
+        edge.label = prompt('Enter a link label:', 'New label');
       }
       return of(edge);
     },
-    dropNode: (event, node) => {
+    dropNode: (_event, node) => {
       const name = prompt('Enter a node name:', node.name);
       if (name) {
         node.name = name;
@@ -85,10 +82,10 @@ export class AppComponent implements AfterViewInit {
       console.log(edge);
     },
     nodeCallbacks: {
-      doubleClick: event => {
+      doubleClick: _event => {
         console.log('Node was doubleclicked.');
       },
-      nodeEdit: (event, node) => {
+      nodeEdit: (_event, node) => {
         const name = prompt('Enter a node name:', node.name);
         if (name) {
           node.name = name;
@@ -225,12 +222,12 @@ export class AppComponent implements AfterViewInit {
   }
 
   @HostListener('keydown.control.a', ['$event'])
-  public onCtrlA(event: KeyboardEvent) {
+  public onCtrlA(_event: KeyboardEvent) {
     this.fcCanvas.modelService.selectAll();
   }
 
   @HostListener('keydown.esc', ['$event'])
-  public onEsc(event: KeyboardEvent) {
+  public onEsc(_event: KeyboardEvent) {
     this.fcCanvas.modelService.deselectAll();
   }
 

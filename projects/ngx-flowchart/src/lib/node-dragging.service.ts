@@ -193,7 +193,7 @@ export class FcNodeDraggingService {
       let dropNodeInfo: DropNodeInfo = null;
       try {
         dropNodeInfo = JSON.parse(infoText);
-      } catch (e) {}
+      } catch (e) {/**/}
       if (dropNodeInfo && dropNodeInfo.dropTargetId) {
         if (this.modelService.canvasHtmlElement.id &&
           this.modelService.canvasHtmlElement.id === dropNodeInfo.dropTargetId) {
