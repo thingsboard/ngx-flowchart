@@ -1,9 +1,9 @@
 {
   "name": "ngx-flowchart",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "peerDependencies": {
-    "@angular/common": "^18.2.6",
-    "@angular/core": "^18.2.6",
+    "@angular/common": "^20.3.16",
+    "@angular/core": "^20.3.16",
     "jquery": "^3.7.1"
   },
   "module": "fesm2022/ngx-flowchart.mjs",
@@ -14,8 +14,6 @@
     },
     ".": {
       "types": "./index.d.ts",
-      "esm2022": "./esm2022/ngx-flowchart.mjs",
-      "esm": "./esm2022/ngx-flowchart.mjs",
       "default": "./fesm2022/ngx-flowchart.mjs"
     }
   },
