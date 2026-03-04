@@ -1,7 +1,7 @@
 import * as i0 from '@angular/core';
-import { EventEmitter, OnInit, AfterViewInit, OnChanges, ViewContainerRef, ElementRef, ComponentFactoryResolver, SimpleChanges, InjectionToken, Type, DoCheck, IterableDiffers, ChangeDetectorRef, NgZone } from '@angular/core';
+import { EventEmitter, OnInit, AfterViewInit, OnChanges, ViewContainerRef, ElementRef, SimpleChanges, InjectionToken, Type, DoCheck, IterableDiffers, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import * as i6 from '@angular/common';
+import * as i8 from '@angular/common';
 
 declare class FcModelValidationService {
     validateModel(model: FcModel): FcModel;
@@ -63,6 +63,12 @@ declare class EdgesModel extends AbstractFcModel<FcEdge> {
     putEdge(edge: FcEdge): void;
     _addEdge(event: Event, sourceConnector: FcConnector, destConnector: FcConnector, label: string): void;
 }
+declare class NotesModel extends AbstractFcModel<FcNote> {
+    constructor(modelService: FcModelService);
+    delete(note: FcNote): void;
+    getSelectedNotes(): Array<FcNote>;
+    handleClicked(note: FcNote, ctrlKey?: boolean): void;
+}
 declare class FcModelService {
     modelValidation: FcModelValidationService;
     model: FcModel;
@@ -78,13 +84,15 @@ declare class FcModelService {
     edgeAddedCallback: (edge: FcEdge) => void;
     nodeRemovedCallback: (node: FcNode) => void;
     edgeRemovedCallback: (edge: FcEdge) => void;
+    noteRemovedCallback: (note: FcNote) => void;
     dropTargetId: string;
     private readonly modelChanged;
     private readonly debouncer;
     connectors: ConnectorsModel;
     nodes: NodesModel;
     edges: EdgesModel;
-    constructor(modelValidation: FcModelValidationService, model: FcModel, modelChanged: EventEmitter<any>, detectChangesSubject: Subject<any>, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement);
+    notes: NotesModel;
+    constructor(modelValidation: FcModelValidationService, model: FcModel, modelChanged: EventEmitter<any>, detectChangesSubject: Subject<any>, selectedObjects: any[], dropNode: (event: Event, node: FcNode) => void, createEdge: (event: Event, edge: FcEdge) => Observable<FcEdge>, edgeAddedCallback: (edge: FcEdge) => void, nodeRemovedCallback: (node: FcNode) => void, edgeRemovedCallback: (edge: FcEdge) => void, canvasHtmlElement: HTMLElement, svgHtmlElement: SVGElement, noteRemovedCallback?: (note: FcNote) => void);
     notifyModelChanged(): void;
     detectChanges(): void;
     selectObject(object: any): void;
@@ -96,6 +104,9 @@ declare class FcModelService {
     isEditObject(object: any): boolean;
     private inRectBox;
     getItemInfoAtPoint(x: number, y: number): FcItemInfo;
+    getNoteAtPoint(x: number, y: number): FcNote;
+    getNodesInNoteBounds(note: FcNote): FcNode[];
+    getNotesInNoteBounds(note: FcNote): FcNote[];
     getNodeAtPoint(x: number, y: number): FcNode;
     getEdgeAtPoint(x: number, y: number): FcEdge;
     selectAllInRect(rectBox: FcRectBox): void;
@@ -108,7 +119,6 @@ declare class FcModelService {
 declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChanges {
     private nodeComponentConfig;
     private elementRef;
-    private componentFactoryResolver;
     callbacks: FcCallbacks;
     userNodeCallbacks: UserNodeCallbacks;
     node: FcNode;
@@ -123,7 +133,7 @@ declare class FcNodeContainerComponent implements OnInit, AfterViewInit, OnChang
     get left(): string;
     nodeComponent: FcNodeComponent;
     nodeContentContainer: ViewContainerRef;
-    constructor(nodeComponentConfig: FcNodeComponentConfig, elementRef: ElementRef<HTMLElement>, componentFactoryResolver: ComponentFactoryResolver);
+    constructor(nodeComponentConfig: FcNodeComponentConfig, elementRef: ElementRef<HTMLElement>);
     ngOnInit(): void;
     ngAfterViewInit(): void;
     ngOnChanges(changes: SimpleChanges): void;
@@ -173,6 +183,7 @@ declare abstract class FcNodeComponent implements OnInit {
         rightConnectorClass: string;
         canvasResizeThreshold: number;
         canvasResizeStep: number;
+        noteClass: string;
     };
     width: number;
     height: number;
@@ -182,9 +193,115 @@ declare abstract class FcNodeComponent implements OnInit {
     static ɵdir: i0.ɵɵDirectiveDeclaration<FcNodeComponent, never, never, { "callbacks": { "alias": "callbacks"; "required": false; }; "userNodeCallbacks": { "alias": "userNodeCallbacks"; "required": false; }; "node": { "alias": "node"; "required": false; }; "selected": { "alias": "selected"; "required": false; }; "edit": { "alias": "edit"; "required": false; }; "underMouse": { "alias": "underMouse"; "required": false; }; "mouseOverConnector": { "alias": "mouseOverConnector"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "dragging": { "alias": "dragging"; "required": false; }; }, {}, never, never, true, never>;
 }
 
+declare enum NoteDragMode {
+    None = "none",
+    Pending = "pending",// mousedown recorded, waiting for drag threshold
+    Move = "move",
+    ResizeN = "resize-n",
+    ResizeNE = "resize-ne",
+    ResizeE = "resize-e",
+    ResizeSE = "resize-se",
+    ResizeS = "resize-s",
+    ResizeSW = "resize-sw",
+    ResizeW = "resize-w",
+    ResizeNW = "resize-nw"
+}
+declare class FcNoteDraggingService {
+    private readonly modelService;
+    private readonly automaticResize;
+    private readonly applyFunction;
+    private readonly scrollParent;
+    private state;
+    private readonly onMouseMove;
+    private readonly onMouseUp;
+    constructor(modelService: FcModelService, applyFunction: <T>(fn: (...args: any[]) => T) => T, automaticResize: boolean);
+    private updateScroll;
+    private resizeCanvas;
+    isDraggingNote(note: FcNote): boolean;
+    startMove(event: MouseEvent, note: FcNote): void;
+    private commitMove;
+    startResize(event: MouseEvent, note: FcNote, mode: NoteDragMode): void;
+    private mousemove;
+    private mouseup;
+}
+
+declare class FcNoteContainerComponent implements OnInit, AfterViewInit, OnChanges {
+    private noteComponentConfig;
+    private elementRef;
+    note: FcNote;
+    modelservice: FcModelService;
+    noteDraggingService: FcNoteDraggingService;
+    userNoteCallbacks: UserNoteCallbacks;
+    selected: boolean;
+    edit: boolean;
+    dragging: boolean;
+    noteComponent: FcNoteComponent;
+    noteContentContainer: ViewContainerRef;
+    get noteId(): string;
+    get top(): string;
+    get left(): string;
+    get width(): string;
+    get height(): string;
+    constructor(noteComponentConfig: FcNoteComponentConfig, elementRef: ElementRef<HTMLElement>);
+    ngOnInit(): void;
+    ngAfterViewInit(): void;
+    ngOnChanges(changes: SimpleChanges): void;
+    private updateNoteClass;
+    private updateNoteComponent;
+    private toggleClass;
+    mousedown(event: MouseEvent): void;
+    click(event: MouseEvent): void;
+    mouseenter(event: MouseEvent): void;
+    mouseleave(event: MouseEvent): void;
+    startResize(event: MouseEvent, mode: NoteDragMode): void;
+    get noteDragMode(): typeof NoteDragMode;
+    static ɵfac: i0.ɵɵFactoryDeclaration<FcNoteContainerComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<FcNoteContainerComponent, "fc-note", never, { "note": { "alias": "note"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "noteDraggingService": { "alias": "noteDraggingService"; "required": false; }; "userNoteCallbacks": { "alias": "userNoteCallbacks"; "required": false; }; "selected": { "alias": "selected"; "required": false; }; "edit": { "alias": "edit"; "required": false; }; "dragging": { "alias": "dragging"; "required": false; }; }, {}, never, never, false, never>;
+}
+declare abstract class FcNoteComponent implements OnInit {
+    note: FcNote;
+    selected: boolean;
+    edit: boolean;
+    modelservice: FcModelService;
+    userNoteCallbacks: UserNoteCallbacks;
+    flowchartConstants: {
+        htmlPrefix: string;
+        leftConnectorType: string;
+        rightConnectorType: string;
+        curvedStyle: string;
+        lineStyle: string;
+        dragAnimationRepaint: string;
+        dragAnimationShadow: string;
+        canvasClass: string;
+        selectedClass: string;
+        editClass: string;
+        activeClass: string;
+        hoverClass: string;
+        draggingClass: string;
+        edgeClass: string;
+        edgeLabelClass: string;
+        connectorClass: string;
+        magnetClass: string;
+        nodeClass: string;
+        nodeOverlayClass: string;
+        leftConnectorClass: string;
+        rightConnectorClass: string;
+        canvasResizeThreshold: number;
+        canvasResizeStep: number;
+        noteClass: string;
+    };
+    ngOnInit(): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<FcNoteComponent, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<FcNoteComponent, never, never, { "note": { "alias": "note"; "required": false; }; "selected": { "alias": "selected"; "required": false; }; "edit": { "alias": "edit"; "required": false; }; "modelservice": { "alias": "modelservice"; "required": false; }; "userNoteCallbacks": { "alias": "userNoteCallbacks"; "required": false; }; }, {}, never, never, true, never>;
+}
+
 declare const FC_NODE_COMPONENT_CONFIG: InjectionToken<FcNodeComponentConfig>;
 interface FcNodeComponentConfig {
     nodeComponentType: Type<FcNodeComponent>;
+}
+declare const FC_NOTE_COMPONENT_CONFIG: InjectionToken<FcNoteComponentConfig>;
+interface FcNoteComponentConfig {
+    noteComponentType: Type<FcNoteComponent>;
 }
 declare const FlowchartConstants: {
     htmlPrefix: string;
@@ -210,6 +327,7 @@ declare const FlowchartConstants: {
     rightConnectorClass: string;
     canvasResizeThreshold: number;
     canvasResizeStep: number;
+    noteClass: string;
 };
 interface FcCoords {
     x?: number;
@@ -220,6 +338,14 @@ interface FcRectBox {
     left: number;
     right: number;
     bottom: number;
+}
+interface FcNote extends FcCoords {
+    id: string;
+    width: number;
+    height: number;
+    readonly?: boolean;
+    content?: string;
+    [key: string]: any;
 }
 interface FcConnector {
     id: string;
@@ -255,10 +381,18 @@ interface FcEdge {
 interface FcItemInfo {
     node?: FcNode;
     edge?: FcEdge;
+    note?: FcNote;
 }
 interface FcModel {
     nodes: Array<FcNode>;
     edges: Array<FcEdge>;
+    notes?: Array<FcNote>;
+}
+interface UserNoteCallbacks {
+    noteEdit?: (event: MouseEvent, note: FcNote) => void;
+    doubleClick?: (event: MouseEvent, note: FcNote) => void;
+    mouseEnter?: (event: MouseEvent, note: FcNote) => void;
+    mouseLeave?: (event: MouseEvent, note: FcNote) => void;
 }
 interface UserCallbacks {
     dropNode?: (event: Event, node: FcNode) => void;
@@ -266,11 +400,13 @@ interface UserCallbacks {
     edgeAdded?: (edge: FcEdge) => void;
     nodeRemoved?: (node: FcNode) => void;
     edgeRemoved?: (edge: FcEdge) => void;
+    noteRemoved?: (note: FcNote) => void;
     edgeDoubleClick?: (event: MouseEvent, edge: FcEdge) => void;
     edgeMouseOver?: (event: MouseEvent, edge: FcEdge) => void;
     isValidEdge?: (source: FcConnector, destination: FcConnector) => boolean;
     edgeEdit?: (event: Event, edge: FcEdge) => void;
     nodeCallbacks?: UserNodeCallbacks;
+    noteCallbacks?: UserNoteCallbacks;
 }
 interface UserNodeCallbacks {
     nodeEdit?: (event: MouseEvent, node: FcNode) => void;
@@ -319,16 +455,20 @@ declare class FcNodeDraggingService {
     private readonly automaticResize;
     private readonly dragAnimation;
     private readonly applyFunction;
+    private readonly scrollParent;
+    private lastScrollLeft;
+    private lastScrollTop;
     constructor(modelService: FcModelService, applyFunction: <T>(fn: (...args: any[]) => T) => T, automaticResize: boolean, dragAnimation: string);
     private getCoordinate;
     private getXCoordinate;
     private getYCoordinate;
+    private compensateScrollDrift;
     private resizeCanvas;
     isDraggingNode(node: FcNode): boolean;
     dragstart(event: Event | any, node: FcNode): void;
     drop(event: Event | any): boolean;
     dragover(event: Event | any): boolean;
-    dragend(event: Event | any): void;
+    dragend(_event: Event | any): void;
 }
 interface NodeDraggingScope {
     draggedNodes: Array<FcNode>;
@@ -439,8 +579,10 @@ declare class NgxFlowchartComponent implements OnInit, DoCheck {
     set fitModelSizeByDefault(value: boolean);
     callbacks: FcCallbacks;
     userNodeCallbacks: UserNodeCallbacks;
+    userNoteCallbacks: UserNoteCallbacks;
     modelService: FcModelService;
     nodeDraggingService: FcNodeDraggingService;
+    noteDraggingService: FcNoteDraggingService;
     edgeDraggingService: FcEdgeDraggingService;
     mouseoverService: FcMouseOverService;
     rectangleSelectService: FcRectangleSelectService;
@@ -470,9 +612,11 @@ declare class NgxFlowchartComponent implements OnInit, DoCheck {
         rightConnectorClass: string;
         canvasResizeThreshold: number;
         canvasResizeStep: number;
+        noteClass: string;
     };
     private nodesDiffer;
     private edgesDiffer;
+    private notesDiffer;
     private readonly detectChangesSubject;
     constructor(elementRef: ElementRef<HTMLElement>, differs: IterableDiffers, modelValidation: FcModelValidationService, edgeDrawingService: FcEdgeDrawingService, cd: ChangeDetectorRef, zone: NgZone);
     ngOnInit(): void;
@@ -538,11 +682,19 @@ declare class DefaultFcNodeComponent extends FcNodeComponent {
     static ɵcmp: i0.ɵɵComponentDeclaration<DefaultFcNodeComponent, "fc-default-node", never, {}, {}, never, never, false, never>;
 }
 
+declare class DefaultFcNoteComponent extends FcNoteComponent {
+    constructor();
+    noteEdit(event: MouseEvent): void;
+    noteDelete(event: MouseEvent): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<DefaultFcNoteComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<DefaultFcNoteComponent, "fc-default-note", never, {}, {}, never, never, false, never>;
+}
+
 declare class NgxFlowchartModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<NgxFlowchartModule, never>;
-    static ɵmod: i0.ɵɵNgModuleDeclaration<NgxFlowchartModule, [typeof NgxFlowchartComponent, typeof FcMagnetDirective, typeof FcConnectorDirective, typeof FcNodeContainerComponent, typeof DefaultFcNodeComponent], [typeof i6.CommonModule], [typeof NgxFlowchartComponent, typeof FcMagnetDirective, typeof FcConnectorDirective, typeof DefaultFcNodeComponent]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<NgxFlowchartModule, [typeof NgxFlowchartComponent, typeof FcMagnetDirective, typeof FcConnectorDirective, typeof FcNodeContainerComponent, typeof DefaultFcNodeComponent, typeof FcNoteContainerComponent, typeof DefaultFcNoteComponent], [typeof i8.CommonModule], [typeof NgxFlowchartComponent, typeof FcMagnetDirective, typeof FcConnectorDirective, typeof DefaultFcNodeComponent, typeof FcNoteContainerComponent, typeof DefaultFcNoteComponent]>;
     static ɵinj: i0.ɵɵInjectorDeclaration<NgxFlowchartModule>;
 }
 
-export { DefaultFcNodeComponent, FC_NODE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, fcTopSort };
-export type { FcAdjacentList, FcCallbacks, FcConnector, FcConnectorRectInfo, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcNodeComponentConfig, FcNodeRectInfo, FcRectBox, UserCallbacks, UserNodeCallbacks };
+export { DefaultFcNodeComponent, DefaultFcNoteComponent, FC_NODE_COMPONENT_CONFIG, FC_NOTE_COMPONENT_CONFIG, FcConnectorDirective, FcMagnetDirective, FcNodeComponent, FcNoteComponent, FcNoteContainerComponent, FlowchartConstants, ModelvalidationError, NgxFlowchartComponent, NgxFlowchartModule, NoteDragMode, fcTopSort };
+export type { FcAdjacentList, FcCallbacks, FcConnector, FcConnectorRectInfo, FcCoords, FcEdge, FcItemInfo, FcModel, FcNode, FcNodeComponentConfig, FcNodeRectInfo, FcNote, FcNoteComponentConfig, FcRectBox, UserCallbacks, UserNodeCallbacks, UserNoteCallbacks };

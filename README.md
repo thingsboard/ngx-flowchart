@@ -15,10 +15,6 @@ Run `ng build ngx-flowchart` to build the project. The build artifacts will be s
 
 After building your library with `ng build ngx-flowchart`, go to the dist folder `cd dist/ngx-flowchart` and run `npm publish`.
 
-## Running unit tests
-
-Run `ng test ngx-flowchart` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
