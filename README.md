@@ -64,7 +64,7 @@ new `release/x.y.z` branch. The version in
 
 ## License
 
-Copyright 2016 The Thingsboard Authors. Licensed under the
+Copyright 2016 ThingsBoard, Inc. Licensed under the
 [Apache License, Version 2.0](LICENSE).
 
 This library is an Angular port of [ngFlowchart](https://github.com/DaHaiz/ngFlowchart),
