@@ -14,8 +14,7 @@
     "**/*.npmignore",
     "**/LICENSE",
     "**/NOTICE",
-    "**/licenses/**",
-    "projects/ngx-flowchart/src/lib/scrollparent.ts"
+    "**/licenses/**"
   ],
   "trailingWhitespace": "TRIM",
   "licenseFormats": {
