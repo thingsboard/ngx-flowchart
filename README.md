@@ -2,6 +2,17 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.1.
 
+## License
+
+Copyright 2016 The Thingsboard Authors. Licensed under the
+[Apache License, Version 2.0](LICENSE).
+
+This library is an Angular port of [ngFlowchart](https://github.com/DaHaiz/ngFlowchart),
+an AngularJS flowchart component developed by ONE LOGIC and licensed under the MIT
+License (Copyright (c) 2015 ONE LOGIC). The original work has been modified and
+extended. See [NOTICE](NOTICE) for the full attribution and the complete text of the
+MIT License.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
