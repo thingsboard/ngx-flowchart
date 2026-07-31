@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -33,7 +34,6 @@ import { FcEdgeDrawingService } from './edge-drawing.service';
 import { FcEdgeDraggingService } from './edge-dragging.service';
 import { FcMouseOverService } from './mouseover.service';
 import { FcRectangleSelectService } from './rectangleselect.service';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -81,14 +81,8 @@ export class NgxFlowchartComponent implements OnInit, DoCheck {
   @Output()
   modelChanged = new EventEmitter();
 
-  private fitModelSizeByDefaultValue = true;
-  get fitModelSizeByDefault(): boolean {
-    return this.fitModelSizeByDefaultValue;
-  }
-  @Input()
-  set fitModelSizeByDefault(value: boolean) {
-    this.fitModelSizeByDefaultValue = coerceBooleanProperty(value);
-  }
+  @Input({transform: booleanAttribute})
+  fitModelSizeByDefault = true;
 
   callbacks: FcCallbacks;
 

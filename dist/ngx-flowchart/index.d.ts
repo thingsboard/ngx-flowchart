@@ -574,9 +574,7 @@ declare class NgxFlowchartComponent implements OnInit, DoCheck {
     nodeHeight: number;
     dropTargetId: string;
     modelChanged: EventEmitter<any>;
-    private fitModelSizeByDefaultValue;
-    get fitModelSizeByDefault(): boolean;
-    set fitModelSizeByDefault(value: boolean);
+    fitModelSizeByDefault: boolean;
     callbacks: FcCallbacks;
     userNodeCallbacks: UserNodeCallbacks;
     userNoteCallbacks: UserNoteCallbacks;
@@ -639,6 +637,7 @@ declare class NgxFlowchartComponent implements OnInit, DoCheck {
     mouseup(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<NgxFlowchartComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<NgxFlowchartComponent, "fc-canvas", never, { "model": { "alias": "model"; "required": false; }; "selectedObjects": { "alias": "selectedObjects"; "required": false; }; "edgeStyle": { "alias": "edgeStyle"; "required": false; }; "userCallbacks": { "alias": "userCallbacks"; "required": false; }; "automaticResize": { "alias": "automaticResize"; "required": false; }; "dragAnimation": { "alias": "dragAnimation"; "required": false; }; "nodeWidth": { "alias": "nodeWidth"; "required": false; }; "nodeHeight": { "alias": "nodeHeight"; "required": false; }; "dropTargetId": { "alias": "dropTargetId"; "required": false; }; "fitModelSizeByDefault": { "alias": "fitModelSizeByDefault"; "required": false; }; }, { "modelChanged": "modelChanged"; }, never, never, false, never>;
+    static ngAcceptInputType_fitModelSizeByDefault: unknown;
 }
 
 declare class FcMagnetDirective implements OnInit {
