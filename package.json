@@ -4,8 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --open --port 4300 --configuration development",
+    "prebuild": "npm run license:check",
     "build": "ng build ngx-flowchart --configuration production",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "license:check": "license-check-and-add check -f license-check.json",
+    "license:format": "license-check-and-add add -f license-check.json"
   },
   "private": true,
   "peerDependencies": {
@@ -34,6 +37,7 @@
     "eslint-plugin-jsdoc": "^63.3.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "jquery": "^3.7.1",
+    "license-check-and-add": "^4.0.5",
     "ng-packagr": "~20.3.2",
     "rxjs": "~7.8.2",
     "ts-node": "^10.9.2",

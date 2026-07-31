@@ -1,0 +1,36 @@
+{
+  "license": "license-header.txt",
+  "ignore": [
+    ".angular/**",
+    "**/*.html",
+    "**/*.md",
+    "**/*.txt",
+    "**/*.mjs",
+    "**/*.map",
+    "**/*.lock",
+    "**/*.editorconfig",
+    "**/*.gitignore",
+    "**/*.gitkeep",
+    "**/*.npmignore",
+    "**/LICENSE",
+    "**/NOTICE",
+    "projects/ngx-flowchart/src/lib/scrollparent.ts"
+  ],
+  "trailingWhitespace": "TRIM",
+  "licenseFormats": {
+    "ts": {
+      "prepend": "///",
+      "append": "///",
+      "eachLine": {
+        "prepend": "/// "
+      }
+    },
+    "scss": {
+      "prepend": "/**",
+      "append": " */",
+      "eachLine": {
+        "prepend": " * "
+      }
+    }
+  }
+}
