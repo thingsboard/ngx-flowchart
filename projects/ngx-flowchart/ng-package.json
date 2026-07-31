@@ -6,6 +6,7 @@
     "entryFile": "src/public-api.ts"
   },
   "assets": [
-    "NOTICE"
+    "NOTICE",
+    "licenses"
   ]
 }
