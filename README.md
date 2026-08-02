@@ -64,8 +64,10 @@ new `release/x.y.z` branch. The version in
 
 ## License
 
-Copyright 2016 ThingsBoard, Inc. Licensed under the
-[Apache License, Version 2.0](LICENSE).
+Copyright 2016 ThingsBoard, Inc.
+
+ngx-flowchart is licensed under the Apache License, Version 2.0. See
+[LICENSE](LICENSE) for the full license text.
 
 This library is an Angular port of [ngFlowchart](https://github.com/DaHaiz/ngFlowchart),
 an AngularJS flowchart component developed by ONE LOGIC and licensed under the MIT
