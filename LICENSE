@@ -200,3 +200,19 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+========================================================================
+ngx-flowchart Subcomponents:
+
+The ngx-flowchart project contains subcomponents with separate copyright
+notices and license terms. Your use of the source code for these
+subcomponents is also subject to the terms and conditions of the following
+licenses.
+
+MIT (ngFlowchart):
+This library is an Angular port of ngFlowchart
+(https://github.com/DaHaiz/ngFlowchart), Copyright (c) 2015 ONE LOGIC,
+licensed under the MIT License. The original work has been modified and
+extended.
+See `/licenses/LICENSE-ngFlowchart` for details of the license.

@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import base from '../../eslint.config.mjs';
 
 export default [
