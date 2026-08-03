@@ -1,3 +1,11 @@
+/*!
+ * ngx-flowchart
+ * SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Angular port of ngFlowchart, Copyright (c) 2015 ONE LOGIC, MIT licensed.
+ * See LICENSE, NOTICE and licenses/LICENSE-ngFlowchart in this package.
+ */
 import * as i0 from '@angular/core';
 import { EventEmitter, OnInit, AfterViewInit, OnChanges, ViewContainerRef, ElementRef, SimpleChanges, InjectionToken, Type, DoCheck, IterableDiffers, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';

@@ -414,11 +414,14 @@ alongside canvas-wide methods such as `isEditable()`, `selectAll()`,
 
 ## License
 
-Copyright 2016 ThingsBoard, Inc. Licensed under the
-[Apache License, Version 2.0](LICENSE).
+Copyright 2016 ThingsBoard, Inc.
+
+ngx-flowchart is licensed under the Apache License, Version 2.0. See
+[LICENSE](LICENSE) for the full license text.
 
 This library is an Angular port of [ngFlowchart](https://github.com/DaHaiz/ngFlowchart),
 an AngularJS flowchart component developed by ONE LOGIC and licensed under the MIT
 License (Copyright (c) 2015 ONE LOGIC). The original work has been modified and
-extended. See [NOTICE](NOTICE) for the full attribution and the complete text of the
-MIT License.
+extended. See [NOTICE](NOTICE) for the full attribution, and
+[licenses/LICENSE-ngFlowchart](licenses/LICENSE-ngFlowchart) for the complete text of
+the MIT License.

@@ -1,3 +1,11 @@
+/*!
+ * ngx-flowchart
+ * SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Angular port of ngFlowchart, Copyright (c) 2015 ONE LOGIC, MIT licensed.
+ * See LICENSE, NOTICE and licenses/LICENSE-ngFlowchart in this package.
+ */
 import * as i0 from '@angular/core';
 import { InjectionToken, Injectable, ViewContainerRef, HostListener, ViewChild, HostBinding, Input, Inject, Component, Directive, EventEmitter, booleanAttribute, Output, ChangeDetectionStrategy, NgModule } from '@angular/core';
 import { Subject, of } from 'rxjs';
@@ -607,6 +615,10 @@ class FcModelService {
     }
 }
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcModelValidationService {
     validateModel(model) {
         this.validateNodes(model.nodes);
@@ -720,6 +732,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
             type: Injectable
         }] });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 const regex = /(auto|scroll)/;
 const style = (node, prop) => getComputedStyle(node, null).getPropertyValue(prop);
 const scroll = (node) => regex.test(style(node, 'overflow') +
@@ -1315,6 +1331,10 @@ class FcNoteDraggingService {
     }
 }
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcEdgeDrawingService {
     getEdgeDAttribute(pt1, pt2, style) {
         let dAddribute = `M ${pt1.x}, ${pt1.y} `;
@@ -1711,6 +1731,10 @@ class FcRectangleSelectService {
     }
 }
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcNodeContainerComponent {
     get nodeId() {
         return this.node.id;
@@ -1918,6 +1942,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 type: Input
             }] } });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcNoteContainerComponent {
     get noteId() { return this.note.id; }
     get top() { return this.note.y + 'px'; }
@@ -2094,6 +2122,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 type: Input
             }] } });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class NgxFlowchartComponent {
     get canvasClass() {
         return FlowchartConstants.canvasClass;
@@ -2344,6 +2376,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 args: ['mouseup', ['$event']]
             }] } });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcMagnetDirective {
     constructor(elementRef) {
         this.elementRef = elementRef;
@@ -2391,6 +2427,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 args: ['dragend', ['$event']]
             }] } });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class FcConnectorDirective {
     constructor(elementRef) {
         this.elementRef = elementRef;
@@ -2503,6 +2543,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 args: ['mouseleave', ['$event']]
             }] } });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class DefaultFcNodeComponent extends FcNodeComponent {
     constructor() {
         super();
@@ -2515,6 +2559,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
             args: [{ selector: 'fc-default-node', standalone: false, template: "<div\n  (dblclick)=\"userNodeCallbacks?.doubleClick?.($event, node)\">\n  <div class=\"{{flowchartConstants.nodeOverlayClass}}\"></div>\n  <div class=\"innerNode\">\n    <p>{{ node.name }}</p>\n\n    <div class=\"{{flowchartConstants.leftConnectorClass}}\">\n      @for (connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.leftConnectorType); track connector) {\n        <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\">\n          <div fc-connector [connector]=\"connector\"\n            [nodeRectInfo]=\"nodeRectInfo\"\n            [mouseOverConnector]=\"mouseOverConnector\"\n            [callbacks]=\"callbacks\"\n          [modelservice]=\"modelservice\"></div>\n        </div>\n      }\n    </div>\n    <div class=\"{{flowchartConstants.rightConnectorClass}}\">\n      @for (connector of modelservice.nodes.getConnectorsByType(node, flowchartConstants.rightConnectorType); track connector) {\n        <div fc-magnet [connector]=\"connector\" [callbacks]=\"callbacks\">\n          <div fc-connector [connector]=\"connector\"\n            [nodeRectInfo]=\"nodeRectInfo\"\n            [mouseOverConnector]=\"mouseOverConnector\"\n            [callbacks]=\"callbacks\"\n          [modelservice]=\"modelservice\"></div>\n        </div>\n      }\n    </div>\n  </div>\n  @if (modelservice.isEditable() && !node.readonly) {\n    <div class=\"fc-nodeedit\" (click)=\"userNodeCallbacks.nodeEdit($event, node)\">\n      <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n    </div>\n  }\n  @if (modelservice.isEditable() && !node.readonly) {\n    <div class=\"fc-nodedelete\" (click)=\"modelservice.nodes.delete(node)\">\n      &times;\n    </div>\n  }\n</div>\n", styles: [":host .fc-node-overlay{position:absolute;pointer-events:none;inset:0;background-color:#000;opacity:0}:host :host-context(.fc-hover) .fc-node-overlay{opacity:.25;transition:opacity .2s}:host :host-context(.fc-selected) .fc-node-overlay{opacity:.25}:host .innerNode{display:flex;justify-content:center;align-items:center;min-width:100px;border-radius:5px;background-color:#f15b26;color:#fff;font-size:16px;pointer-events:none}:host .innerNode p{padding:0 15px;text-align:center}\n"] }]
         }], ctorParameters: () => [] });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class DefaultFcNoteComponent extends FcNoteComponent {
     constructor() {
         super();
@@ -2537,6 +2585,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
             args: [{ selector: 'fc-default-note', standalone: false, template: "@if (modelservice.isEditable() && !note.readonly && edit) {\n  <div class=\"fc-noselect fc-nodeedit\"\n       (mousedown)=\"$event.stopPropagation()\"\n       (click)=\"noteEdit($event)\">\n    <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>\n  </div>\n  <div class=\"fc-noselect fc-nodedelete\"\n       (mousedown)=\"$event.stopPropagation()\"\n       (click)=\"noteDelete($event)\">\n    &times;\n  </div>\n}\n<div class=\"fc-default-note-content\"\n     (dblclick)=\"userNoteCallbacks?.doubleClick?.($event, note)\">\n  <div class=\"fc-default-note-text\">{{ note.content || '' }}</div>\n</div>\n", styles: [":host{display:block;width:100%;height:100%;box-sizing:border-box}:host .fc-nodeedit,:host .fc-nodedelete{display:block;position:absolute;border:solid 2px #eee;border-radius:50%;font-weight:600;line-height:20px;height:20px;padding-top:2px;width:22px;background:#494949;color:#fff;text-align:center;vertical-align:bottom;cursor:pointer;z-index:10}:host .fc-nodeedit{top:-24px;right:16px;font-size:15px}:host .fc-nodedelete{top:-24px;right:-13px;font-size:18px}:host .fc-default-note-content{position:relative;width:100%;height:100%;background-color:#fff9c4;border:1px solid #E6D600;border-radius:4px;box-sizing:border-box;padding:8px;overflow:auto}:host .fc-default-note-content .fc-default-note-text{white-space:pre-wrap;word-break:break-word;font-size:13px;color:#333;min-height:100%}\n"] }]
         }], ctorParameters: () => [] });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 class NgxFlowchartModule {
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "20.3.27", ngImport: i0, type: NgxFlowchartModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
     static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "20.3.27", ngImport: i0, type: NgxFlowchartModule, declarations: [NgxFlowchartComponent,
@@ -2610,6 +2662,10 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.27", ngImpo
                 }]
         }] });
 
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 /*
  * Public API Surface of ngx-flowchart
  */
