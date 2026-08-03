@@ -50,6 +50,21 @@ Lint the library sources and templates:
 yarn lint
 ```
 
+Every first-party source file carries the licence header from
+[license-header.txt](license-header.txt). `yarn build` verifies this before building
+and fails if a file is missing it; `yarn license:format` stamps the header onto new
+files:
+
+```bash
+yarn license:check
+yarn license:format
+```
+
+The same header is stamped as a banner onto the built `fesm2022/ngx-flowchart.mjs` and
+`index.d.ts` after every build, so the notice travels with the artifact that
+`release/x.y.z` branches publish. `yarn license:banner:check` verifies it without
+rebuilding.
+
 ## Releases
 
 Each released version lives on its own `release/x.y.z` branch. Consumers depend
@@ -64,11 +79,14 @@ new `release/x.y.z` branch. The version in
 
 ## License
 
-Copyright 2016 ThingsBoard, Inc. Licensed under the
-[Apache License, Version 2.0](LICENSE).
+Copyright 2016 ThingsBoard, Inc.
+
+ngx-flowchart is licensed under the Apache License, Version 2.0. See
+[LICENSE](LICENSE) for the full license text.
 
 This library is an Angular port of [ngFlowchart](https://github.com/DaHaiz/ngFlowchart),
 an AngularJS flowchart component developed by ONE LOGIC and licensed under the MIT
 License (Copyright (c) 2015 ONE LOGIC). The original work has been modified and
-extended. See [NOTICE](NOTICE) for the full attribution and the complete text of the
-MIT License.
+extended. See [NOTICE](NOTICE) for the full attribution, and
+[licenses/LICENSE-ngFlowchart](licenses/LICENSE-ngFlowchart) for the complete text of
+the MIT License.

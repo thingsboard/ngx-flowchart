@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { NgModule } from '@angular/core';
 import { NgxFlowchartComponent } from './ngx-flowchart.component';
 import { FcModelValidationService } from './modelvalidation.service';

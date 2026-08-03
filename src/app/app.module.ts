@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 

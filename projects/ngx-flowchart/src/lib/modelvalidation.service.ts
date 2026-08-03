@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { Injectable } from '@angular/core';
 import { FcConnector, FcEdge, FcModel, FcNode, fcTopSort, ModelvalidationError } from './ngx-flowchart.models';
 

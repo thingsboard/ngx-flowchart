@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { Observable } from 'rxjs';
 import { InjectionToken, Type } from '@angular/core';
 import { FcNodeComponent } from './node.component';

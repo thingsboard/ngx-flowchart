@@ -1,11 +1,17 @@
 {
   "name": "ngx-flowchart-demo",
   "version": "4.1.1",
+  "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --open --port 4300 --configuration development",
+    "prebuild": "yarn license:check",
     "build": "ng build ngx-flowchart --configuration production",
-    "lint": "ng lint"
+    "postbuild": "node scripts/license-banner.mjs",
+    "lint": "ng lint",
+    "license:check": "node scripts/license.mjs check",
+    "license:format": "node scripts/license.mjs format",
+    "license:banner:check": "node scripts/license-banner.mjs --check"
   },
   "private": true,
   "peerDependencies": {

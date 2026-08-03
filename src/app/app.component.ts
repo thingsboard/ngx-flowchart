@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { AfterViewInit, Component, HostBinding, HostListener, ViewChild } from '@angular/core';
 import { FcModel, FcNode, FcNote, FlowchartConstants, NgxFlowchartComponent, UserCallbacks } from 'ngx-flowchart-dev';
 import { of } from 'rxjs';

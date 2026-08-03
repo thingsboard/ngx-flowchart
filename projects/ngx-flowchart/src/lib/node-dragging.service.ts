@@ -1,3 +1,7 @@
+///
+/// SPDX-FileCopyrightText: Copyright 2016 ThingsBoard, Inc.
+/// SPDX-License-Identifier: Apache-2.0
+///
 import { FcModelService } from './model.service';
 import { FcCoords, FcNode, FlowchartConstants } from './ngx-flowchart.models';
 import scrollparent from './scrollparent';
