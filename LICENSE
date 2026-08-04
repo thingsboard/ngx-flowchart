@@ -216,3 +216,9 @@ This library is an Angular port of ngFlowchart
 licensed under the MIT License. The original work has been modified and
 extended.
 See `/licenses/LICENSE-ngFlowchart` for details of the license.
+
+MIT (scrollparent.js):
+The scrollparent.ts source file is a TypeScript adaptation of
+scrollparent.js (https://github.com/olahol/scrollparent.js),
+Copyright (c) 2014 Ola Holmström, licensed under the MIT License.
+See `/licenses/LICENSE-scrollparent` for details of the license.
