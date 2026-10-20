@@ -31,7 +31,7 @@
     "@angular/forms": "20.3.27",
     "@angular/platform-browser": "20.3.27",
     "@angular/platform-browser-dynamic": "20.3.27",
-    "@angular/router": "20.3.27",
+    "@angular/router": "20.3.33",
     "@types/jquery": "^3.5.34",
     "@types/node": "22.20.1",
     "angular-eslint": "~20.7.0",
